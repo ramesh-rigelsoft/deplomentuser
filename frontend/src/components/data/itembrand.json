@@ -1,0 +1,246 @@
+{
+  "brands": {
+    "Smartphone": [
+      { "value": "Apple", "label": "Apple" },
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Xiaomi", "label": "Xiaomi" },
+      { "value": "OnePlus", "label": "OnePlus" },
+      { "value": "Vivo", "label": "Vivo" },
+      { "value": "Oppo", "label": "Oppo" },
+      { "value": "Realme", "label": "Realme" },
+      { "value": "POCO", "label": "POCO" }
+    ],
+    "Feature-Phone": [
+      { "value": "Nokia", "label": "Nokia" },
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Lava", "label": "Lava" },
+      { "value": "Micromax", "label": "Micromax" }
+    ],
+    "Tablet": [
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Lenovo", "label": "Lenovo" },
+      { "value": "Xiaomi", "label": "Xiaomi" }
+    ],
+    "iPad": [
+      { "value": "Apple", "label": "Apple" }
+    ],
+    "Smart Watch": [
+      { "value": "Apple", "label": "Apple" },
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Noise", "label": "Noise" },
+      { "value": "Boat", "label": "Boat" },
+      { "value": "Fire-Boltt", "label": "Fire-Boltt" }
+    ],
+    "Fitness Band": [
+      { "value": "Mi", "label": "Mi" },
+      { "value": "Realme", "label": "Realme" },
+      { "value": "Noise", "label": "Noise" }
+    ],
+    "Smart Glasses": [
+      { "value": "Snapchat", "label": "Snapchat" },
+      { "value": "Meta", "label": "Meta" }
+    ],
+    "Wired Earphone": [
+      { "value": "Boat", "label": "Boat" },
+      { "value": "JBL", "label": "JBL" },
+      { "value": "Sony", "label": "Sony" },
+      { "value": "Realme", "label": "Realme" }
+    ],
+    "Wireless Earbuds": [
+      { "value": "Apple", "label": "Apple" },
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Boat", "label": "Boat" },
+      { "value": "Noise", "label": "Noise" },
+      { "value": "OnePlus", "label": "OnePlus" }
+    ],
+    "Headphone": [
+      { "value": "Sony", "label": "Sony" },
+      { "value": "JBL", "label": "JBL" },
+      { "value": "Boat", "label": "Boat" },
+      { "value": "Sennheiser", "label": "Sennheiser" }
+    ],
+    "Bluetooth Headphone": [
+      { "value": "Boat", "label": "Boat" },
+      { "value": "JBL", "label": "JBL" },
+      { "value": "Sony", "label": "Sony" }
+    ],
+    "Neckband": [
+      { "value": "Boat", "label": "Boat" },
+      { "value": "Realme", "label": "Realme" },
+      { "value": "OnePlus", "label": "OnePlus" }
+    ],
+    "Bluetooth Speaker": [
+      { "value": "JBL", "label": "JBL" },
+      { "value": "Boat", "label": "Boat" },
+      { "value": "Sony", "label": "Sony" },
+      { "value": "Bose", "label": "Bose" }
+    ],
+    "Sound Bar": [
+      { "value": "Sony", "label": "Sony" },
+      { "value": "JBL", "label": "JBL" },
+      { "value": "Boat", "label": "Boat" }
+    ],
+    "Microphone": [
+      { "value": "Boya", "label": "Boya" },
+      { "value": "Blue", "label": "Blue" },
+      { "value": "Rode", "label": "Rode" }
+    ],
+    "Mobile Charger": [
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Mi", "label": "Mi" },
+      { "value": "Boat", "label": "Boat" },
+      { "value": "Ambrane", "label": "Ambrane" }
+    ],
+    "Fast Charger": [
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "OnePlus", "label": "OnePlus" },
+      { "value": "Mi", "label": "Mi" }
+    ],
+    "Wireless Charger": [
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Belkin", "label": "Belkin" }
+    ],
+    "Power Bank": [
+      { "value": "Mi", "label": "Mi" },
+      { "value": "Realme", "label": "Realme" },
+      { "value": "Ambrane", "label": "Ambrane" }
+    ],
+    "Extension Board": [
+      { "value": "Anchor", "label": "Anchor" },
+      { "value": "GM", "label": "GM" }
+    ],
+    "UPS": [
+      { "value": "APC", "label": "APC" },
+      { "value": "Microtek", "label": "Microtek" }
+    ],
+    "Inverter": [
+      { "value": "Luminous", "label": "Luminous" },
+      { "value": "Microtek", "label": "Microtek" }
+    ],
+    "Battery": [
+      { "value": "Exide", "label": "Exide" },
+      { "value": "Amaron", "label": "Amaron" }
+    ],
+    "Data Cable": [
+      { "value": "Boat", "label": "Boat" },
+      { "value": "Portronics", "label": "Portronics" }
+    ],
+    "Type-C Cable": [
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "OnePlus", "label": "OnePlus" }
+    ],
+    "Lightning Cable": [
+      { "value": "Apple", "label": "Apple" },
+      { "value": "Belkin", "label": "Belkin" }
+    ],
+    "HDMI Cable": [
+      { "value": "Belkin", "label": "Belkin" },
+      { "value": "Portronics", "label": "Portronics" }
+    ],
+    "Memory Card": [
+      { "value": "SanDisk", "label": "SanDisk" },
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Kingston", "label": "Kingston" }
+    ],
+    "Pendrive": [
+      { "value": "SanDisk", "label": "SanDisk" },
+      { "value": "HP", "label": "HP" },
+      { "value": "Kingston", "label": "Kingston" }
+    ],
+    "External Hard Disk": [
+      { "value": "Seagate", "label": "Seagate" },
+      { "value": "WD", "label": "WD" }
+    ],
+    "SSD": [
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "WD", "label": "WD" },
+      { "value": "Crucial", "label": "Crucial" }
+    ],
+    "RAM": [
+      { "value": "Corsair", "label": "Corsair" },
+      { "value": "Crucial", "label": "Crucial" }
+    ],
+    "Laptop": [
+      { "value": "HP", "label": "HP" },
+      { "value": "Dell", "label": "Dell" },
+      { "value": "Lenovo", "label": "Lenovo" },
+      { "value": "ASUS", "label": "ASUS" },
+      { "value": "Apple", "label": "Apple" }
+    ],
+    "Desktop Computer": [
+      { "value": "HP", "label": "HP" },
+      { "value": "Dell", "label": "Dell" },
+      { "value": "Lenovo", "label": "Lenovo" }
+    ],
+    "Monitor": [
+      { "value": "LG", "label": "LG" },
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Dell", "label": "Dell" }
+    ],
+    "Graphics Card": [
+      { "value": "NVIDIA", "label": "NVIDIA" },
+      { "value": "AMD", "label": "AMD" },
+      { "value": "ASUS", "label": "ASUS" },
+      { "value": "MSI", "label": "MSI" }
+    ],
+    "LED TV": [
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "LG", "label": "LG" },
+      { "value": "Sony", "label": "Sony" },
+      { "value": "Mi", "label": "Mi" }
+    ],
+    "Smart TV": [
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "LG", "label": "LG" },
+      { "value": "Sony", "label": "Sony" },
+      { "value": "OnePlus", "label": "OnePlus" }
+    ],
+    "WiFi Router": [
+      { "value": "TP-Link", "label": "TP-Link" },
+      { "value": "D-Link", "label": "D-Link" }
+    ],
+    "CCTV Camera": [
+      { "value": "CP Plus", "label": "CP Plus" },
+      { "value": "Hikvision", "label": "Hikvision" }
+    ],
+    "Washing Machine": [
+      { "value": "LG", "label": "LG" },
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Whirlpool", "label": "Whirlpool" }
+    ],
+    "Refrigerator": [
+      { "value": "LG", "label": "LG" },
+      { "value": "Samsung", "label": "Samsung" },
+      { "value": "Whirlpool", "label": "Whirlpool" }
+    ],
+    "Gaming Console": [
+      { "value": "Sony", "label": "Sony" },
+      { "value": "Microsoft", "label": "Microsoft" },
+      { "value": "Nintendo", "label": "Nintendo" }
+    ],
+    "Mouse": [
+      { "value": "Logitech", "label": "Logitech" },
+      { "value": "HP", "label": "HP" },
+      { "value": "Dell", "label": "Dell" },
+      { "value": "Lenovo", "label": "Lenovo" },
+      { "value": "Microsoft", "label": "Microsoft" }
+    ],
+    "Keyboard": [
+      { "value": "Logitech", "label": "Logitech" },
+      { "value": "HP", "label": "HP" },
+      { "value": "Dell", "label": "Dell" },
+      { "value": "Lenovo", "label": "Lenovo" },
+      { "value": "Microsoft", "label": "Microsoft" }
+    ],
+    "CPU": [
+      { "value": "Intel", "label": "Intel" },
+      { "value": "AMD", "label": "AMD" }
+    ],
+    "ServiceCharge": [
+      { "value": "NA", "label": "NA" }
+    ],
+    "Other": [
+      { "value": "Other", "label": "Other" }
+    ]
+  }
+}

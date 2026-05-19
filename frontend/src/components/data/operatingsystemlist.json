@@ -1,0 +1,54 @@
+{
+  "brands": {
+    "nonapple": [
+    { "value": "Windows XP", "label": "Windows XP" },
+    { "value": "Windows Vista", "label": "Windows Vista" },
+    { "value": "Windows 7", "label": "Windows 7" },
+    { "value": "Windows 8", "label": "Windows 8" },
+    { "value": "Windows 8.1", "label": "Windows 8.1" },
+    { "value": "Windows 10", "label": "Windows 10" },
+    { "value": "Windows 11", "label": "Windows 11" },
+    { "value": "Windows 12", "label": "Windows 12" },
+
+    { "value": "Linux Ubuntu", "label": "Linux Ubuntu" },
+    { "value": "Linux Debian", "label": "Linux Debian" },
+    { "value": "Linux Fedora", "label": "Linux Fedora" },
+    { "value": "Linux CentOS", "label": "Linux CentOS" },
+    { "value": "Linux Rocky Linux", "label": "Linux Rocky Linux" },
+    { "value": "Linux AlmaLinux", "label": "Linux AlmaLinux" },
+    { "value": "Linux Mint", "label": "Linux Mint" },
+    { "value": "Linux Arch Linux", "label": "Linux Arch Linux" },
+    { "value": "Linux Manjaro", "label": "Linux Manjaro" },
+    { "value": "Linux OpenSUSE", "label": "Linux OpenSUSE" },
+    { "value": "Linux Kali Linux", "label": "Linux Kali Linux" },
+    { "value": "Linux Elementary OS", "label": "Linux Elementary OS" },
+    { "value": "Linux Zorin OS", "label": "Linux Zorin OS" },
+    { "value": "Linux Pop!_OS", "label": "Linux Pop!_OS" },
+
+    { "value": "Chrome OS", "label": "Chrome OS" },
+    { "value": "Android", "label": "Android" }
+  ],
+  "apple": [
+    { "value": "Mac OS X 10.0 Cheetah", "label": "Mac OS X 10.0 Cheetah" },
+    { "value": "Mac OS X 10.1 Puma", "label": "Mac OS X 10.1 Puma" },
+    { "value": "Mac OS X 10.2 Jaguar", "label": "Mac OS X 10.2 Jaguar" },
+    { "value": "Mac OS X 10.3 Panther", "label": "Mac OS X 10.3 Panther" },
+    { "value": "Mac OS X 10.4 Tiger", "label": "Mac OS X 10.4 Tiger" },
+    { "value": "Mac OS X 10.5 Leopard", "label": "Mac OS X 10.5 Leopard" },
+    { "value": "Mac OS X 10.6 Snow Leopard", "label": "Mac OS X 10.6 Snow Leopard" },
+    { "value": "Mac OS X 10.7 Lion", "label": "Mac OS X 10.7 Lion" },
+    { "value": "Mac OS X 10.8 Mountain Lion", "label": "Mac OS X 10.8 Mountain Lion" },
+    { "value": "OS X 10.9 Mavericks", "label": "OS X 10.9 Mavericks" },
+    { "value": "OS X 10.10 Yosemite", "label": "OS X 10.10 Yosemite" },
+    { "value": "OS X 10.11 El Capitan", "label": "OS X 10.11 El Capitan" },
+    { "value": "macOS 10.12 Sierra", "label": "macOS 10.12 Sierra" },
+    { "value": "macOS 10.13 High Sierra", "label": "macOS 10.13 High Sierra" },
+    { "value": "macOS 10.14 Mojave", "label": "macOS 10.14 Mojave" },
+    { "value": "macOS 10.15 Catalina", "label": "macOS 10.15 Catalina" },
+    { "value": "macOS 11 Big Sur", "label": "macOS 11 Big Sur" },
+    { "value": "macOS 12 Monterey", "label": "macOS 12 Monterey" },
+    { "value": "macOS 13 Ventura", "label": "macOS 13 Ventura" },
+    { "value": "macOS 14 Sonoma", "label": "macOS 14 Sonoma" }
+  ]
+  }
+}

@@ -1,0 +1,86 @@
+/* Sidebar.css */
+
+/* Sidebar Layout */
+.sidebar-container {
+  width: 100%; /* col-3 */
+  min-width: 100%; /* ensures it doesn't shrink too much on small screens */
+  max-width: 100%; /* optional: restrict max width */
+  /* background: linear-gradient(180deg, #004aad 0%, #012b73 100%); */
+  background: linear-gradient(180deg, #1e3a5f 0%, #1e3a5f 100%);
+  color: white;
+  min-height: 100vh;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1000;
+}
+
+@media (min-width: 768px) {
+    .col-md-3 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+}
+@media (min-width: 768px) {
+    .col-md-9 {
+        flex: 0 0 auto;
+        width: 80%;
+    }
+}
+
+/* Nav Links */
+.sidebar-container .nav-link {
+  color: #e0e0e0;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-container .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+  transform: translateX(3px);
+}
+
+.sidebar-container .nav-link i {
+  transition: all 0.2s ease;
+}
+
+.sidebar-container .nav-link:hover i {
+  color: #ffd43b !important;
+}
+
+/* Active Tab */
+.sidebar-container .active-link {
+  background-color: #ffffff !important;
+  color: #15bdbf !important;
+  font-weight: 600;
+}
+
+/* Footer */
+.sidebar-footer {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-footer .btn {
+  transition: all 0.3s ease;
+}
+
+.sidebar-footer .btn:hover {
+  background-color: #15bdbf !important;
+  color: #fff !important;
+  transform: scale(1.05);
+}
+
+/* Mobile Override */
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 100%;
+    min-width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
