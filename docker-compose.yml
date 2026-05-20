@@ -5,8 +5,8 @@ services:
   frontend:
     build: ./frontend
     container_name: frontend
-    ports:
-      - "3000:80"
+    expose:
+      - "80"
 
   backend:
     build: ./backend
@@ -17,8 +17,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
-    ports:
-      - "8089:8089"
+    expose:
+      - "8089"
     depends_on:
       - db
 
