@@ -35,13 +35,11 @@ export default function Signup() {
 
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{12,}$/;
 
-    if (regex.test(value)) {
-      setPasswordMessage("Strong password");
-    } else {
-      setPasswordMessage(
-        "Min 12 chars, 1 uppercase, 1 lowercase, 1 special character"
-      );
-    }
+    setPasswordMessage(
+      regex.test(value)
+        ? "Strong password"
+        : "Min 12 chars, 1 uppercase, 1 lowercase, 1 special character"
+    );
   };
 
   const handleChange = (e) => {
@@ -56,7 +54,7 @@ export default function Signup() {
   };
 
   const errorStyle = (field) => ({
-    border: errors[field] ? "1px solid red" : "",
+    border: errors[field] ? "1px solid red" : "1px solid #ddd",
   });
 
   const validate = () => {
@@ -64,7 +62,6 @@ export default function Signup() {
 
     Object.keys(formData).forEach((key) => {
       if (key === "gstNumber" || key === "panNumber" || key === "logo") return;
-
       if (!formData[key]) temp[key] = true;
     });
 
@@ -74,7 +71,6 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validate()) return;
 
     setLoading(true);
@@ -102,135 +98,148 @@ export default function Signup() {
   return (
     <>
       <style>{`
-        *{
-          box-sizing:border-box;
-        }
+        * { box-sizing: border-box; }
 
         html, body {
-          margin:0;
-          padding:0;
-          height:auto;
-          overflow-y:auto;
+          margin: 0;
+          padding: 0;
+          overflow-x: hidden;
         }
 
-        .container{
-          display:flex;
-          min-height:100vh;
-          width:100%;
-          flex-wrap:wrap;
-          font-family:Segoe UI;
-
-          /* FIX SCROLL */
-          overflow-y:auto;
-          -webkit-overflow-scrolling: touch;
+        .container {
+          display: flex;
+          min-height: 100vh;
+          width: 100%;
+          font-family: Segoe UI;
         }
 
-        .left{
-          flex:1 1 300px;
-          background:linear-gradient(135deg,#0b2242,#111827);
-          color:#fff;
-          padding:50px;
-          display:flex;
-          flex-direction:column;
-          justify-content:center;
+        /* LEFT PANEL */
+        .left {
+          flex: 1;
+          background: linear-gradient(135deg,#0b2242,#111827);
+          color: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 50px;
         }
 
-        .right{
-          flex:1 1 500px;
-          background:#f5f7fb;
-          display:flex;
-          justify-content:center;
-
-          /* IMPORTANT FIX */
-          align-items:flex-start;
-
-          min-height:100vh;
-          padding:20px;
+        /* RIGHT PANEL */
+        .right {
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          background: #f5f7fb;
+          padding: 20px;
         }
 
-        .card{
-          width:100%;
-          max-width:520px;
-          background:#fff;
-          padding:30px;
-          border-radius:15px;
-          box-shadow:0 10px 30px rgba(0,0,0,0.08);
-
-          /* FIX SCROLL GAP */
-          margin-bottom:50px;
+        /* CARD */
+        .card {
+          width: 100%;
+          max-width: 520px;
+          background: white;
+          padding: 30px;
+          border-radius: 15px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+          margin-bottom: 30px;
         }
 
-        .grid{
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          gap:10px;
+        /* GRID */
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
         }
 
-        input, select, textarea{
-          width:100%;
-          padding:10px;
-          box-sizing:border-box;
+        input, select, textarea {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          outline: none;
         }
 
-        .upload{
-          margin-top:10px;
-          padding:10px;
-          border:2px dashed #ccc;
-          border-radius:10px;
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          gap:10px;
+        textarea {
+          resize: none;
         }
 
-        .logo{
-          width:80px;
-          height:80px;
-          border-radius:50%;
-          border:1px solid #ddd;
-          overflow:hidden;
-          display:flex;
-          justify-content:center;
-          align-items:center;
+        /* UPLOAD */
+        .upload {
+          margin-top: 10px;
+          padding: 10px;
+          border: 2px dashed #ccc;
+          border-radius: 10px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 10px;
         }
 
-        .logo img{
-          width:100%;
-          height:100%;
-          object-fit:cover;
+        .logo {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          overflow: hidden;
+          border: 1px solid #ddd;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
-        @media(max-width:768px){
+        .logo img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
 
-          .container{
-            flex-direction:column;
+        /* ================= MOBILE ================= */
+        @media (max-width: 768px) {
+
+          .container {
+            flex-direction: column;
           }
 
-          .left{
-            padding:30px 20px;
-            text-align:center;
+          .left {
+            padding: 25px;
+            text-align: center;
           }
 
-          .right{
-            padding:15px;
-            min-height:auto;
+          .right {
+            padding: 15px;
           }
 
-          .card{
-            padding:20px;
+          .card {
+            padding: 18px;
           }
 
-          .grid{
-            grid-template-columns:1fr;
+          .grid {
+            grid-template-columns: 1fr;
           }
 
-          .upload{
-            flex-direction:column;
-            align-items:flex-start;
+          .upload {
+            flex-direction: column;
+            align-items: flex-start;
           }
 
-          .logo{
-            align-self:center;
+          .logo {
+            align-self: center;
+          }
+        }
+
+        /* ================= TABLET ================= */
+        @media (min-width: 769px) and (max-width: 1024px) {
+
+          .left {
+            padding: 35px;
+          }
+
+          .card {
+            max-width: 450px;
+          }
+
+          .grid {
+            grid-template-columns: 1fr 1fr;
           }
         }
       `}</style>
@@ -242,13 +251,12 @@ export default function Signup() {
           <h1 style={{ fontSize: 42, fontWeight: "bold" }}>
             InventoryPro
           </h1>
-          <p style={{ opacity: 0.85, marginTop: 10 }}>
-            Smart billing & inventory system
-          </p>
+          <p>Smart billing & inventory system</p>
         </div>
 
         {/* RIGHT */}
         <div className="right">
+
           <form className="card" onSubmit={handleSubmit}>
 
             <h2 style={{ textAlign: "center" }}>
@@ -269,36 +277,32 @@ export default function Signup() {
             <h4>Company Info</h4>
 
             <div className="grid">
-              <select name="shopType" onChange={handleChange}
-               style={{
-                  ...errorStyle("shopType"),
-                  height: "42px",
-                  padding: "0 10px",
-                  lineHeight: "42px",
-                }}>
+
+              <select name="shopType" onChange={handleChange}>
                 <option value="">Select Shop Type</option>
                 <option value="mobile_shop">Mobile Shop</option>
                 <option value="laptop_shop">Laptop Shop</option>
               </select>
 
-              <input name="companyName" placeholder="Company Name" onChange={handleChange} style={errorStyle("companyName")} />
+              <input name="companyName" placeholder="Company Name" onChange={handleChange} />
 
               <input name="gstNumber" placeholder="GST Number" onChange={handleChange} />
               <input name="panNumber" placeholder="PAN Number" onChange={handleChange} />
 
-              <input name="state" placeholder="State" onChange={handleChange} style={errorStyle("state")} />
-              <input name="district" placeholder="District" onChange={handleChange} style={errorStyle("district")} />
-              <input name="pincode" placeholder="Pincode" onChange={handleChange} style={errorStyle("pincode")} />
+              <input name="state" placeholder="State" onChange={handleChange} />
+              <input name="district" placeholder="District" onChange={handleChange} />
+              <input name="pincode" placeholder="Pincode" onChange={handleChange} />
+
             </div>
 
             <textarea
               name="companyAddress"
               placeholder="Company Address"
               onChange={handleChange}
-              style={errorStyle("companyAddress")}
             />
 
             <div className="upload">
+
               <input
                 type="file"
                 onChange={(e) => {
@@ -309,12 +313,9 @@ export default function Signup() {
               />
 
               <div className="logo">
-                {logoPreview ? (
-                  <img src={logoPreview} alt="logo" />
-                ) : (
-                  "No Logo"
-                )}
+                {logoPreview ? <img src={logoPreview} /> : "No Logo"}
               </div>
+
             </div>
 
             <button
@@ -329,8 +330,8 @@ export default function Signup() {
             </p>
 
           </form>
-        </div>
 
+        </div>
       </div>
 
       <NetworkStatus />
