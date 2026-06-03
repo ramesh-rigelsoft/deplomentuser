@@ -12,10 +12,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "pages")
 @Getter
 @Setter
-public class Roles implements Serializable {
+public class Pages implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,13 +23,14 @@ public class Roles implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "role", unique = true, nullable = false)
-    private String role;
+    @Column(name = "page_url", nullable = false)
+    private String roleUrl;
     
-    @Column(name = "role_name", unique = true, nullable = false)
-    private String roleName;
+    @Column(name = "page_name", nullable = false)
+    private String pageName;
+    private String description;
     
-    @OneToMany(mappedBy = "roles", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "pages", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private Set<RolesPagePermision> rolesPagePermision = new HashSet<>();
 

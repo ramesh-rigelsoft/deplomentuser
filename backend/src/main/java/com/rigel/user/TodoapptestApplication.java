@@ -11,16 +11,16 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 public class TodoapptestApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TodoapptestApplication.class, args);
-//		SpringApplicationBuilder builder = new SpringApplicationBuilder(TodoapptestApplication.class);
-//
-//        builder.headless(false)      // <<< THIS IS IMPORTANT
-//               .run(args);
-//        
-//       
-//		SwingUtilities.invokeLater(() -> {
-//            FXApp.startBrowser();
-//        });
+//		SpringApplication.run(TodoapptestApplication.class, args);
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(TodoapptestApplication.class);
+
+        builder.headless(false)      // <<< THIS IS IMPORTANT
+               .run(args);
+        
+       
+		SwingUtilities.invokeLater(() -> {
+            FXApp.startBrowser();
+        });
 	}
 
 }
