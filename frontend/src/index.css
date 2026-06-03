@@ -11,17 +11,20 @@ body {
   /* font-family: "Lato", sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
- 
 }
- html, body {
-  height: auto;         /* Auto height allow kare */
-  min-height: 100vh;    /* Kam se kam poori screen cover ho */
-  overflow-y: auto;     /* Scroll bar aayega agar content zyada ho */
-  /* font-family: sans-serif; */
-  line-height: 1.5; /* optional: improves readability */
-  overflow: hidden;
- 
 
+html, body {
+  height: auto;
+  min-height: 100vh;
+  overflow-y: auto;   /* ONLY this */
+  line-height: 1.5;
+  padding-bottom: 15%;
+}
+.form-control:focus {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+   outline: none !important;
+  box-shadow: none !important;
 }
 /* Desktop */
 @media only screen and (min-width: 851px) {
@@ -74,27 +77,3 @@ body {
    }
 }
 
-
-
-.scrollable-div {
-  max-height: 100%;
-  overflow-y: auto;
-  padding-bottom: 5%;
-}
-
-.scrollable-div::-webkit-scrollbar {
-  width: 4px;
-}
-
-.scrollable-div::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollable-div::-webkit-scrollbar-thumb {
-  background: gray;
-  border-radius: 20px;
-}
-
-.scrollable-div::-webkit-scrollbar-thumb:hover {
-  background: gray;
-}

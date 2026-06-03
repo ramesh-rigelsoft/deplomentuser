@@ -21,12 +21,12 @@ export default function Dashboards() {
   };
 
   return (
-    <div className="scrollable-div min-vh-100 bg-light p-4">
+    <div className="min-vh-100 bg-light p-4">
 
 {/* Coming Soon Overlay */}
-<div className="coming-soon-overlay">
+{/* <div className="coming-soon-overlay">
   Coming Soon
-</div>
+</div> */}
 
       {/* Header */}
       <div className="row mb-4 align-items-center">
@@ -129,7 +129,7 @@ export default function Dashboards() {
       <div className="row mt-4 g-4">
 
         {/* Last Payment */}
-        <div className="col-md-6">
+        {/* <div className="col-md-6">
           <div className="card shadow-sm border-0 p-4">
 
             <h5>Last Payment Status</h5>
@@ -148,10 +148,10 @@ export default function Dashboards() {
             )}
 
           </div>
-        </div>
+        </div> */}
 
         {/* Summary */}
-        <div className="col-md-6">
+        {/* <div className="col-md-6">
           <div className="card shadow-sm border-0 p-4">
             <h5>Quick Summary</h5>
             <ul className="list-unstyled mt-3">
@@ -160,7 +160,7 @@ export default function Dashboards() {
               <li>✔ Account Status: Active</li>
             </ul>
           </div>
-        </div>
+        </div> */}
 
       </div>
 
