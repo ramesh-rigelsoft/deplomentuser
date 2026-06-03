@@ -97,244 +97,211 @@ export default function Signup() {
 
   return (
     <>
-      <style>{`
-        * { box-sizing: border-box; }
+     
+    <div className="container py-5">
+      <div className="row justify-content-center">
+        <div className="col-lg-8 col-md-10">
 
-        html, body {
-          margin: 0;
-          padding: 0;
-          overflow-x: hidden;
-        }
-
-        .container {
-          display: flex;
-          min-height: 100vh;
-          width: 100%;
-          font-family: Segoe UI;
-        }
-
-        /* LEFT PANEL */
-        .left {
-          flex: 1;
-          background: linear-gradient(135deg,#0b2242,#111827);
-          color: white;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          padding: 50px;
-        }
-
-        /* RIGHT PANEL */
-        .right {
-          flex: 1;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          background: #f5f7fb;
-          padding: 20px;
-        }
-
-        /* CARD */
-        .card {
-          width: 100%;
-          max-width: 520px;
-          background: white;
-          padding: 30px;
-          border-radius: 15px;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-          margin-bottom: 30px;
-        }
-
-        /* GRID */
-        .grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-
-        input, select, textarea {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          outline: none;
-        }
-
-        textarea {
-          resize: none;
-        }
-
-        /* UPLOAD */
-        .upload {
-          margin-top: 10px;
-          padding: 10px;
-          border: 2px dashed #ccc;
-          border-radius: 10px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .logo {
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
-          overflow: hidden;
-          border: 1px solid #ddd;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .logo img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        /* ================= MOBILE ================= */
-        @media (max-width: 768px) {
-
-          .container {
-            flex-direction: column;
-          }
-
-          .left {
-            padding: 25px;
-            text-align: center;
-          }
-
-          .right {
-            padding: 15px;
-          }
-
-          .card {
-            padding: 18px;
-          }
-
-          .grid {
-            grid-template-columns: 1fr;
-          }
-
-          .upload {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-
-          .logo {
-            align-self: center;
-          }
-        }
-
-        /* ================= TABLET ================= */
-        @media (min-width: 769px) and (max-width: 1024px) {
-
-          .left {
-            padding: 35px;
-          }
-
-          .card {
-            max-width: 450px;
-          }
-
-          .grid {
-            grid-template-columns: 1fr 1fr;
-          }
-        }
-      `}</style>
-
-      <div className="container">
-
-        {/* LEFT */}
-        <div className="left">
-          <h1 style={{ fontSize: 42, fontWeight: "bold" }}>
-            InventoryPro
-          </h1>
-          <p>Smart billing & inventory system</p>
-        </div>
-
-        {/* RIGHT */}
-        <div className="right">
-
-          <form className="card" onSubmit={handleSubmit}>
-
-            <h2 style={{ textAlign: "center" }}>
+          <form className="card shadow p-4" onSubmit={handleSubmit}>
+            <h2 className="text-center mb-4">
               Create Account
             </h2>
 
-            <div className="grid">
-              <input name="name" placeholder="Name" onChange={handleChange} style={errorStyle("name")} />
-              <input name="mobile_no" placeholder="Mobile" onChange={handleChange} style={errorStyle("mobile_no")} />
-              <input name="email_id" placeholder="Email" onChange={handleChange} style={errorStyle("email_id")} />
-              <input type="password" placeholder="Password" onChange={handlePassword} style={errorStyle("password")} />
+            {/* User Info */}
+            <div className="row g-3 mb-3">
+              <div className="col-md-6">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="name"
+                  placeholder="Name"
+                  onChange={handleChange}
+                  style={errorStyle("name")}
+                />
+              </div>
+
+              <div className="col-md-6">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="mobile_no"
+                  placeholder="Mobile Number"
+                  onChange={handleChange}
+                  style={errorStyle("mobile_no")}
+                />
+              </div>
+
+              <div className="col-md-6">
+                <input
+                  type="email"
+                  className="form-control"
+                  name="email_id"
+                  placeholder="Email"
+                  onChange={handleChange}
+                  style={errorStyle("email_id")}
+                />
+              </div>
+
+              <div className="col-md-6">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="Password"
+                  onChange={handlePassword}
+                  style={errorStyle("password")}
+                />
+              </div>
             </div>
 
-            <p style={{ color: "green", fontSize: 12 }}>
+            <small
+              className={`mb-3 d-block ${
+                passwordMessage === "Strong password"
+                  ? "text-success"
+                  : "text-danger"
+              }`}
+            >
               {passwordMessage}
-            </p>
+            </small>
 
-            <h4>Company Info</h4>
+            <h4 className="mb-3">Company Information</h4>
 
-            <div className="grid">
+            <div className="row g-3">
 
-              <select name="shopType" onChange={handleChange}>
-                <option value="">Select Shop Type</option>
-                <option value="mobile_shop">Mobile Shop</option>
-                <option value="laptop_shop">Laptop Shop</option>
-              </select>
+              <div className="col-md-6">
+                <select
+                  className="form-select"
+                  name="shopType"
+                  onChange={handleChange}
+                >
+                  <option value="">Select Shop Type</option>
+                  <option value="mobile_shop">Mobile Shop</option>
+                  <option value="laptop_shop">Laptop Shop</option>
+                </select>
+              </div>
 
-              <input name="companyName" placeholder="Company Name" onChange={handleChange} />
+              <div className="col-md-6">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="companyName"
+                  placeholder="Company Name"
+                  onChange={handleChange}
+                />
+              </div>
 
-              <input name="gstNumber" placeholder="GST Number" onChange={handleChange} />
-              <input name="panNumber" placeholder="PAN Number" onChange={handleChange} />
+              <div className="col-md-6">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="gstNumber"
+                  placeholder="GST Number"
+                  onChange={handleChange}
+                />
+              </div>
 
-              <input name="state" placeholder="State" onChange={handleChange} />
-              <input name="district" placeholder="District" onChange={handleChange} />
-              <input name="pincode" placeholder="Pincode" onChange={handleChange} />
+              <div className="col-md-6">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="panNumber"
+                  placeholder="PAN Number"
+                  onChange={handleChange}
+                />
+              </div>
 
-            </div>
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="state"
+                  placeholder="State"
+                  onChange={handleChange}
+                />
+              </div>
 
-            <textarea
-              name="companyAddress"
-              placeholder="Company Address"
-              onChange={handleChange}
-            />
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="district"
+                  placeholder="District"
+                  onChange={handleChange}
+                />
+              </div>
 
-            <div className="upload">
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="pincode"
+                  placeholder="Pincode"
+                  onChange={handleChange}
+                />
+              </div>
 
-              <input
-                type="file"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  setFormData({ ...formData, logo: file });
-                  if (file) setLogoPreview(URL.createObjectURL(file));
-                }}
-              />
+              <div className="col-12">
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  name="companyAddress"
+                  placeholder="Company Address"
+                  onChange={handleChange}
+                />
+              </div>
 
-              <div className="logo">
-                {logoPreview ? <img src={logoPreview} /> : "No Logo"}
+              <div className="col-md-6">
+                <input
+                  type="file"
+                  className="form-control"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    setFormData({ ...formData, logo: file });
+
+                    if (file) {
+                      setLogoPreview(URL.createObjectURL(file));
+                    }
+                  }}
+                />
+              </div>
+
+              <div className="col-md-6 text-center">
+                <div className="border rounded p-2">
+                  {logoPreview ? (
+                    <img
+                      src={logoPreview}
+                      alt="Logo Preview"
+                      className="img-fluid"
+                      style={{ maxHeight: "120px" }}
+                    />
+                  ) : (
+                    <span className="text-muted">
+                      No Logo Selected
+                    </span>
+                  )}
+                </div>
               </div>
 
             </div>
 
             <button
-              className="btn btn-primary w-100 mt-3"
+              type="submit"
+              className="btn btn-primary w-100 mt-4"
               disabled={loading}
             >
               {loading ? "Creating..." : "Create Account"}
             </button>
 
-            <p style={{ textAlign: "center", marginTop: 10 }}>
-              Already have account? <Link to="/login">Login</Link>
+            <p className="text-center mt-3 mb-0">
+              Already have an account?{" "}
+              <Link to="/login">Login</Link>
             </p>
-
           </form>
 
         </div>
       </div>
+    </div>
 
-      <NetworkStatus />
-    </>
-  );
+    <NetworkStatus />
+  </>
+);
 }

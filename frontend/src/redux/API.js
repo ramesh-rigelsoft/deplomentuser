@@ -1,7 +1,6 @@
 // API.js
 import { ENDPOINT } from "./config";
 import { callAPI,callGetAPI,multipartAPI,loginAPI } from "./apiService";
-import fileViewer from "../components/FilePreview";
 
 const API = {
 
@@ -22,14 +21,6 @@ const API = {
   billPrint(dispatch, billRequest) {
     return callAPI(dispatch, ENDPOINT.BILL_PRINT, billRequest);
   },
-
- openFileInBrowser(params) {
-  const fullUrl = `${ENDPOINT.VIEW_FILE}?path=${params.path}&type=${params.type}&fileName=${params.fileName}`;
-    fileViewer.openFile(fullUrl,params.type);
-     console.log(fullUrl);
-    //  window.open(fullUrl, "_blank");
-  },
-
 
   sendOTP(dispatch, itemData) {
     return callAPI(dispatch, ENDPOINT.SAVE_OTP, itemData);

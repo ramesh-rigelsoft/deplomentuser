@@ -1,7 +1,8 @@
 import React from "react";
-import { FaUser, FaEdit, FaFileInvoice, FaCreditCard, FaCogs, FaSignOutAlt } from "react-icons/fa";
+import { FaUser, FaEdit, FaFileInvoice, FaCreditCard, FaCogs, FaSignOutAlt, FaUserFriends } from "react-icons/fa";
 import { success, fail } from "../redux/WebTostar";
 import { navigateTo } from "../components/navigationService";
+import { Link } from "react-router-dom";
 
 export default function Dashboards() {
 
@@ -20,7 +21,7 @@ export default function Dashboards() {
   };
 
   return (
-    <div className="container-fluid min-vh-100 bg-light p-4">
+    <div className="scrollable-div min-vh-100 bg-light p-4">
 
 {/* Coming Soon Overlay */}
 <div className="coming-soon-overlay">
@@ -49,11 +50,13 @@ export default function Dashboards() {
       {/* Top Cards */}
       <div className="row g-4">
 
-        <div className="col-md-3">
+        {/* <div className="col-md-3">
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaCreditCard size={28} className="text-success mb-2" />
             <h5>Pay Bills</h5>
-            <button className="btn btn-success btn-sm">Pay Now</button>
+             <Link to="/addSubUser" className="btn btn-info btn-sm text-white">
+                Pay Now
+            </Link>
           </div>
         </div>
 
@@ -61,15 +64,19 @@ export default function Dashboards() {
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaFileInvoice size={28} className="text-primary mb-2" />
             <h5>Tax Invoice</h5>
-            <button className="btn btn-primary btn-sm">View</button>
+             <Link to="/addSubUser" className="btn btn-info btn-sm text-white">
+                View
+            </Link>
           </div>
-        </div>
+        </div> */}
 
         <div className="col-md-3">
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaUser size={28} className="text-warning mb-2" />
             <h5>My Profile</h5>
-            <button className="btn btn-warning btn-sm text-white">View</button>
+             <Link to="/viewProfile" className="btn btn-info btn-sm text-white">
+                View
+            </Link>
           </div>
         </div>
 
@@ -77,7 +84,9 @@ export default function Dashboards() {
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaEdit size={28} className="text-danger mb-2" />
             <h5>Edit Profile</h5>
-            <button className="btn btn-danger btn-sm">Edit</button>
+             <Link to="/signup" className="btn btn-info btn-sm text-white">
+                Edit
+            </Link>
           </div>
         </div>
 
@@ -88,12 +97,32 @@ export default function Dashboards() {
 
             <h5>Our Services</h5>
            {/* ✔ FIXED BUTTON COLOR */}
-            <button className="btn btn-info btn-sm text-white">
-              View
-            </button>
+             <Link to="/addSubUser" className="btn btn-info btn-sm text-white">
+                View
+            </Link>
           </div>
         </div>
+        <div className="col-md-3">
+          <div className="card shadow-sm border-0 text-center p-4 hover-card">
+            <FaCogs size={28} className="text-info mb-2" />
 
+            <h5>Role Permission</h5>
+           {/* ✔ FIXED BUTTON COLOR */}
+            <Link to="/rolesPermission" className="btn btn-info btn-sm text-white">
+                    Roles
+            </Link>
+          </div>
+        </div>
+        <div className="col-md-3">
+          <div className="card shadow-sm border-0 text-center p-4 hover-card">
+            <FaUserFriends size={28} className="text-info mb-2" />
+            <h5>User Management</h5>
+           {/* ✔ FIXED BUTTON COLOR */}
+            <Link to="/addSubUser" className="btn btn-info btn-sm text-white">
+                    Users
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Bottom Section */}

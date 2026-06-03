@@ -1,159 +1,135 @@
-// ViewProfile.jsx
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import API from "../redux/API";
-import { fail } from "../redux/WebTostar";
+import React from "react";
 
 export default function ViewProfile() {
 
-  const dispatch = useDispatch();
-
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    API.getProfile(dispatch)
-      .then(res => {
-        setData(res.payload.data);
-      })
-      .catch(() => fail("Failed to load profile"));
-  }, []);
-
-  if (!data) {
-    return <div style={{ padding: "50px" }}>Loading...</div>;
-  }
+  const user = {
+    name: "John Doe",
+    email_id: "john@example.com",
+    mobile_no: "9876543210",
+    shopType: "Mobile Shop",
+    companyName: "Tech Store Pvt Ltd",
+    gstNumber: "22ABCDE1234F1Z5",
+    panNumber: "ABCDE1234F",
+    state: "MP",
+    district: "Bhopal",
+    pincode: "462001",
+    companyAddress: "MP Nagar, Bhopal",
+    logo: null
+  };
 
   return (
-    <div style={styles.container}>
+    <div className="container py-4">
 
-      {/* LEFT PANEL */}
-      <div style={styles.left}>
-        <h1>My Profile</h1>
-        <p>View your account details</p>
-      </div>
+      <div className="row justify-content-center">
 
-      {/* RIGHT PANEL */}
-      <div style={styles.right}>
+        <div className="col-12 col-md-8 col-lg-6">
 
-        <div style={styles.card}>
+          <div className="card shadow border-0">
 
-          {/* LOGO */}
-          <div style={{ textAlign: "center", marginBottom: "20px" }}>
-            {data.companyLogo ? (
-              <img src={data.companyLogo} alt="logo" style={styles.logo} />
-            ) : (
-              <div style={styles.noLogo}>No Logo</div>
-            )}
-          </div>
+            {/* HEADER */}
+            <div className="card-header text-center bg-primary text-white">
+              <h5 className="mb-0">My Profile</h5>
+            </div>
 
-          {/* USER INFO */}
-          <h2>Basic Info</h2>
+            <div className="card-body">
 
-          <div style={styles.row}>
-            <span>Name:</span>
-            <strong>{data.name}</strong>
-          </div>
+              {/* AVATAR */}
+              <div className="text-center mb-3">
+                {user.logo ? (
+                  <img
+                    src={user.logo}
+                    alt="logo"
+                    className="rounded-circle border"
+                    style={{ width: "90px", height: "90px", objectFit: "cover" }}
+                  />
+                ) : (
+                  <div
+                    className="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto"
+                    style={{ width: "90px", height: "90px", fontSize: "22px" }}
+                  >
+                    {user.name.charAt(0)}
+                  </div>
+                )}
 
-          <div style={styles.row}>
-            <span>Email:</span>
-            <strong>{data.email_id}</strong>
-          </div>
+                <h5 className="mt-2 mb-0">{user.name}</h5>
+                <small className="text-muted">{user.email_id}</small>
+              </div>
 
-          <div style={styles.row}>
-            <span>Mobile:</span>
-            <strong>{data.mobile_no}</strong>
-          </div>
+              <hr />
 
-          {/* COMPANY INFO */}
-          <h2 style={{ marginTop: "20px" }}>Company Info</h2>
+              {/* USER INFO */}
+              <h6 className="text-primary mb-2">User Details</h6>
 
-          <div style={styles.row}>
-            <span>Company:</span>
-            <strong>{data.companyName || "-"}</strong>
-          </div>
+              <div className="mb-2">
+                <span className="text-muted">Mobile:</span>
+                <div className="fw-bold">{user.mobile_no}</div>
+              </div>
 
-          <div style={styles.row}>
-            <span>GST:</span>
-            <strong>{data.gstNumber || "-"}</strong>
-          </div>
+              <hr />
 
-          <div style={styles.row}>
-            <span>PAN:</span>
-            <strong>{data.panNumber || "-"}</strong>
-          </div>
+              {/* COMPANY INFO */}
+              <h6 className="text-primary mb-2">Company Details</h6>
 
-          <div style={styles.row}>
-            <span>District:</span>
-            <strong>{data.city || "-"}</strong>
-          </div>
+              <div className="row g-2">
 
-          <div style={styles.row}>
-            <span>State:</span>
-            <strong>{data.state || "-"}</strong>
-          </div>
+                <div className="col-6">
+                  <small className="text-muted">Shop Type</small>
+                  <div className="badge bg-light text-dark w-100 text-start">
+                    {user.shopType}
+                  </div>
+                </div>
 
-          <div style={styles.row}>
-            <span>Pincode:</span>
-            <strong>{data.pincode || "-"}</strong>
-          </div>
+                <div className="col-6">
+                  <small className="text-muted">Company</small>
+                  <div className="badge bg-light text-dark w-100 text-start">
+                    {user.companyName}
+                  </div>
+                </div>
 
-          <div style={styles.row}>
-            <span>Address:</span>
-            <strong>{data.addressLine1 || "-"}</strong>
+                <div className="col-6">
+                  <small className="text-muted">GST</small>
+                  <div className="badge bg-light text-dark w-100 text-start">
+                    {user.gstNumber}
+                  </div>
+                </div>
+
+                <div className="col-6">
+                  <small className="text-muted">PAN</small>
+                  <div className="badge bg-light text-dark w-100 text-start">
+                    {user.panNumber}
+                  </div>
+                </div>
+
+                <div className="col-6">
+                  <small className="text-muted">State</small>
+                  <div className="badge bg-light text-dark w-100 text-start">
+                    {user.state}
+                  </div>
+                </div>
+
+                <div className="col-6">
+                  <small className="text-muted">District</small>
+                  <div className="badge bg-light text-dark w-100 text-start">
+                    {user.district}
+                  </div>
+                </div>
+
+                <div className="col-12">
+                  <small className="text-muted">Address</small>
+                  <div className="badge bg-light text-dark w-100 text-start">
+                    {user.companyAddress}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
 
         </div>
+
       </div>
     </div>
   );
 }
-
-// 🎨 Styles
-const styles = {
-  container: {
-    display: "flex",
-    minHeight: "100vh"
-  },
-  left: {
-    flex: 1,
-    background: "#0f172a",
-    color: "#fff",
-    padding: "40px"
-  },
-  right: {
-    flex: 1,
-    padding: "30px",
-    background: "#f1f5f9",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  card: {
-    background: "#fff",
-    padding: "30px",
-    borderRadius: "10px",
-    width: "100%",
-    maxWidth: "500px",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.1)"
-  },
-  logo: {
-    width: "100px",
-    height: "100px",
-    objectFit: "cover",
-    borderRadius: "50%"
-  },
-  noLogo: {
-    width: "100px",
-    height: "100px",
-    borderRadius: "50%",
-    background: "#ddd",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  row: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "8px 0",
-    borderBottom: "1px solid #eee"
-  }
-};

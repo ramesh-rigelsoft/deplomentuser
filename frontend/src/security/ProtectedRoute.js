@@ -7,9 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 const ProtectedRoute = ({ children }) => {
   const token = Cookies.get("token");
 
-  if (token==null) {
-    return <Navigate to="/login" replace />;
-  }
+  // if (token==null) {
+  //   return <Navigate to="/login" replace />;
+  // }
 
   return children;
 };

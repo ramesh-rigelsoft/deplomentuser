@@ -3,7 +3,6 @@ import React,{ useState,useEffect } from "react";
 import Main from './components/Main';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FileViewerComponent } from "./components/FilePreview";
 
 function App() {
 //    const host = window.location.hostname;
@@ -15,7 +14,6 @@ function App() {
     	<div>
 	    	<Main/>
 			<ToastContainer />
-			<FileViewerComponent />
 	    </div>
   );
 }
