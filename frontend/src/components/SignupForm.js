@@ -9,6 +9,7 @@ export default function Signup() {
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
+    id:0,
     name: "",
     email_id: "",
     mobile_no: "",

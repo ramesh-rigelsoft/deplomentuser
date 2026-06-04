@@ -3,6 +3,7 @@ import { FaUser, FaEdit, FaFileInvoice, FaCreditCard, FaCogs, FaSignOutAlt, FaUs
 import { success, fail } from "../redux/WebTostar";
 import { navigateTo } from "../components/navigationService";
 import { Link } from "react-router-dom";
+import Header from "./Header";
 
 export default function Dashboards() {
 
@@ -13,12 +14,12 @@ export default function Dashboards() {
   };
 
   // Logout function (abhi simple alert, baad me API + token remove)
-  const handleLogout = () => {
-    success("Logged out successfully!");
+  // const handleLogout = () => {
+  //   success("Logged out successfully!");
     
-    navigateTo("/login");
-    // yaha localStorage.removeItem("token") bhi kar sakte ho
-  };
+  //   navigateTo("/login");
+  //   // yaha localStorage.removeItem("token") bhi kar sakte ho
+  // };
 
   return (
     <div className="min-vh-100 bg-light p-4">
@@ -29,13 +30,15 @@ export default function Dashboards() {
 </div> */}
 
       {/* Header */}
-      <div className="row mb-4 align-items-center">
+      <Header
+        title="Dashboard"
+        subTitle="Manage everything in one place"
+      />
+      {/* <div className="row mb-4 align-items-center">
         <div className="col">
           <h2 className="fw-bold">Dashboard</h2>
           <p className="text-muted">Manage everything in one place</p>
         </div>
-
-        {/* 🚪 Logout Button */}
         <div className="col text-end">
           <button
             onClick={handleLogout}
@@ -45,7 +48,7 @@ export default function Dashboards() {
             Logout
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Top Cards */}
       <div className="row g-4">
