@@ -6,7 +6,8 @@ import Cookies from "js-cookie";
 import Header from "./Header";
 
 export default function RBACPermissionPanel() {
-  const ownerId = Cookies.get("secretCode");
+  
+  const ownerId = parseInt(Cookies.get("secretCode"))
   const dispatch = useDispatch();
 
   // Pages
@@ -150,7 +151,7 @@ const fetchPermissionByRolePage = async () => {
   };
 
   return (
-    <div className="container py-4">
+    <div className="min-vh-100 bg-light p-4">
 
       <Header
         title="RBAC Dashboard"
@@ -158,7 +159,7 @@ const fetchPermissionByRolePage = async () => {
       />
 
       <div className="row justify-content-center">
-        <div className="col-lg-8">
+        <div className="col-lg-12">
 
           <div className="card shadow">
             <div className="card-body">

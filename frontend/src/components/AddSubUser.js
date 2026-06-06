@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import Header from "./Header";
 
 const AddSubUser = () => {
-  const ownerId= Cookies.get("secretCode");
+  const ownerId= parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     id:0,
@@ -88,7 +88,8 @@ const AddSubUser = () => {
   // CREATE / UPDATE USER
   const handleSubmit = (e) => {
     e.preventDefault();
-
+alert(JSON.stringify(formData));
+// return;
     if (!validate()) return; // ❌ stop if invalid
 
     API.addUser(dispatch, formData)
@@ -132,10 +133,6 @@ const AddSubUser = () => {
     setErrors({});
   };
 
-  const handleDelete = (index) => {
-    const filtered = users.filter((_, i) => i !== index);
-    setUsers(filtered);
-  };
 
   return (
     <div className="container py-3">

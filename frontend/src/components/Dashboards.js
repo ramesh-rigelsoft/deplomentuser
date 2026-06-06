@@ -33,6 +33,7 @@ export default function Dashboards() {
       <Header
         title="Dashboard"
         subTitle="Manage everything in one place"
+        dashboard={true}
       />
       {/* <div className="row mb-4 align-items-center">
         <div className="col">

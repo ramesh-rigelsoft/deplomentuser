@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import Header from "./Header";
 
 export default function Signup() {
-  const ownerId = Cookies.get("secretCode");
+  const ownerId = parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -140,14 +140,14 @@ export default function Signup() {
 
   return (
     <>
-      <div className="container py-5">
+      <div className="min-vh-100 bg-light p-4">
         <Header
           title="User Management"
           subTitle="Manage everything in one place"
         />
 
         <div className="row justify-content-center">
-          <div className="col-lg-8 col-md-10">
+          <div className="col-lg-12 col-md-12">
             <form
               className="card shadow p-4"
               autoComplete="off"

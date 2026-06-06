@@ -8,6 +8,7 @@ import { navigateTo } from "../components/navigationService";
 const Header = ({
   title = "Dashboard",
   subTitle = "Welcome back! Here's what's happening today.",
+  dashboard = false
 }) => {
   const dispatch = useDispatch();
 
@@ -31,12 +32,21 @@ const Header = ({
   //     .catch((err) => console.log(err));
   // }, [dispatch, fileName]);
 
-  const handleLogout = () => {
-    Cookies.remove("companyName");
-    Cookies.remove("fileName");
-    localStorage.clear();
-    sessionStorage.clear();
-    navigateTo("/login");
+  const handleLogout = (status) => {
+    if(!status){
+      navigateTo("/dashboard");
+    } else{
+      Cookies.remove("tab");
+      Cookies.remove("companyName");
+      Cookies.remove("username");
+      Cookies.remove("secretCode");
+      Cookies.remove("secret");
+      Cookies.remove("fileName");
+      Cookies.remove("token");
+      localStorage.clear();
+      sessionStorage.clear();
+      navigateTo("/login");
+    }
   };
 
   return (
@@ -98,13 +108,13 @@ const Header = ({
 
         {/* Right Section */}
         <div>
-          <button
-            onClick={handleLogout}
+          <span
+            onClick={() => handleLogout(dashboard)}
             className="btn btn-danger px-4 rounded-pill"
           >
             <FaSignOutAlt className="me-2" />
-            Logout
-          </button>
+            {dashboard?("Logout"):"Back"}
+          </span>
         </div>
       </div>
     </div>

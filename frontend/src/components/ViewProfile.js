@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 
 export default function ViewProfile() {
   
-  const ownerId= Cookies.get("secretCode");
+  const ownerId = parseInt(Cookies.get("secretCode"))
   const dispatch = useDispatch();
 
  const [user, setUser] = useState({
@@ -54,7 +54,7 @@ console.log(data)
   
 
   return (
-    <div className="container py-4">
+    <div className="min-vh-100 bg-light p-4">
        <Header
         title="User Mangement"
         subTitle="Manage everything in one place"
@@ -62,7 +62,7 @@ console.log(data)
 
       <div className="row justify-content-center">
 
-        <div className="col-12 col-md-8 col-lg-6">
+        <div className="col-12 col-md-12 col-lg-12">
 
           <div className="card shadow border-0">
 
