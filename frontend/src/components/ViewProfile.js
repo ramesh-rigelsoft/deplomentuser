@@ -1,24 +1,64 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
+import Header from "./Header";
+import API from "../redux/API";
+import { success, fail } from "../redux/WebTostar";
+import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
 
 export default function ViewProfile() {
+  
+  const ownerId= Cookies.get("secretCode");
+  const dispatch = useDispatch();
 
-  const user = {
-    name: "John Doe",
-    email_id: "john@example.com",
-    mobile_no: "9876543210",
-    shopType: "Mobile Shop",
-    companyName: "Tech Store Pvt Ltd",
-    gstNumber: "22ABCDE1234F1Z5",
-    panNumber: "ABCDE1234F",
-    state: "MP",
-    district: "Bhopal",
-    pincode: "462001",
-    companyAddress: "MP Nagar, Bhopal",
-    logo: null
-  };
+ const [user, setUser] = useState({
+  name: "",
+  email_id: "",
+  mobile_no: "",
+  shopType: "",
+  companyName: "",
+  gstNumber: "",
+  panNumber: "",
+  state: "",
+  district: "",
+  pincode: "",
+  companyAddress: "",
+  logo: null
+});
+
+useEffect(() => {
+  if (ownerId) {
+    API.viewAccount(dispatch, { userId: ownerId })
+      .then((res) => {
+        const data = res.payload.data.user;
+console.log(data)
+        setUser({
+          name: data.name || "NA",
+          email_id: data.email_id || "NA",
+          mobile_no: data.mobile_no || "NA",
+          shopType: data.shopType || "NA",
+          companyName: data.companyName || "NA",
+          gstNumber: data.gstNumber || "NA",
+          panNumber: data.panNumber || "NA",
+          state: data.state || "NA",
+          district: data.district || "NA",
+          pincode: data.pincode || "NA",
+          companyAddress: data.addressLine1 || "NA",
+          logo: data.logo || null
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+}, [ownerId]);
+  
 
   return (
     <div className="container py-4">
+       <Header
+        title="User Mangement"
+        subTitle="Manage everything in one place"
+      />
 
       <div className="row justify-content-center">
 

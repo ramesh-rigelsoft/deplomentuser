@@ -27,13 +27,14 @@ const HomePage = () => {
         return;
       }
       if (res.payload.code === "200") {
+        alert(JSON.stringify(data));
         Cookies.set("tab", "dashboard", { expires: 1 });
         Cookies.set("companyName", data.user.companyName, { expires: 1 });
         Cookies.set("username", data.user.email_id, { expires: 1 });
         Cookies.set("secretCode", data.user.id, { expires: 1 });
         Cookies.set("secret", JSON.stringify(data.secret), { expires: 1 });
         Cookies.set("fileName", `${data.user.logo}`, { expires: 1 });
-        Cookies.set("token", data.token, { expires: 1 });
+        Cookies.set("token", data.access_token, { expires: 1 });
 
         success(res.payload.message);
         navigateTo("/dashboard");

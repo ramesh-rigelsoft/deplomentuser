@@ -15,21 +15,21 @@ const Header = ({
   const companyName = Cookies.get("companyName") || "Your Company";
   const fileName = Cookies.get("fileName");
 
-  useEffect(() => {
-    if (!fileName) return;
+  // useEffect(() => {
+  //   if (!fileName) return;
 
-    const payload = {
-      path: "logo",
-      fileName,
-      type: 1,
-    };
+  //   const payload = {
+  //     path: "logo",
+  //     fileName,
+  //     type: 1,
+  //   };
 
-    API.viewFiles(dispatch, payload)
-      .then((res) => {
-        setLogo(URL.createObjectURL(res.payload));
-      })
-      .catch((err) => console.log(err));
-  }, [dispatch, fileName]);
+  //   API.viewFiles(dispatch, payload)
+  //     .then((res) => {
+  //       setLogo(URL.createObjectURL(res.payload));
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, [dispatch, fileName]);
 
   const handleLogout = () => {
     Cookies.remove("companyName");

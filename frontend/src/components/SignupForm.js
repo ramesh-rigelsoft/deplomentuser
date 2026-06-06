@@ -19,9 +19,9 @@ export default function Signup() {
     gstNumber: "",
     panNumber: "",
     state: "",
-    district: "",
+    city: "",
     pincode: "",
-    companyAddress: "",
+    addressLine1: "",
     logo: null,
   });
 
@@ -62,7 +62,7 @@ export default function Signup() {
     let temp = {};
 
     Object.keys(formData).forEach((key) => {
-      if (key === "gstNumber" || key === "panNumber" || key === "logo") return;
+      if (key === "gstNumber" || key === "panNumber" || key === "logo"||key=="id") return;
       if (!formData[key]) temp[key] = true;
     });
 
@@ -72,6 +72,8 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    //  alert("----------------"+JSON.stringify(formData));
+   
     if (!validate()) return;
 
     setLoading(true);
@@ -80,7 +82,7 @@ export default function Signup() {
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
-
+    //  alert(JSON.stringify(data));
     try {
       const res = await API.signupAccount(dispatch, data);
 
@@ -224,8 +226,8 @@ export default function Signup() {
                 <input
                   type="text"
                   className="form-control"
-                  name="district"
-                  placeholder="District"
+                  name="city"
+                  placeholder="city"
                   onChange={handleChange}
                 />
               </div>
@@ -244,7 +246,7 @@ export default function Signup() {
                 <textarea
                   className="form-control"
                   rows="3"
-                  name="companyAddress"
+                  name="addressLine1"
                   placeholder="Company Address"
                   onChange={handleChange}
                 />

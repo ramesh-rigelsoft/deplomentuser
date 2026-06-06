@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
+
+import API from "../redux/API";
+import { success, fail } from "../redux/WebTostar";
+import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import Header from "./Header";
 
 const AddSubUser = () => {
+  const ownerId= Cookies.get("secretCode");
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
+    id:0,
     name: "",
-    email: "",
+    email_id: "",
     password: "",
+    ownerId: ownerId,
+    mobile_no: "",
     role: "",
   });
 
@@ -12,6 +23,20 @@ const AddSubUser = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    if (ownerId) {
+      API.fetchSubUser(dispatch, { userId: ownerId })
+        .then((res) => {
+          console.log(res);
+          // setState yahan karo
+          setUsers(res.payload.data.userList);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  }, [ownerId, dispatch]);
+  
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -33,10 +58,16 @@ const AddSubUser = () => {
       newErrors.name = "Name is required";
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+    if (!formData.email_id.trim()) {
+      newErrors.email_id = "email_id is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email_id)) {
+      newErrors.email_id = "Invalid email_id format";
+    }
+    
+    if (!formData.mobile_no?.trim()) {
+      newErrors.mobile_no = "Mobile number is required";
+    } else if (!/^[0-9]{10}$/.test(formData.mobile_no)) {
+      newErrors.mobile_no = "Mobile number must be 10 digits";
     }
 
     if (!formData.password.trim()) {
@@ -60,21 +91,37 @@ const AddSubUser = () => {
 
     if (!validate()) return; // ❌ stop if invalid
 
+    API.addUser(dispatch, formData)
+    .then((res) => {
+      if (res.payload.code === '200') {
+        success(res.payload.message);
+        setFormData({
+          name: "",
+          email_id: "",
+          mobile_no:"",
+          password: "",
+          status:1,
+          role: "",
+        });
+      } else {
+        fail(res.payload.message);
+      }
+    }).catch((err) => {
+      console.error(err);
+      fail('Please contact to service provider.');
+    });
+
     if (editIndex !== null) {
-      const updatedUsers = [...users];
-      updatedUsers[editIndex] = formData;
-      setUsers(updatedUsers);
-      setEditIndex(null);
+      // const updatedUsers = [...users];
+      // updatedUsers[editIndex] = formData;
+      // setUsers(updatedUsers);
+      // setEditIndex(null);
+
     } else {
-      setUsers([...users, formData]);
+      // setUsers([...users, formData]);
     }
 
-    setFormData({
-      name: "",
-      email: "",
-      password: "",
-      role: "",
-    });
+    
 
     setErrors({});
   };
@@ -92,6 +139,10 @@ const AddSubUser = () => {
 
   return (
     <div className="container py-3">
+      <Header
+        title="User Mangement"
+        subTitle="Manage everything in one place"
+      />
       <div className="row g-3">
 
         {/* FORM */}
@@ -116,17 +167,30 @@ const AddSubUser = () => {
                 <small className="text-danger">{errors.name}</small>
               )}
 
-              {/* EMAIL */}
+              {/* email_id */}
               <input
                 type="text"
-                name="email"
+                name="email_id"
                 className="form-control form-control-sm mb-1 mt-2"
-                placeholder="Email"
-                value={formData.email}
+                placeholder="email_id"
+                value={formData.email_id}
                 onChange={handleChange}
               />
-              {errors.email && (
-                <small className="text-danger">{errors.email}</small>
+              {errors.email_id && (
+                <small className="text-danger">{errors.email_id}</small>
+              )}
+
+               {/* email_id */}
+              <input
+                type="text"
+                name="mobile_no"
+                className="form-control form-control-sm mb-1 mt-2"
+                placeholder="Mobile Number"
+                value={formData.mobile_no}
+                onChange={handleChange}
+              />
+               {errors.mobile_no && (
+                <small className="text-danger">{errors.mobile_no}</small>
               )}
 
               {/* PASSWORD */}
@@ -158,6 +222,17 @@ const AddSubUser = () => {
                 <small className="text-danger">{errors.role}</small>
               )}
 
+               {/* ROLE */}
+              <select
+                name="role"
+                className="form-select form-select-sm mb-1 mt-2"
+                value={formData.role}
+                onChange={handleChange}
+              >
+                <option value="1">Active</option>
+                <option value="0">InActive</option>
+              </select>
+
               <button
                 className={`btn w-100 btn-sm mt-3 ${
                   editIndex !== null ? "btn-primary" : "btn-success"
@@ -179,9 +254,10 @@ const AddSubUser = () => {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Email</th>
-                    <th>Password</th>
+                    <th>Email Id</th>
+                    <th>Mobile</th>
                     <th>Role</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -197,22 +273,17 @@ const AddSubUser = () => {
                     users.map((user, index) => (
                       <tr key={index}>
                         <td>{user.name}</td>
-                        <td>{user.email}</td>
-                        <td>{user.password}</td>
+                        <td>{user.email_id}</td>
+                        <td>{user.mobile_no}</td>
                         <td>{user.role}</td>
+                        <td>{user.status===1?'Active':'InActive'}</td>
                         <td>
-                          <button
+                          <span
                             className="btn btn-warning btn-sm me-1"
                             onClick={() => handleEdit(index)}
                           >
                             Edit
-                          </button>
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleDelete(index)}
-                          >
-                            Delete
-                          </button>
+                          </span>
                         </td>
                       </tr>
                     ))

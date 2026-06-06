@@ -1,173 +1,343 @@
-// EditProfile.jsx
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import API from "../redux/API";
 import { success, fail } from "../redux/WebTostar";
+import NetworkStatus from "./NetworkStatus";
+import Cookies from "js-cookie";
+import Header from "./Header";
 
-export default function EditProfile() {
-
+export default function Signup() {
+  const ownerId = Cookies.get("secretCode");
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
+    id: 0,
     name: "",
     email_id: "",
     mobile_no: "",
+    shopType: "",
     companyName: "",
     gstNumber: "",
     panNumber: "",
-    district: "",
     state: "",
+    city: "",
+    ownerId:ownerId,
     pincode: "",
-    companyAddress: "",
-    files: null
+    addressLine1: "",
+    logo: null,
   });
 
-  const [logoPreview, setLogoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [logoPreview, setLogoPreview] = useState(null);
 
-  // 🔥 GET USER DATA (API se load)
   useEffect(() => {
-    API.getProfile(dispatch)
-      .then(res => {
-        const data = res.payload.data;
+    if (ownerId) {
+      API.viewAccount(dispatch, { userId: ownerId })
+        .then((res) => {
+          const data = res?.payload?.data?.user;
+          if (!data) return;
 
-        setFormData({
-          name: data.name || "",
-          email_id: data.email_id || "",
-          mobile_no: data.mobile_no || "",
-          companyName: data.companyName || "",
-          gstNumber: data.gstNumber || "",
-          panNumber: data.panNumber || "",
-          district: data.city || "",
-          state: data.state || "",
-          pincode: data.pincode || "",
-          companyAddress: data.addressLine1 || "",
-          files: null
+          setFormData({
+            id: data.id || 0,
+            name: data.name || "",
+            email_id: data.email_id || "",
+            mobile_no: data.mobile_no || "",
+            shopType: data.shopType || "",
+            companyName: data.companyName || "",
+            gstNumber: data.gstNumber || "",
+            panNumber: data.panNumber || "",
+            state: data.state || "",
+            ownerId: ownerId,
+            city: data.city || "",
+            pincode: data.pincode || "",
+            addressLine1: data.addressLine1 || "",
+            logo: null,
+          });
+
+          if (data.logo) {
+            setLogoPreview(data.logo);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
         });
-
-        // Existing logo
-        if (data.companyLogo) {
-          setLogoPreview(data.companyLogo);
-        }
-      })
-      .catch(() => fail("Failed to load profile"));
-  }, []);
+    }
+  }, [ownerId, dispatch]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: false,
+    }));
   };
 
-  const handleFile = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+   const errorStyle = (field) => ({
+    border: errors[field] ? "1px solid red" : "1px solid #ddd",
+  });
 
-    setFormData({ ...formData, files: file });
-    setLogoPreview(URL.createObjectURL(file));
+  const validate = () => {
+    let temp = {};
+
+    Object.keys(formData).forEach((key) => {
+      if (
+        key === "gstNumber" ||
+        key === "panNumber" ||
+        key === "logo" ||
+        key === "id"||
+         key === "ownerId"
+      ) {
+        return;
+      }
+
+      if (!formData[key]) {
+        temp[key] = true;
+      }
+    });
+
+    setErrors(temp);
+
+    return Object.keys(temp).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) return;
+
     setLoading(true);
 
     try {
-      const res = await API.updateProfile(dispatch, formData);
-      success(res.payload.message);
+      // const data = new FormData();
+
+      // Object.keys(formData).forEach((key) => {
+      //   if (key === "logo" && !formData.logo) return;
+
+      //   data.append(key, formData[key]);
+      // });
+      // alert(JSON.stringify(formData));
+      const res = await API.signupAccount(dispatch, formData);
+
+      if (res?.payload?.code === "200") {
+        success(res.payload.message);
+      } else {
+        fail(res?.payload?.message || "Failed");
+      }
     } catch (err) {
-      fail("Update failed");
+      console.error(err);
+      fail("Server Down");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container}>
+    <>
+      <div className="container py-5">
+        <Header
+          title="User Management"
+          subTitle="Manage everything in one place"
+        />
 
-      {/* LEFT */}
-      <div style={styles.left}>
-        <h1>Edit Profile</h1>
-        <p>Update your company & personal details</p>
-      </div>
+        <div className="row justify-content-center">
+          <div className="col-lg-8 col-md-10">
+            <form
+              className="card shadow p-4"
+              autoComplete="off"
+              onSubmit={handleSubmit}
+            >
+              <h2 className="text-center mb-4">Update Account</h2>
 
-      {/* RIGHT */}
-      <div style={styles.right}>
-        <form onSubmit={handleSubmit} style={styles.form}>
+              <div className="row g-3 mb-3">
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="name"
+                    value={formData.name}
+                    placeholder="Name"
+                    onChange={handleChange}
+                    style={errorStyle("name")}
+                  />
+                </div>
 
-          <h2>Basic Info</h2>
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="mobile_no"
+                    value={formData.mobile_no}
+                    placeholder="Mobile Number"
+                    onChange={handleChange}
+                    style={errorStyle("mobile_no")}
+                  />
+                </div>
 
-          <input name="name" value={formData.name} onChange={handleChange} />
-          <input name="mobile_no" value={formData.mobile_no} onChange={handleChange} />
-          <input name="email_id" value={formData.email_id} disabled />
+                <div className="col-md-6">
+                  <input
+                    type="email"
+                    className="form-control"
+                    name="email_id"
+                    value={formData.email_id}
+                    placeholder="Email"
+                    onChange={handleChange}
+                    style={errorStyle("email_id")}
+                  />
+                </div>
 
-          <h3>Company Info</h3>
+              </div>
 
-          <input name="companyName" value={formData.companyName} onChange={handleChange} />
-          <input name="gstNumber" value={formData.gstNumber} onChange={handleChange} />
-          <input name="panNumber" value={formData.panNumber} onChange={handleChange} />
-          <input name="district" value={formData.district} onChange={handleChange} />
-          <input name="state" value={formData.state} onChange={handleChange} />
-          <input name="pincode" value={formData.pincode} onChange={handleChange} />
+              <h4 className="mb-3">Company Information</h4>
 
-          <textarea
-            name="companyAddress"
-            rows={2}
-            value={formData.companyAddress}
-            onChange={handleChange}
-          />
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <select
+                    className="form-select"
+                    name="shopType"
+                    value={formData.shopType}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select Shop Type</option>
+                    <option value="mobile_shop">Mobile Shop</option>
+                    <option value="laptop_shop">Laptop Shop</option>
+                  </select>
+                </div>
 
-          {/* LOGO */}
-          <div style={styles.uploadBox}>
-            <input type="file" onChange={handleFile} />
-            {logoPreview && (
-              <img src={logoPreview} alt="logo" style={styles.preview} />
-            )}
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="companyName"
+                    value={formData.companyName}
+                    placeholder="Company Name"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="gstNumber"
+                    value={formData.gstNumber}
+                    placeholder="GST Number"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="panNumber"
+                    value={formData.panNumber}
+                    placeholder="PAN Number"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="state"
+                    value={formData.state}
+                    placeholder="State"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="city"
+                    value={formData.city}
+                    placeholder="District"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="pincode"
+                    value={formData.pincode}
+                    placeholder="Pincode"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-12">
+                  <textarea
+                    className="form-control"
+                    rows="3"
+                    name="addressLine1"
+                    value={formData.addressLine1}
+                    placeholder="Company Address"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+
+                      if (file) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          logo: file,
+                        }));
+
+                        setLogoPreview(URL.createObjectURL(file));
+                      }
+                    }}
+                  />
+                </div>
+
+                <div className="col-md-6 text-center">
+                  <div className="border rounded p-2">
+                    {logoPreview ? (
+                      <img
+                        src={logoPreview}
+                        alt="Logo"
+                        className="img-fluid"
+                        style={{ maxHeight: "120px" }}
+                      />
+                    ) : (
+                      <span className="text-muted">
+                        No Logo Selected
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary w-100 mt-4"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Update Account"}
+              </button>
+            </form>
           </div>
-
-          <button style={styles.button} disabled={loading}>
-            {loading ? "Updating..." : "Update Profile"}
-          </button>
-
-        </form>
+        </div>
       </div>
-    </div>
+
+      <NetworkStatus />
+    </>
   );
 }
-
-// 🔥 STYLES (same as signup)
-const styles = {
-  container: {
-    display: "flex",
-    minHeight: "100vh"
-  },
-  left: {
-    flex: 1,
-    background: "#0f172a",
-    color: "#fff",
-    padding: "40px"
-  },
-  right: {
-    flex: 1,
-    padding: "30px",
-    background: "#f1f5f9"
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  },
-  uploadBox: {
-    border: "2px dashed #ccc",
-    padding: "20px",
-    textAlign: "center"
-  },
-  preview: {
-    width: "80px",
-    marginTop: "10px"
-  },
-  button: {
-    padding: "12px",
-    background: "#3b82f6",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px"
-  }
-};

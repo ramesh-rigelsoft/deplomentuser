@@ -1,278 +1,290 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import API from "../redux/API";
+import { success, fail } from "../redux/WebTostar";
+import Cookies from "js-cookie";
+import Header from "./Header";
 
 export default function RBACPermissionPanel() {
+  const ownerId = Cookies.get("secretCode");
+  const dispatch = useDispatch();
+
+  // Pages
+  const [pages, setPages] = useState([]);
+
   // Roles
   const roles = [
-    { id: 1, name: "Admin" },
     { id: 2, name: "Manager" },
     { id: 3, name: "Employee" },
     { id: 4, name: "User" }
   ];
 
-  // Pages from your system
-  const pages = [
-    { id: 1, name: "Dashboard", route: "/dashboard" },
-    { id: 2, name: "Inventory", route: "/inventory" },
-    { id: 3, name: "Outbound", route: "/outbound" },
-    { id: 4, name: "Vendor List", route: "/listVender" },
-    { id: 5, name: "Add Vendor", route: "/addVender" },
-    { id: 6, name: "Reports", route: "/summaryReport" },
-    { id: 7, name: "Transactions", route: "/trans" }
-  ];
+  // ✅ OBJECT STATE ONLY (NO ARRAY)
+  const [permissions, setPermissions] = useState({
+    id: 0,
+    roleId: 2,
+    pageId: 1,
+    canAll: false,
+    canView: false,
+    canCreate: false,
+    canEdit: false,
+    canDelete: false
+  });
 
-  // Selected Role & Page
-  const [roleId, setRoleId] = useState(1);
-  const [pageId, setPageId] = useState(1);
+  // Load pages
+  useEffect(() => {
+    fetchPages();
+  }, []);
 
-  // Permissions state
-  const [permissions, setPermissions] = useState([
-    {
-      roleId: 1,
-      pageId: 1,
-      canVisit: true,
-      canView: true,
-      canCreate: true,
-      canEdit: true,
-      canDelete: true
+  const fetchPages = async () => {
+    try {
+      const res = await API.fetchPermission(dispatch, { itemType: "pages" });
+
+      if (res.payload.code === "200") {
+        setPages(res.payload.data.pages || []);
+      } else {
+        fail(res.payload.message);
+      }
+    } catch (err) {
+      fail("Server Down");
     }
-  ]);
+  };
 
-  // Get current permission
-  const getPermission = () => {
-    return (
-      permissions.find(
-        p => p.roleId === roleId && p.pageId === pageId
-      ) || {
-        roleId,
-        pageId,
-        canVisit: true,
+useEffect(() => {
+  fetchPermissionByRolePage();
+}, [permissions.roleId, permissions.pageId]);
+
+const fetchPermissionByRolePage = async () => {
+  try {
+     const res = await API.fetchPermission(dispatch, { 
+      itemType: "permision" ,userId:ownerId,roleId: permissions.roleId,
+      pageId: permissions.pageId});
+      const apiData = res.payload?.data?.access?.[0];
+      if (apiData) {
+      setPermissions((prev) => ({
+        ...prev,
+        ...apiData   // merge API values safely
+      }));
+    } else {
+      // reset if not found
+      setPermissions((prev) => ({
+        ...prev,
+        id: 0,
+        canAll: false,
         canView: false,
         canCreate: false,
         canEdit: false,
         canDelete: false
+      }));
+    }
+  } catch (err) {
+    fail("Server Down");
+  }
+};
+
+  // current permission object
+  const permission = permissions;
+
+  // handle change
+  const handleChange = (field, value) => {
+    setPermissions((prev) => {
+      let updated = { ...prev };
+
+      if (field === "canAll") {
+        updated.canAll = value;
+        updated.canView = value;
+        updated.canCreate = value;
+        updated.canEdit = value;
+        updated.canDelete = value;
+      } else {
+        updated[field] = value;
+        updated.canAll = false;
       }
-    );
+
+      return updated;
+    });
   };
 
-  const permission = getPermission();
+  // SAVE
+  const handleSave = () => {
+    const current = permissions;
 
-  // Handle checkbox change
-  const handleChange = (field, value) => {
-    const index = permissions.findIndex(
-      p => p.roleId === roleId && p.pageId === pageId
-    );
+    const hasPermission =
+      current.canAll ||
+      current.canView ||
+      current.canCreate ||
+      current.canEdit ||
+      current.canDelete;
 
-    if (index >= 0) {
-      const updated = [...permissions];
-      updated[index][field] = value;
-      setPermissions(updated);
-    } else {
-      setPermissions([
-        ...permissions,
-        {
-          roleId,
-          pageId,
-          canVisit: true,
-          canView: false,
-          canCreate: false,
-          canEdit: false,
-          canDelete: false,
-          [field]: value
-        }
-      ]);
+    if (!hasPermission) {
+      fail("Select any permission");
+      return;
+    }
+
+    const payload = {
+      id: current.id,
+      roleId: { id: current.roleId },
+      pageId: { id: current.pageId },
+      canAll: current.canAll,
+      canView: current.canView,
+      canCreate: current.canCreate,
+      canEdit: current.canEdit,
+      canDelete: current.canDelete,
+      ownerId: ownerId
+    };
+
+    submit(payload);
+  };
+
+  const submit = async (payload) => {
+    try {
+      const res = await API.saveRolePermissionUser(dispatch, payload);
+      if (res.payload.code === "200") {
+        success(res.payload.message);
+      } else {
+        fail(res.payload.message);
+      }
+    } catch (err) {
+      fail("Server Down");
     }
   };
 
-  // Save handler (API ready)
-  const handleSave = () => {
-    const data = permissions.filter(
-      p => p.roleId === roleId
-    );
-
-    console.log("Saved Permissions:", data);
-    alert("Permissions Saved Successfully");
-  };
-
   return (
-  <div className="container py-4">
-    <div className="row justify-content-center">
-      <div className="col-lg-8">
+    <div className="container py-4">
 
-        <div className="card shadow">
-          <div className="card-body">
+      <Header
+        title="RBAC Dashboard"
+        subTitle="Manage role-based permissions"
+      />
 
-            <h2 className="card-title mb-4 text-center">
-              RBAC Permission Management
-            </h2>
+      <div className="row justify-content-center">
+        <div className="col-lg-8">
 
-            <div className="row g-3 mb-4">
-              <div className="col-md-6">
-                <label className="form-label fw-bold">
-                  Role
-                </label>
+          <div className="card shadow">
+            <div className="card-body">
 
-                <select
-                  className="form-select"
-                  value={roleId}
-                  onChange={(e) =>
-                    setRoleId(Number(e.target.value))
-                  }
-                >
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.id}>
-                      {role.name}
-                    </option>
-                  ))}
-                </select>
+              <h2 className="text-center mb-4">
+                RBAC Permission Management
+              </h2>
+
+              {/* ROLE + PAGE */}
+              <div className="row g-3 mb-4">
+
+                <div className="col-md-6">
+                  <label className="form-label fw-bold">Role</label>
+                  <select
+                    className="form-select"
+                    value={permissions.roleId}
+                    onChange={(e) =>
+                      setPermissions((prev) => ({
+                        ...prev,
+                        roleId: Number(e.target.value)
+                      }))
+                    }
+                  >
+                    {roles.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label fw-bold">Page</label>
+                  <select
+                    className="form-select"
+                    value={permissions.pageId}
+                    onChange={(e) =>
+                      setPermissions((prev) => ({
+                        ...prev,
+                        pageId: Number(e.target.value)
+                      }))
+                    }
+                  >
+                    {pages.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.pageName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
               </div>
 
-              <div className="col-md-6">
-                <label className="form-label fw-bold">
-                  Page
-                </label>
+              <hr />
 
-                <select
-                  className="form-select"
-                  value={pageId}
-                  onChange={(e) =>
-                    setPageId(Number(e.target.value))
-                  }
-                >
-                  {pages.map((page) => (
-                    <option key={page.id} value={page.id}>
-                      {page.name}
-                    </option>
-                  ))}
-                </select>
+              <h5 className="mb-3">
+                Page: {pages.find((p) => p.id === permissions.pageId)?.pageName}
+              </h5>
+
+              {/* PERMISSIONS */}
+              <div className="d-flex flex-column gap-2">
+
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    checked={permission.canAll}
+                    onChange={(e) => handleChange("canAll", e.target.checked)}
+                  />
+                  <label className="form-check-label fw-bold text-success">
+                    All Access
+                  </label>
+                </div>
+
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    checked={permission.canView}
+                    onChange={(e) => handleChange("canView", e.target.checked)}
+                  />
+                  <label>View</label>
+                </div>
+
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    checked={permission.canCreate}
+                    onChange={(e) => handleChange("canCreate", e.target.checked)}
+                  />
+                  <label>Create</label>
+                </div>
+
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    checked={permission.canEdit}
+                    onChange={(e) => handleChange("canEdit", e.target.checked)}
+                  />
+                  <label>Edit</label>
+                </div>
+
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    checked={permission.canDelete}
+                    onChange={(e) => handleChange("canDelete", e.target.checked)}
+                  />
+                  <label>Delete</label>
+                </div>
+
               </div>
+
+              {/* SAVE BUTTON */}
+              <button
+                className="btn btn-primary mt-4"
+                onClick={handleSave}
+              >
+                Save Permissions
+              </button>
+
             </div>
-
-            <hr />
-
-            <h5 className="mb-3">
-              Page: {pages.find((p) => p.id === pageId)?.name}
-            </h5>
-
-            <div className="d-flex flex-column gap-2">
-
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="visit"
-                  checked={permission.canVisit}
-                  onChange={(e) =>
-                    handleChange(
-                      "canVisit",
-                      e.target.checked
-                    )
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="visit"
-                >
-                  Visit
-                </label>
-              </div>
-
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="view"
-                  checked={permission.canView}
-                  onChange={(e) =>
-                    handleChange(
-                      "canView",
-                      e.target.checked
-                    )
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="view"
-                >
-                  View
-                </label>
-              </div>
-
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="create"
-                  checked={permission.canCreate}
-                  onChange={(e) =>
-                    handleChange(
-                      "canCreate",
-                      e.target.checked
-                    )
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="create"
-                >
-                  Create
-                </label>
-              </div>
-
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="edit"
-                  checked={permission.canEdit}
-                  onChange={(e) =>
-                    handleChange(
-                      "canEdit",
-                      e.target.checked
-                    )
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="edit"
-                >
-                  Edit
-                </label>
-              </div>
-
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="delete"
-                  checked={permission.canDelete}
-                  onChange={(e) =>
-                    handleChange(
-                      "canDelete",
-                      e.target.checked
-                    )
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="delete"
-                >
-                  Delete
-                </label>
-              </div>
-            </div>
-
-            <button
-              className="btn btn-primary mt-4"
-              onClick={handleSave}
-            >
-              Save Permissions
-            </button>
-
           </div>
-        </div>
 
+        </div>
       </div>
+
     </div>
-  </div>
-);
-};
+  );
+}

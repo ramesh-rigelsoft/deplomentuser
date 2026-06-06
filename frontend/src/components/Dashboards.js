@@ -87,7 +87,7 @@ export default function Dashboards() {
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaEdit size={28} className="text-danger mb-2" />
             <h5>Edit Profile</h5>
-             <Link to="/signup" className="btn btn-info btn-sm text-white">
+             <Link to="/editProfile" className="btn btn-info btn-sm text-white">
                 Edit
             </Link>
           </div>

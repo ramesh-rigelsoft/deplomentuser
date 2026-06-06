@@ -28,6 +28,12 @@ html, body {
    outline: none !important;
   box-shadow: none !important;
 }
+.form-select:focus {
+  border-color: #28a745 !important;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+   outline: none !important;
+  box-shadow: none !important;
+}
 /* Desktop */
 @media only screen and (min-width: 851px) {
    * { 
