@@ -205,7 +205,7 @@ const fetchPermissionByRolePage = async () => {
                   >
                     {pages.map((p) => (
                       <option key={p.id} value={p.id}>
-                        {p.pageName}
+                        {p.label}
                       </option>
                     ))}
                   </select>
