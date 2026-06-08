@@ -23,13 +23,14 @@ export default function RBACPermissionPanel() {
   // ✅ OBJECT STATE ONLY (NO ARRAY)
   const [permissions, setPermissions] = useState({
     id: 0,
-    roleId: 2,
-    pageId: 1,
+    roleId: 0,
+    pageId: 0,
     canAll: false,
     canView: false,
     canCreate: false,
     canEdit: false,
-    canDelete: false
+    canDelete: false,
+    ownerId:ownerId
   });
 
   // Load pages
@@ -75,7 +76,8 @@ const fetchPermissionByRolePage = async () => {
         canView: false,
         canCreate: false,
         canEdit: false,
-        canDelete: false
+        canDelete: false,
+        ownerId:ownerId
       }));
     }
   } catch (err) {
