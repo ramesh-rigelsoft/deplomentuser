@@ -18,5 +18,8 @@ export const ENDPOINT = {
    SAVE_ROLES_PERMISSION: `${BASE_URL}/access/saveRolePermission`,
    FETCH_PERMISSION: `${BASE_URL}/access/fetch`,
    FETCH_USERLIST: `${BASE_URL}/access/userList`,
+
+   BRANCH_ADD: `${BASE_URL}/branch/save`,
+   BRANCH_LIST: `${BASE_URL}/branch/search`,
    
 };

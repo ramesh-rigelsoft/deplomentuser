@@ -99,9 +99,9 @@ export default function Dashboards() {
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaCogs size={28} className="text-info mb-2" />
 
-            <h5>Our Services</h5>
+            <h5>Branch Management</h5>
            {/* ✔ FIXED BUTTON COLOR */}
-             <Link to="/addSubUser" className="btn btn-info btn-sm text-white">
+             <Link to="/branchs" className="btn btn-info btn-sm text-white">
                 View
             </Link>
           </div>

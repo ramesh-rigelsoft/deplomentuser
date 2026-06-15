@@ -36,6 +36,12 @@ const API = {
   },
   fetchSubUser(dispatch, requestData) {
     return callAPI(dispatch, ENDPOINT.FETCH_USERLIST, requestData);
+  },
+  saveOfficeBranch(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.BRANCH_ADD, requestData);
+  },
+  fetchOfficeBranch(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.BRANCH_LIST, requestData);
   }
 };
 

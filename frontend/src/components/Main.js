@@ -14,9 +14,7 @@ import ViewProfile from './ViewProfile';
 import ResetPassword from './ResetPassword';
 import RolePermissionManager from './RolePermissionManager';
 import AddSubUser from './AddSubUser';
-// import {Redirect, BrowserRouter, Switch, Route } from 'react-router-dom'
-
-
+import OfficeBranch from './OfficeBranch';
 
 export default function Main() {
   const navigate = useNavigate();
@@ -25,11 +23,8 @@ export default function Main() {
     setNavigate(navigate); // अब globally store हो गया
   }, [navigate]);
 
-
-// basename="/eMedical"
   return (
-    // <Router basename="/eMedical"> 
-      <Routes basename="/eMedical">
+      <Routes>
         <Route exact path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginForm/>} />
         <Route path="/signup" element={<SignupForm/>} />
@@ -41,12 +36,7 @@ export default function Main() {
 
         <Route path="/rolesPermission" element={<RolePermissionManager/>}/>
         <Route path="/addSubUser" element={<AddSubUser/>}/>
-       
-        {/* <Route path="/warehouse/add-location" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
-        <Route path="/warehouse/list" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
-        <Route path="/vendor/list" element={<ProtectedRoute><AccountSettings/></ProtectedRoute>} />
-        <Route path="/account/setting" element={<ProtectedRoute><AccountSettings/></ProtectedRoute>} /> */}
+        <Route path="/branchs" element={<OfficeBranch/>}/>
       </Routes>
-    // </Router>
   );
 }
