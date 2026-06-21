@@ -1018,9 +1018,9 @@ margin-top:4px;
 } */
 
 .scrollable-div {
-  max-height: 600px;
+  max-height: 430px;
   overflow-y: auto;
-  padding-bottom: 60px;
+  padding-bottom: 10px;
 }
 
 .scrollable-div::-webkit-scrollbar {
