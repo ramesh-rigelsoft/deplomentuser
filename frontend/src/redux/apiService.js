@@ -2,6 +2,7 @@ import { MultipartPostRequest } from "./MultipartPostRequest";
 import { postRequest } from "./postRequest";
 import { getRequest } from "./getRequest";
 import { loginRequest } from "./LoginRequest";
+import {branchApiRequest} from "./branchApiRequest";
 
 
 export const callAPI = (dispatch, url, data) => {
@@ -18,4 +19,8 @@ export const callGetAPI = (dispatch, url, params) => {
 
 export const multipartAPI = (dispatch, url, data) => {
    return dispatch(MultipartPostRequest({ url, data }));//.unwrap();
+};
+
+export const branchApiCall = (dispatch, url, data) => {
+   return dispatch(branchApiRequest({ domain: "branch", endpoint: url, data }));//.unwrap();   
 };

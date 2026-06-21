@@ -104,7 +104,7 @@
         {
           "name": "LED TV",
           "hsn": "8528",
-          "gst_by_size": {
+          "gst": {
             "up_to_32_inch": { "cgst": 9, "sgst": 9, "igst": 18 },
             "above_32_inch": { "cgst": 14, "sgst": 14, "igst": 28 }
           }
@@ -112,7 +112,7 @@
         {
           "name": "Smart TV",
           "hsn": "8528",
-          "gst_by_size": {
+          "gst": {
             "up_to_32_inch": { "cgst": 9, "sgst": 9, "igst": 18 },
             "above_32_inch": { "cgst": 14, "sgst": 14, "igst": 28 }
           }

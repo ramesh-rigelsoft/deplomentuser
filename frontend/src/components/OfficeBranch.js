@@ -108,7 +108,7 @@ const OfficeBranch = () => {
   return (
     <div className="container py-3">
       <Header
-        title="Branch Mangement"
+        title="Office Mangement"
         subTitle="Manage everything in one place"
       />
       <div className="row g-3">
@@ -117,7 +117,7 @@ const OfficeBranch = () => {
         <div className="col-12 col-md-4">
           <div className="card shadow p-2 p-md-3">
             <h5 className="text-center mb-3">
-              {editIndex !== null ? "Update Branch" : "Add Branch"}
+              {editIndex !== null ? "Update Office" : "Add Office"}
             </h5>
             <form onSubmit={handleSubmit}>
               <input
@@ -170,7 +170,7 @@ const OfficeBranch = () => {
         {/* TABLE */}
         <div className="col-12 col-md-8">
           <div className="card shadow p-2 p-md-3">
-            <h5 className="mb-3">Branch List</h5>
+            <h5 className="mb-3">Office List</h5>
 
             <div className="table-responsive">
               <table className="table table-bordered table-sm">

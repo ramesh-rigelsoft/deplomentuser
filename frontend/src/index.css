@@ -84,4 +84,8 @@ html, body {
       font-size: 8px;
    }
 }
+.active>.page-link, .page-link.active {
+  position: relative !important;
+  z-index: 0 !important;
+}
 

@@ -1,0 +1,30 @@
+.refresh-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spin-icon {
+  /* animation: spin 1s linear infinite; */
+}
+
+@keyframes spin {
+  100% {
+    /* transform: rotate(360deg); */
+  }
+}
+
+.refresh-badge {
+  position: absolute;
+  font-size: 8px;
+  font-weight: bold;
+  color: white;
+  background: red;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
