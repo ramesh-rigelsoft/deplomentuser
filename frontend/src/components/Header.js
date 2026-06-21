@@ -9,7 +9,7 @@ import { navigateTo } from "../components/navigationService";
 const Header = ({
   title = "Dashboard",
   subTitle = "Welcome back! Here's what's happening today.",
-  dashboard = "3"
+  dashboard = "4"
 }) => {
   const dispatch = useDispatch();
   
@@ -23,7 +23,7 @@ const Header = ({
   const [branchName, setBranchName] = useState(
     branchDetails?.id === 0
       ? "All Location"
-      : branchDetails?.branchName
+      : branchDetails?.branchName||"All Location"
   );
   const [branches,setBranches]=useState([]);
   useEffect(() => {
@@ -210,5 +210,4 @@ const Header = ({
     </div>
   );
 };
-
 export default Header;

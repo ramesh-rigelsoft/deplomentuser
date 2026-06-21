@@ -17,11 +17,26 @@ const AddSubUser = () => {
     ownerId: ownerId,
     mobile_no: "",
     role: "",
+    branchCode:""
   });
 
   const [users, setUsers] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [errors, setErrors] = useState({});
+
+  const [branches,setBranches]=useState([]);
+  useEffect(() => {
+    if (ownerId) {
+      API.fetchOfficeBranch(dispatch, { userId: ownerId })
+        .then((res) => {
+          const list = res?.payload?.data?.branchList || [];
+          setBranches(list);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  }, [ownerId, dispatch]);
 
   useEffect(() => {
     if (ownerId) {
@@ -80,6 +95,11 @@ const AddSubUser = () => {
       newErrors.role = "Please select a role";
     }
 
+    if (!formData.branchCode) {
+      newErrors.branchCode = "Please select a Office";
+    }
+
+
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -88,8 +108,6 @@ const AddSubUser = () => {
   // CREATE / UPDATE USER
   const handleSubmit = (e) => {
     e.preventDefault();
-alert(JSON.stringify(formData));
-// return;
     if (!validate()) return; // ❌ stop if invalid
 
     API.addUser(dispatch, formData)
@@ -103,6 +121,7 @@ alert(JSON.stringify(formData));
           password: "",
           status:1,
           role: "",
+          branchCode:""
         });
       } else {
         fail(res.payload.message);
@@ -203,6 +222,23 @@ alert(JSON.stringify(formData));
                 <small className="text-danger">{errors.password}</small>
               )}
 
+               <select
+                name="role"
+                className="form-select form-select-sm mb-1 mt-2"
+                value={formData.branchCode}
+                onChange={handleChange}
+              >
+                <option value="">Select Office</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.branchCode}>
+                    {b.branchName}
+                  </option>
+                ))}
+              </select>
+               {errors.branchCode && (
+                <small className="text-danger">{errors.branchCode}</small>
+              )}
+
               {/* ROLE */}
               <select
                 name="role"
@@ -250,6 +286,7 @@ alert(JSON.stringify(formData));
               <table className="table table-bordered table-sm">
                 <thead>
                   <tr>
+                    <th>Office Code</th>
                     <th>Name</th>
                     <th>Email Id</th>
                     <th>Mobile</th>
@@ -269,6 +306,7 @@ alert(JSON.stringify(formData));
                   ) : (
                     users.map((user, index) => (
                       <tr key={index}>
+                        <td>{user.branchCode}</td>
                         <td>{user.name}</td>
                         <td>{user.email_id}</td>
                         <td>{user.mobile_no}</td>

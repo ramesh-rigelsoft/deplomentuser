@@ -35,7 +35,8 @@ const HomePage = () => {
         Cookies.set("secret", JSON.stringify(data.secret), { expires: 1 });
         Cookies.set("fileName", `${data.user.logo}`, { expires: 1 });
         Cookies.set("token", data.access_token, { expires: 1 });
-
+        Cookies.set("multipleBranch",false);
+        
         success(res.payload.message);
         navigateTo("/dashboard");
       }else{
