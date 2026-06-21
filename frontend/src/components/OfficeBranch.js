@@ -21,17 +21,19 @@ const OfficeBranch = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (ownerId) {
+    officeList();
+  }, [ownerId]);
+  const officeList=()=>{
+     if (ownerId) {
       API.fetchOfficeBranch(dispatch, { userId: ownerId })
         .then((res) => {
-          alert(JSON.stringify(res.payload.data.branchList));
           setBranchs(res.payload.data.branchList||[]);
         })
         .catch((err) => {
           console.error(err);
         });
     }
-  }, [ownerId, dispatch]);
+  };
   
   const handleChange = (e) => {
     setFormData({
@@ -74,6 +76,7 @@ const OfficeBranch = () => {
           address: "",
           ownerId: ownerId,
         });
+        officeList();
       } else {
         fail(res.payload.message);
       }
@@ -98,7 +101,6 @@ const OfficeBranch = () => {
   };
 
   const handleEdit = (index) => {
-    alert(JSON.stringify(branchs[index]));
     setFormData(branchs[index]);
     setEditIndex(index);
     setErrors({});

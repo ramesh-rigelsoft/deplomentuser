@@ -39,7 +39,11 @@ const AddSubUser = () => {
   }, [ownerId, dispatch]);
 
   useEffect(() => {
-    if (ownerId) {
+   userList();
+  }, [ownerId]);
+
+  const userList=()=>{
+     if (ownerId) {
       API.fetchSubUser(dispatch, { userId: ownerId })
         .then((res) => {
           console.log(res);
@@ -50,7 +54,7 @@ const AddSubUser = () => {
           console.error(err);
         });
     }
-  }, [ownerId, dispatch]);
+  };
   
   const handleChange = (e) => {
     setFormData({
@@ -123,6 +127,7 @@ const AddSubUser = () => {
           role: "",
           branchCode:""
         });
+        userList();
       } else {
         fail(res.payload.message);
       }
@@ -223,7 +228,7 @@ const AddSubUser = () => {
               )}
 
                <select
-                name="role"
+                name="branchCode"
                 className="form-select form-select-sm mb-1 mt-2"
                 value={formData.branchCode}
                 onChange={handleChange}
