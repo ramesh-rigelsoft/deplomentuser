@@ -172,7 +172,7 @@ const Header = ({
                             }else{
                               localStorage.setItem("branchDetails", JSON.stringify(b));
                               Cookies.set("multipleBranch",true);
-                              Cookies.set("branchCode",JSON.stringify("b.branchCode"));
+                              Cookies.set("branchCode",JSON.stringify(b.branchCode));
                             }
                             window.location.reload();
                           }}
