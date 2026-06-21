@@ -24,7 +24,7 @@ const OfficeBranch = () => {
     if (ownerId) {
       API.fetchOfficeBranch(dispatch, { userId: ownerId })
         .then((res) => {
-          console.log(res);
+          alert(JSON.stringify(res.payload.data.branchList));
           setBranchs(res.payload.data.branchList||[]);
         })
         .catch((err) => {

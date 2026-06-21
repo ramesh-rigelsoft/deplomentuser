@@ -7,6 +7,7 @@ import API from "../redux/API";
 import {success,fail} from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import Header from "../components/Header";
+import PageHeader from "./PageHeader";
 // import BorderHeader from "./BorderHeader";
   /* ---------------- EXPENSE LIST ---------------- */
 
@@ -108,14 +109,15 @@ const BranchExpense = () => {
        <Header
         title="Branch Mangement"
         subTitle="Manage everything in one place"
+        dashboard = "2"
       />
     <div className="card p-3 ">
-
+      <PageHeader pageName="Expense" />
       {/* Header with Total Top Right */}
-      <div className="d-flex justify-content-between align-items-center">
+      {/* <div className="d-flex justify-content-between align-items-center">
         <h5>📄 Expense </h5>
         <h6><b>Total: ₹ {totalAmount}</b></h6>
-      </div>
+      </div> */}
 
       {/* Filters */}
       <div className="row mb-3">

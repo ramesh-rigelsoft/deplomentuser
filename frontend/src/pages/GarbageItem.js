@@ -7,6 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { enUS } from "date-fns/locale";
 import Header from "../components/Header";
+import PageHeader from "./PageHeader";
 
 export default function GarbageItem() {
 
@@ -94,12 +95,11 @@ export default function GarbageItem() {
       <Header
       title="Branch Mangement"
       subTitle="Manage everything in one place"
+      dashboard = "2"
     />
     <div className="container py-4">
 
-      <h3 className="fw-bold mb-3">
-        Garbage Collection
-      </h3>
+     <PageHeader pageName="Garbage Collection"/>
       
       {/* FILTER */}
       <div className="mb-3">

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import API from "../redux/API";
 import {success,fail} from "../redux/WebTostar"
 import Header from "../components/Header";
+import PageHeader from "./PageHeader";
 
 import {
   Chart as ChartJS,
@@ -238,8 +239,11 @@ const BranchSalesDashboard = () => {
        <Header
         title="Branch Mangement"
         subTitle="Manage everything in one place"
+        dashboard = "2"
       />
+      
     <div ref={divRef} className="page scrollable-div-d">
+      <PageHeader pageName="Dashboard" />
       {/* HEADER */}
       {/* <div
         style={{

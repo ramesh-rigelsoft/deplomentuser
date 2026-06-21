@@ -15,6 +15,7 @@ import { FiInfo, FiDownload,FiRefreshCw  } from "react-icons/fi";
 import RefreshBadge from "./RefreshBadge";
 import Loader from "./Loader";
 import Header from "../components/Header";
+import PageHeader from "./PageHeader";
 // import DownloadProgressModal from "./DownloadProgressModal";
 
 
@@ -408,11 +409,13 @@ useEffect(() => {
 
   return (
     <div>
-          <Header
+        <Header
           title="Branch Mangement"
           subTitle="Manage everything in one place"
+          dashboard = "2"
         />
     <div className="container mt-3 scrollable-div">
+       <PageHeader pageName="Sales Report" />
        {/* <div className="d-flex justify-content-between align-items-center mb-2">
         <h2 className="fw-bold mb-0">Item Summary Report</h2>
       </div> */}

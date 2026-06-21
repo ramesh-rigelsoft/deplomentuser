@@ -10,7 +10,9 @@ try {
     "http://localhost:8089",
     "http://localhost:8088"
   );
-const token = Cookies.get("token");
+ const token = Cookies.get("token");
+ const multipleBranch = Cookies.get("multipleBranch");
+ const branchCode = Cookies.get("branchCode");      
 
   const response = await axios.post(
     finalUrl,
@@ -19,8 +21,8 @@ const token = Cookies.get("token");
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-        multipleBranch: "false",
-        branchCode: "",
+        multipleBranch: multipleBranch,
+        branchCode: branchCode,
       },
     }
   );

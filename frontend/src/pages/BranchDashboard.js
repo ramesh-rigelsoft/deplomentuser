@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import PageHeader from "./PageHeader";
 
 export default function BranchDashboard() {
   const navigate = useNavigate();
@@ -55,8 +56,10 @@ export default function BranchDashboard() {
       <Header
         title="Branch Management"
         subTitle="Manage all branch operations from one place"
+        dashboard = "4"
       />
-
+ {/* <PageHeader pageName="Garbage Collection"/> */}
+    
       <div className="container py-4">
         <div className="row g-4">
           {modules.map((module, index) => (

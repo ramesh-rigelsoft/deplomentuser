@@ -9,6 +9,7 @@ import {success,fail} from "../redux/WebTostar"
 import Tooltip from "./Tooltip"
 import Cookies from "js-cookie";
 import Header from "../components/Header";
+import PageHeader from "./PageHeader";
 // import BorderHeader from "./BorderHeader";
 
 /* ---------- Custom Styles (height 30px) ---------- */
@@ -171,8 +172,10 @@ useEffect(() => {
       <Header
       title="Branch Mangement"
       subTitle="Manage everything in one place"
+      dashboard = "2"
     />
     <div className="page mt-3 scrollable-div-summary">
+       <PageHeader pageName="Live Stock" />
       {/* Header */}
       {/* <div className="d-flex justify-content-between align-items-center mb-2">
         <h2 className="fw-bold mb-0">Inventory Dashboard</h2>
