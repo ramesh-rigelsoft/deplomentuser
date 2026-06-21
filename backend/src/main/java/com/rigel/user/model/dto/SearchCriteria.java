@@ -48,5 +48,10 @@ public class SearchCriteria {
 	private String screenSize;
 	private String itemGen;
 	private String description;
+	private String itemId;
+	private int userId;
+	private int roleId;
+	private int pageId;
+	
 	
 }

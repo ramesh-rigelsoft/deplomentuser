@@ -23,15 +23,18 @@ public class Pages implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "page_url", nullable = false)
-    private String roleUrl;
+    @Column(name = "tab", nullable = false)
+    private String tab;
+    @Column(name = "label", nullable = false)
+    private String label;
+    @Column(name = "path", nullable = false)
+    private String path;
+    private String icon;
     
-    @Column(name = "page_name", nullable = false)
-    private String pageName;
-    private String description;
+    private boolean status;
     
-	@OneToMany(mappedBy = "pages", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JsonManagedReference
+	@OneToMany(mappedBy = "pageId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonManagedReference(value = "pageId")
 	private Set<RolesPagePermision> rolesPagePermision = new HashSet<>();
 
 }

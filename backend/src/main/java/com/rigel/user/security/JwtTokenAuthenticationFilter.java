@@ -38,6 +38,7 @@ public class JwtTokenAuthenticationFilter extends  OncePerRequestFilter {
 			throws ServletException, IOException {
 		
 		String header = request.getHeader(jwtConfig.getHeader());
+		
 //		System.out.println(jwtConfig.getHeader()+" header "+header);
 		if(header == null || !header.startsWith(jwtConfig.getPrefix())) {
 			chain.doFilter(request, response);  		// If not valid, go to the next filter.
@@ -53,13 +54,13 @@ public class JwtTokenAuthenticationFilter extends  OncePerRequestFilter {
 //			if(JwtTokenUtil.isTokenExpired(token)){
 //				token=JwtTokenUtil.refreshToken(token);
 //			}
-			boolean osInfo=!TokenSecure.getOSInfo().equals(JwtTokenUtil.getOSInfoFromToken(token,1));
-			boolean browserInfo=!TokenSecure.getBrowserInfo(request).equals(JwtTokenUtil.getOSInfoFromToken(token, 2));
-         	if(osInfo&&browserInfo) {
-				chain.doFilter(request, response);  		// If not valid, go to the next filter.
-				return;
-			}
-			
+//			boolean osInfo=!TokenSecure.getOSInfo().equals(JwtTokenUtil.getOSInfoFromToken(token,1));
+//			boolean browserInfo=!TokenSecure.getBrowserInfo(request).equals(JwtTokenUtil.getOSInfoFromToken(token, 2));
+//         	if(osInfo&&browserInfo) {
+//				chain.doFilter(request, response);  		// If not valid, go to the next filter.
+//				return;
+//			}
+         	System.out.println("header-------------"+header);
 			Claims claims = Jwts.parserBuilder()
 					.setSigningKey(jwtConfig.getKey())
 					.build()

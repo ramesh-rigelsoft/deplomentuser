@@ -10,4 +10,8 @@ public class Constaints {
 	public static final String USER_DOMAIN = "http://localhost:8089";
 	public static final String BASE_DIR = System.getProperty("user.dir");
 	public static final String BASE_RESOURCES = "/src/main/resources/application.properties";
+	
+	public static final String ROLE_ADMIN = "admin";
+	public static final String ROLE_USER = "user";
+	public static final String ROLE_MANAGER = "manager";
 }

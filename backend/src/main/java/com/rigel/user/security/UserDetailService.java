@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.rigel.user.dao.IUserDao;
+import com.rigel.user.model.Roles;
 import com.rigel.user.model.User;
 
 
@@ -26,7 +27,7 @@ public class UserDetailService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 //		System.out.println("User name >>> "+username);
-		User user = userDao.findUserByEmailId(username);
+		User user = userDao.findUserByEmailId(username,0);
 //		System.out.println("User name >>> "+user.getId());
         if (user!= null) {
         	return new JwtUser(user.getId(), user.getEmail_id(),
@@ -37,9 +38,9 @@ public class UserDetailService implements UserDetailsService {
         }
 	}
 	
-	 private static Set<GrantedAuthority> mapToGrantedAuthorities(String role) {
-    	Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-	    grantedAuthorities.add(new SimpleGrantedAuthority(role));
+	 private static Set<GrantedAuthority> mapToGrantedAuthorities(String roles) {
+		Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+	    grantedAuthorities.add(new SimpleGrantedAuthority(roles));
 //	    System.out.println(grantedAuthorities.contains(new SimpleGrantedAuthority("user")));
     	return grantedAuthorities;
     }

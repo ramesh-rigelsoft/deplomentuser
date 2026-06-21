@@ -5,9 +5,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 import java.io.*;
 import java.nio.file.Files;
 
@@ -36,7 +37,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rigel.user.util.*;
 import com.rigel.user.util.Constaints;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigel.user.annotation.ApiSecured;
+import com.rigel.user.dao.IRolesManagementDao;
 import com.rigel.user.exception.BadGatewayRequest;
 import com.rigel.user.exception.TaskTitleException;
 import com.rigel.user.exception.TaskTitleNotFound;
@@ -44,14 +47,20 @@ import com.rigel.user.model.LoginActivity;
 import com.rigel.user.model.LoginDetails;
 import com.rigel.user.model.LoginRequest;
 import com.rigel.user.model.Mail;
+import com.rigel.user.model.Roles;
+import com.rigel.user.model.SubscriptionPlan;
 import com.rigel.user.model.User;
 import com.rigel.user.model.UserOtp;
 import com.rigel.user.model.VerifyKeyRequest;
+import com.rigel.user.model.dto.MenuDto;
 import com.rigel.user.model.dto.ResetPasswordRequest;
+import com.rigel.user.model.dto.SearchCriteria;
+import com.rigel.user.model.dto.SubscriptionPlanDto;
 import com.rigel.user.model.dto.UserDto;
 import com.rigel.user.security.JwtTokenUtil;
 import com.rigel.user.security.JwtUser;
 import com.rigel.user.service.ILoginInfoService;
+import com.rigel.user.service.IRolesManagementService;
 import com.rigel.user.service.IUserLogOutIn;
 import com.rigel.user.service.IUserService;
 import com.rigel.user.serviceimpl.EmailService;
@@ -75,6 +84,9 @@ public class UserController {
 
 	@Autowired
 	ModelMapper modelMapper;
+	
+	@Autowired
+	ObjectMapper objectMapper;
 
 //	@Autowired
 //	CryptoAES128 cryptoAES128;
@@ -84,6 +96,9 @@ public class UserController {
 
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
+	
+	@Autowired
+	private IRolesManagementService rolesManagementService;
 	
 
 //	@Autowired
@@ -126,7 +141,7 @@ public class UserController {
 			throw new BadGatewayRequest(result.getFieldError().getDefaultMessage());
 		} else {
 			String username = resetPassword.getMobile_no();
-			User user = userService.findUserByEmailId(username);
+			User user = userService.findUserByEmailId(username,0);
 			if (user != null) {
 				UserOtp userOtp = userService.findUserOtpByMobileNo(username);
 				LocalDateTime currentTime = LocalDateTime.now();
@@ -170,7 +185,7 @@ public class UserController {
 			throw new BadGatewayRequest(result.getFieldError().getDefaultMessage());
 		} else {
 			String username = resetPassword.getMobile_no();
-			User user = userService.findUserByEmailId(username);
+			User user = userService.findUserByEmailId(username,0);
 			if (user != null) {
 				UserOtp userOtp = UserOtp.builder().emailId(user.getEmail_id()).softwareType(user.getSoftwareType()).mobile_no(username).build();
 				userService.saveUserOTP(userOtp);
@@ -186,46 +201,33 @@ public class UserController {
 			}
 		}
 	}
-
-	@PostMapping(value = "update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Map<String, Object>> update(@ModelAttribute @Valid UserDto userDtoReq, BindingResult result,
+	
+	@PostMapping(value = "view")
+	public ResponseEntity<Map<String, Object>> view(
+			@RequestBody(required = true) @Valid SearchCriteria searchCriteria, BindingResult result,
 			HttpServletRequest request) {
 		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> data = new HashMap<>();
 
-		if (userDtoReq == null) {
+		if (searchCriteria == null) {
 			throw new BadGatewayRequest("Invalid Request");
 		} else if (result.hasFieldErrors()) {
 			throw new BadGatewayRequest(result.getFieldError().getDefaultMessage());
 		} else {
-			System.out.println("userDtoReq.getLogo()" + userDtoReq.getLogo());
-			String fileName = userDtoReq.getLogo() == null ? null
-					: UploadFileUtlity.uploadFiles(userDtoReq.getLogo(), "logo", null);
-			User user = modelMapper.map(userDtoReq, User.class);
-			user.setLogo(fileName);
-			User user1 = userService.findUserByEmailId(user.getEmail_id());
-			if (user1 == null) {
-				user.setStatus(1);
-				user.setPassword(User.PASSWORD_ENCODER.encode(user.getPassword()));
-				user.setCreated_at(new Timestamp(new Date().getTime()));
-				user.setRole("user");
-				user.setLogo(fileName);
-				user = userService.saveUser(user);
-				UserDto userDto = modelMapper.map(user, UserDto.class);
-				final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
-				final String token = jwtTokenUtil.generateToken(userDetails, request);
-				data.put("access_token", token);
-				data.put("user", userDto);
+			User user = userService.findUserById(searchCriteria.getUserId());
+			if (user != null) {
+				data.put("user", user);
 				response.put("data", data);
 				response.put("status", "OK");
 				response.put("code", "200");
-				response.put("message", "Your account has been created successfully.");
+				response.put("message", "Your OTP has been send successfully.");
 				return new ResponseEntity<>(response, HttpStatus.OK);
 			} else {
-				throw new TaskTitleException("Email id already registered with us.");
+				throw new TaskTitleException("Mobile Number is not registered with us.");
 			}
 		}
 	}
+
 
 	@PostMapping(value = "signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Map<String, Object>> signup(@ModelAttribute @Valid UserDto userDtoReq, BindingResult result,
@@ -239,37 +241,40 @@ public class UserController {
 			throw new BadGatewayRequest(result.getFieldError().getDefaultMessage());
 		} else {
 			System.out.println("userDtoReq.getLogo()" + userDtoReq.getLogo());
-			String fileName = userDtoReq.getLogo() == null ? null
-					: UploadFileUtlity.uploadFiles(userDtoReq.getLogo(), "logo", null);
+//			String fileName = userDtoReq.getLogo() == null ? null
+//					: UploadFileUtlity.uploadFiles(userDtoReq.getLogo(), "logo", null);
 			User user = modelMapper.map(userDtoReq, User.class);
-			user.setLogo(fileName);
-			User user1 = userService.findUserByEmailId(user.getEmail_id());
-			User user2 = userService.findUserByEmailId(user.getMobile_no());
+//			user.setLogo(fileName);
+			User user2 = userService.findUserByEmailId(user.getMobile_no(),userDtoReq.getId());
 			if(user2!=null){
 				throw new TaskTitleException("Mobile Number already registered with us.");
 			}
-			
+			User user1 = userService.findUserByEmailId(user.getEmail_id(),userDtoReq.getId());
 			if (user1 == null) {
-				user.setStatus(1);
-				user.setPassword(User.PASSWORD_ENCODER.encode(user.getPassword()));
-				user.setCreated_at(new Timestamp(new Date().getTime()));
-				user.setRole("user");
-				user.setLogo(fileName);
-				user.setSoftwareKey(LicenseKeyGenerator.generateLicenseKey());
-				user = userService.saveUser(user);
-				// UserDto userDto = modelMapper.map(user, UserDto.class);
-				final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
-				final String token = jwtTokenUtil.generateToken(userDetails, request);
-				try {
-					emailService.sendHtmlEmail(user.getEmail_id(),user.getSoftwareKey(), user.getEmail_id(),user.getPassword(),user.getSoftwareType());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(user.getId()<1){
+					user.setStatus(1);
+					user.setPassword(User.PASSWORD_ENCODER.encode(user.getPassword()));
+					user.setCreated_at(new Timestamp(new Date().getTime()));
+//					user.setLogo(fileName);
+					user.setRole("admin");
+					user.setSoftwareKey(LicenseKeyGenerator.generateLicenseKey());
+					user = userService.persistUser(user);
+					final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
+					final String token = jwtTokenUtil.generateToken(userDetails, request);
+					try {
+						emailService.sendHtmlEmail(user.getEmail_id(),user.getSoftwareKey(), user.getEmail_id(),user.getPassword(),user.getSoftwareType());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					data.put("access_token", token);
+					data.put("user", user);
+					response.put("data", data);
+				}else {
+					user = userService.saveUserDto(userDtoReq);
+					data.put("user", user);
+					response.put("data", data);
 				}
-				
-				data.put("access_token", token);
-				data.put("user", user);
-				response.put("data", data);
 				response.put("status", "OK");
 				response.put("code", "200");
 				response.put("message", "Your account has been created successfully.");
@@ -285,21 +290,24 @@ public class UserController {
 			HttpServletRequest request) {
 		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> data = new HashMap<>();
-		User user = userService.findUserByEmailId(login.getUsername());
+		User user = userService.findUserByEmailId(login.getUsername(),0);
 		if (user == null) {
 			throw new TaskTitleNotFound("Email id not existing with us.");
 		} else if (!(User.PASSWORD_ENCODER.matches(login.getPassword(), user.getPassword()))) {
 			throw new TaskTitleException("Wrong password");
 		} else {
 
-			
-			// if(user.getMacAddress().split("\\|")[0].equalsIgnoreCase(login.getMacAddress()))
-			// {
-//			UserDto userDto = modelMapper.map(user, UserDto.class);
 			final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
 			final String token = jwtTokenUtil.generateToken(userDetails, request);
+			Long roleId=rolesManagementService.getRoleIdByRole(user.getRole());
+			List<MenuDto> menuDto=rolesManagementService.getMenus(roleId, user.getOwnerId());
+			SubscriptionPlan subscriptionPlan=rolesManagementService.findBySubscriptionCode(user.getSubscriptionCode());
+			SubscriptionPlanDto subscriptionPlanDto=objectMapper.convertValue(subscriptionPlan, SubscriptionPlanDto.class);
+			System.out.println(user.getBranchCode());
 			data.put("access_token", token);
 			data.put("user", user);
+			data.put("page_access", menuDto);
+			data.put("subscription_plan", subscriptionPlanDto);
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -316,7 +324,7 @@ public class UserController {
 			@RequestBody(required = true) @Valid VerifyKeyRequest verifyKeyRequest, HttpServletRequest request) {
 		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> data = new HashMap<>();
-		User user = userService.findUserByEmailId(verifyKeyRequest.getUsername());
+		User user = userService.findUserByEmailId(verifyKeyRequest.getUsername(),0);
 		if (user == null) {
 			response.put("status", "BAD_GATEWAY");
 			response.put("code", "400");
@@ -354,6 +362,8 @@ public class UserController {
 //					return new ResponseEntity<>(response, HttpStatus.OK);
 //			
 //	    }
+	
+	
 
 	@RequestMapping(value = "testapi", method = RequestMethod.GET)
 	public String d() {

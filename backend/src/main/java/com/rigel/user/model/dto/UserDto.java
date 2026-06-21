@@ -43,7 +43,7 @@ public class UserDto {
 	@Pattern(regexp = "^[0-9]{1,3}$",message="Enter valid contry code") 
 	private String country_code;
 	
-	@NotBlank(message = "Password is mandatory")
+//	@NotBlank(message = "Password is mandatory")
 	private String password;
 	
 	private int status;// 1-active,2-InActive,3-delete
@@ -52,6 +52,10 @@ public class UserDto {
 	
 	private String gender;
 	private Date lastPasswordResetDate;
+	
+    private boolean multipleBranch;
+    private String branchCode;
+    private String branchName;
 	
     // ================= COMPANY INFO =================
 	private String shopType;
@@ -74,6 +78,10 @@ public class UserDto {
     private String companyType; // Pvt Ltd, LLP, Proprietor, etc.
     private Integer companyEmployeeCount;
     // ================= RELATION =================
+    
+    private int ownerId;
+    
+    private String subscriptionCode;
 
     private MultipartFile logo;
 }
