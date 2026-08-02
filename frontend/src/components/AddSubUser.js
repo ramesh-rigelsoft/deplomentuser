@@ -124,6 +124,7 @@ const AddSubUser = () => {
           mobile_no:"",
           password: "",
           status:1,
+          ownerId: ownerId,
           role: "",
           branchCode:""
         });
