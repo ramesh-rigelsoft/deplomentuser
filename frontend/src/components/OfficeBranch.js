@@ -9,11 +9,21 @@ import Header from "./Header";
 const OfficeBranch = () => {
   const ownerId= parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
+  const [logoPreview, setLogoPreview] = useState(null);
   const [formData, setFormData] = useState({
     id: "",
     branchName: "",
-    address: "",
     ownerId: ownerId,
+
+     // Company Information
+    shopType: "",
+    gstNumber: "",
+    panNumber: "",
+    state: "",
+    city: "",
+    pincode: "",
+    address: "",
+    logo: null,
   });
 
   const [branchs, setBranchs] = useState([]);
@@ -55,6 +65,25 @@ const OfficeBranch = () => {
   if (!formData.branchName.trim()) {
     newErrors.branchName = "Branch name is required";
   }
+  if (!formData.shopType) {
+    newErrors.shopType = "Select Shop Type";
+  }
+
+  if (!formData.state.trim()) {
+    newErrors.state = "State is required";
+  }
+
+  if (!formData.city.trim()) {
+    newErrors.city = "City is required";
+  }
+
+  if (!formData.pincode.trim()) {
+    newErrors.pincode = "Pincode is required";
+  }
+
+  if (!formData.address.trim()) {
+    newErrors.address = "Address is required";
+  }
 
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
@@ -70,12 +99,12 @@ const OfficeBranch = () => {
     .then((res) => {
       if (res.payload.code === '200') {
         success(res.payload.message);
-        setFormData({
-          id: "",
-          branchName: "",
-          address: "",
-          ownerId: ownerId,
-        });
+        // setFormData({
+        //   id: "",
+        //   branchName: "",
+        //   address: "",
+        //   ownerId: ownerId,
+        // });
         officeList();
       } else {
         fail(res.payload.message);
@@ -106,9 +135,32 @@ const OfficeBranch = () => {
     setErrors({});
   };
 
+  const formReset=()=>{
+    setFormData({
+      id: "",
+      branchName: "",
+      ownerId: ownerId,
+      status: true,
+
+      shopType: "",
+      gstNumber: "",
+      panNumber: "",
+      state: "",
+      city: "",
+      pincode: "",
+      address: "",
+      logo: null,
+    });
+
+    setLogoPreview(null);
+  };
 
   return (
-    <div className="container py-3">
+    <div  className="container py-3"
+      style={{
+        minHeight: "100vh",
+        overflowY: "auto"
+      }}>
       <Header
         title="Office Mangement"
         subTitle="Manage everything in one place"
@@ -133,29 +185,178 @@ const OfficeBranch = () => {
               {errors.branchName && (
                 <small className="text-danger">{errors.branchName}</small>
               )}
+              <hr />
+              <h6 className="mt-3 mb-2">Company Information</h6>
+
+              <div className="row">
+                <div className="col-md-6 mb-2">
+                  <select
+                    className="form-select form-select-sm"
+                    name="shopType"
+                    value={formData.shopType}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select Shop Type</option>
+                    <option value="mobile_shop">Mobile Shop</option>
+                    <option value="laptop_shop">Laptop Shop</option>
+                  </select>
+                  {errors.shopType && (
+                    <small className="text-danger">{errors.shopType}</small>
+                  )}
+                </div>
+                <div className="col-md-6 mb-2">
+                  <select
+                    name="status"
+                    className="form-select form-select-sm mb-2"
+                    value={formData.status}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        status: e.target.value === "true",
+                      })
+                    }
+                  >
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                  </select>
+                </div>
+
+              </div>
+
+              <input
+                type="text"
+                className="form-control form-control-sm mb-2"
+                name="gstNumber"
+                placeholder="GST Number"
+                value={formData.gstNumber}
+                onChange={handleChange}
+              />
+
+              <input
+                type="text"
+                className="form-control form-control-sm mb-2"
+                name="panNumber"
+                placeholder="PAN Number"
+                value={formData.panNumber}
+                onChange={handleChange}
+              />
+
+              <div className="row">
+                <div className="col-md-4 mb-2">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    name="state"
+                    placeholder="State"
+                    value={formData.state}
+                    onChange={handleChange}
+                  />
+                  {errors.state && (
+                    <small className="text-danger">{errors.state}</small>
+                  )}
+                </div>
+
+                <div className="col-md-4 mb-2">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    name="city"
+                    placeholder="City"
+                    value={formData.city}
+                    onChange={handleChange}
+                  />
+                  {errors.city && (
+                    <small className="text-danger">{errors.city}</small>
+                  )}
+                </div>
+
+                <div className="col-md-4 mb-2">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    name="pincode"
+                    placeholder="Pincode"
+                    value={formData.pincode}
+                    onChange={handleChange}
+                  />
+                  {errors.pincode && (
+                    <small className="text-danger">{errors.pincode}</small>
+                  )}
+                </div>
+              </div>
 
               <textarea
-                name="address"
                 className="form-control form-control-sm mb-2"
-                placeholder="Enter Address"
+                rows="3"
+                name="address"
+                placeholder="Company Address"
                 value={formData.address}
                 onChange={handleChange}
               />
 
-              <select
-                name="status"
-                className="form-select form-select-sm mb-2"
-                value={formData.status}
-                onChange={(e) =>
+              {errors.address && (
+                <small className="text-danger">{errors.address}</small>
+              )}
+
+             <div className="d-flex align-items-center justify-content-between border rounded p-2 bg-light mb-2">
+
+            <div className="flex-grow-1 me-3">
+              <label className="form-label small mb-1 text-muted">
+                Upload Company Logo
+              </label>
+
+              <input
+                type="file"
+                className="form-control form-control-sm"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
                   setFormData({
                     ...formData,
-                    status: e.target.value === "true",
-                  })
-                }
-              >
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-              </select>
+                    logo: file,
+                  });
+
+                  if (file) {
+                    setLogoPreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
+            </div>
+
+
+          <div className="text-center">
+            <div
+              className="border rounded-circle shadow-sm bg-white d-flex align-items-center justify-content-center"
+              style={{
+                width: "65px",
+                height: "65px",
+                overflow: "hidden",
+              }}
+            >
+              {logoPreview ? (
+                <img
+                  src={logoPreview}
+                  alt="Logo Preview"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <span className="text-muted small">
+                  Logo
+                </span>
+              )}
+            </div>
+
+            <small className="text-muted">
+              Preview
+            </small>
+          </div>
+
+        </div>
 
               <button
                 className={`btn w-100 btn-sm ${
