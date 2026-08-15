@@ -3,7 +3,7 @@ export const BASE_URL = process.env.REACT_APP_API_URL;
 
 export const ENDPOINT = {
 
-  LOGIN: `${BASE_URL}/user/login`,
+  LOGIN: `${BASE_URL}/user/adminLogin`,
   SIGNUP: `${BASE_URL}/user/signup`,
   ADMIN_VIEW: `${BASE_URL}/user/view`,
   VALIDATE_TOKEN: `${BASE_URL}/user/token/validate`,
