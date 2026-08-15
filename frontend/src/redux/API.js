@@ -37,6 +37,15 @@ const API = {
   fetchSubUser(dispatch, requestData) {
     return callAPI(dispatch, ENDPOINT.FETCH_USERLIST, requestData);
   },
+  fetchSubscriptionPlan(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.SUBSCRIPTION_LIST, requestData);
+  },
+  fetchUserSubscription(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.USER_SUBSCRIPTION_LIST, requestData);
+  },
+  paySubscription(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.SAVE_USER_SUBSCRIPTION, requestData);
+  },
   saveOfficeBranch(dispatch, requestData) {
     return multipartAPI(dispatch, ENDPOINT.BRANCH_ADD, requestData);
   },

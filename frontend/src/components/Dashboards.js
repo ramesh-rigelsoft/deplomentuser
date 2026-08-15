@@ -91,6 +91,17 @@ export default function Dashboards() {
             </Link>
           </div>
         </div>
+         <div className="col-md-3" onClick={() => clickedCards("officeLocation")}>
+          <div className="card shadow-sm border-0 text-center p-4 hover-card">
+            <FaCogs size={28} className="text-info mb-2" />
+
+            <h5>Subscription Plan</h5>
+           {/* ✔ FIXED BUTTON COLOR */}
+             <Link to="/subscriptionPlanList" className="btn btn-info btn-sm text-white">
+                View
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Bottom Section */}

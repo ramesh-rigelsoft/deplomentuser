@@ -160,7 +160,6 @@ const fetchPermissionByRolePage = async () => {
         subTitle="Manage role-based permissions"
         dashboard="1"
       />
-
       <div className="row justify-content-center">
         <div className="col-lg-12">
 

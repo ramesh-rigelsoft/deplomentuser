@@ -18,15 +18,18 @@ export const ENDPOINT = {
    SAVE_ROLES_PERMISSION: `${BASE_URL}/access/saveRolePermission`,
    FETCH_PERMISSION: `${BASE_URL}/access/fetch`,
    FETCH_USERLIST: `${BASE_URL}/access/userList`,
+   SUBSCRIPTION_LIST: `${BASE_URL}/access/subscriptionList`,
+   USER_SUBSCRIPTION_LIST: `${BASE_URL}/access/userSubscriptionList`,
+   SAVE_USER_SUBSCRIPTION: `${BASE_URL}/user/userSubscription`,
 
    BRANCH_ADD: `${BASE_URL}/branch/save`,
    BRANCH_LIST: `${BASE_URL}/branch/search`,
 
    ///branch
-  SEARCH_ITEMS: `${BASE_URL}/items/search`,
-  SALES_LIST_AND_SEARCH: `${BASE_URL}/sales/search`,
-  FETCH_DASHBOARD_DATA: `${BASE_URL}/dashboard/view`, 
-  INVENTRY_LIST: `${BASE_URL}/inventory/search`,
-  EXPENSE_LIST_AND_SEARCH: `${BASE_URL}/expense/search`,
-  GARBAGE_SEARCH: `${BASE_URL}/garbage/search`
+   SEARCH_ITEMS: `${BASE_URL}/items/search`,
+   SALES_LIST_AND_SEARCH: `${BASE_URL}/sales/search`,
+   FETCH_DASHBOARD_DATA: `${BASE_URL}/dashboard/view`, 
+   INVENTRY_LIST: `${BASE_URL}/inventory/search`,
+   EXPENSE_LIST_AND_SEARCH: `${BASE_URL}/expense/search`,
+   GARBAGE_SEARCH: `${BASE_URL}/garbage/search`
 };

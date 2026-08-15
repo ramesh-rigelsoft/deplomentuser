@@ -149,7 +149,6 @@ export default function Signup() {
     <div className="container py-5 page-scroll">
       <div className="row justify-content-center">
         <div className="col-lg-6 col-md-8">
-
           <form
             className="card shadow p-4"
             onSubmit={handleSubmit}

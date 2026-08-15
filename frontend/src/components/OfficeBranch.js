@@ -145,7 +145,7 @@ const OfficeBranch = () => {
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
 };
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!validate()) return;
@@ -174,24 +174,26 @@ const handleSubmit = (e) => {
   for (let pair of data.entries()) {
     console.log(pair[0], pair[1]);
   }
+  try {
+  const res = await API.saveOfficeBranch(dispatch, data);
+    console.log("API RESPONSE:", res);
+    if (res.code === "200") {
+      success(res.message);
+      officeList();
+      formReset();
+      setEditIndex(null);
+    } else {
+      fail(res.message || "Something went wrong.");
+    }
 
-  API.saveOfficeBranch(dispatch, formData)
-    .then((res) => {
-      if (res.payload.code === "200") {
-        success(res.payload.message);
+  } catch (err) {
+    console.error("SAVE ERROR:", err);
 
-        officeList();
-        formReset();
-        setEditIndex(null);
-      } else {
-        fail(res.payload.message);
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      fail("Please contact to service provider.");
-    });
-
+    fail(
+      err?.message ||
+      "Something went wrong."
+    );
+  }
   setErrors({});
 };
 

@@ -22,6 +22,7 @@ import EntryReport from '../pages/EntryReport';
 import GarbageItem from '../pages/GarbageItem';
 import BranchDashboard from '../pages/BranchDashboard';
 import AppLayout from '../layout/AppLayout';
+import SubscriptionPlanList from './SubscriptionList';
 
 export default function Main() {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ export default function Main() {
         <Route path="/addSubUser" element={<AddSubUser/>}/>
         <Route path="/officeLocation" element={<OfficeBranch/>}/>
         <Route path="/branchs" element={<BranchDashboard/>}/>
+        <Route path="/subscriptionPlanList" element={<SubscriptionPlanList/>}/>
        
        
         {/* branch route */}
