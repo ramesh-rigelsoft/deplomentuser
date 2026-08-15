@@ -7,11 +7,10 @@ import Header from "./Header";
 
 export default function Dashboards() {
 
-  const lastPayment = {
-    amount: 1200,
-    status: "success",
-    date: "30 Apr 2026"
+  const clickedCards =(name)=> {
+    localStorage.setItem("adTab",name);
   };
+
 
   // Logout function (abhi simple alert, baad me API + token remove)
   // const handleLogout = () => {
@@ -35,67 +34,21 @@ export default function Dashboards() {
         subTitle="Manage everything in one place"
         dashboard="3"
       />
-      {/* <div className="row mb-4 align-items-center">
-        <div className="col">
-          <h2 className="fw-bold">Dashboard</h2>
-          <p className="text-muted">Manage everything in one place</p>
-        </div>
-        <div className="col text-end">
-          <button
-            onClick={handleLogout}
-            className="btn btn-outline-dark btn-sm"
-          >
-            <FaSignOutAlt className="me-1" />
-            Logout
-          </button>
-        </div>
-      </div> */}
 
       {/* Top Cards */}
       <div className="row g-4">
-
-        {/* <div className="col-md-3">
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaCreditCard size={28} className="text-success mb-2" />
-            <h5>Pay Bills</h5>
-             <Link to="/addSubUser" className="btn btn-info btn-sm text-white">
-                Pay Now
-            </Link>
-          </div>
-        </div>
-
-        <div className="col-md-3">
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaFileInvoice size={28} className="text-primary mb-2" />
-            <h5>Tax Invoice</h5>
-             <Link to="/addSubUser" className="btn btn-info btn-sm text-white">
-                View
-            </Link>
-          </div>
-        </div> */}
-
-        <div className="col-md-3">
+        <div className="col-md-3" onClick={() => clickedCards("viewProfile")}>
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaUser size={28} className="text-warning mb-2" />
             <h5>My Profile</h5>
-             <Link to="/viewProfile" className="btn btn-info btn-sm text-white">
-                View
-            </Link>
-          </div>
-        </div>
-
-        <div className="col-md-3">
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaEdit size={28} className="text-danger mb-2" />
-            <h5>Edit Profile</h5>
              <Link to="/editProfile" className="btn btn-info btn-sm text-white">
-                Edit
+                View
             </Link>
           </div>
         </div>
 
         {/* 🆕 Our Services (FIXED COLOR) */}
-        <div className="col-md-3">
+        <div className="col-md-3" onClick={() => clickedCards("officeLocation")}>
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaCogs size={28} className="text-info mb-2" />
 
@@ -106,7 +59,7 @@ export default function Dashboards() {
             </Link>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3" onClick={() => clickedCards("branchManagement")}>
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaCogs size={28} className="text-info mb-2" />
 
@@ -117,7 +70,7 @@ export default function Dashboards() {
             </Link>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3" onClick={() => clickedCards("rolePermission")}>
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaCogs size={28} className="text-info mb-2" />
 
@@ -128,7 +81,7 @@ export default function Dashboards() {
             </Link>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3" onClick={() => clickedCards("userManagement")}>
           <div className="card shadow-sm border-0 text-center p-4 hover-card">
             <FaUserFriends size={28} className="text-info mb-2" />
             <h5>User Management</h5>

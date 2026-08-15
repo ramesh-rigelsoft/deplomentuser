@@ -14,7 +14,10 @@ export const MultipartPostRequest = createAsyncThunk(
          
       const response = await axios.post(url, data, {
           headers: { "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}` 
          },
+         
+         
       });
 
       return response.data;        // Success

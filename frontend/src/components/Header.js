@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import API from "../redux/API";
 import Cookies from "js-cookie";
@@ -16,8 +16,7 @@ const Header = ({
   const ownerId= parseInt(Cookies.get("secretCode"));
 
   const [logo, setLogo] = useState("");
-  const companyName = Cookies.get("companyName") || "Your Company";
-  const fileName = Cookies.get("fileName");
+  const companyName = Cookies.get("name");
   const [showDropdown, setShowDropdown] = useState(false);
   const branchDetails=JSON.parse(localStorage.getItem("branchDetails"));
   const [branchName, setBranchName] = useState(
@@ -44,6 +43,23 @@ const Header = ({
         });
     }
   }, [ownerId, dispatch]);
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
 //  useEffect(() => {
 //     if (ownerId) {
@@ -145,8 +161,11 @@ const Header = ({
             <small className="text-muted">
               Business Management System
             </small>
-            {(dashboard==="2"||dashboard==="4")&&(
-              <div className="branch-switcher">
+            {
+            
+            
+            (dashboard==="2"||dashboard==="4")&&localStorage.getItem("adTab")==="branchManagement"&&(
+              <div className="branch-switcher" ref={dropdownRef}>
                   <span>📍 {branchName}</span>
 
                   <button

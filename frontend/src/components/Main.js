@@ -10,7 +10,6 @@ import SignupForm from './SignupForm';
 import ProtectedRoute from "../security/ProtectedRoute";
 import Dashboards from './Dashboards';
 import EditProfile from './EditProfile';
-import ViewProfile from './ViewProfile';
 import ResetPassword from './ResetPassword';
 import RolePermissionManager from './RolePermissionManager';
 import AddSubUser from './AddSubUser';
@@ -38,7 +37,6 @@ export default function Main() {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboards/></ProtectedRoute>} />
         
         <Route path="/editProfile" element={<EditProfile/>}/>
-        <Route path="/viewProfile" element={<ViewProfile/>}/>
         <Route path="/resetPassword" element={<ResetPassword/>}/>
 
         <Route path="/rolesPermission" element={<RolePermissionManager/>}/>

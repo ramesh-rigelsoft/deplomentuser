@@ -9,8 +9,7 @@ export const postRequest = createAsyncThunk(
   "api/postRequest",
   async ({ url, data }, { rejectWithValue }) => {
     try {
-       const token = Cookies.get("token");
-       
+       const token = Cookies.get("token"); 
         const response = await axios.post(url, data, {
         headers: { "Content-Type": "application/json",
         Authorization: `Bearer ${token}` 

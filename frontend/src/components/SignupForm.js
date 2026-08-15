@@ -3,88 +3,111 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import API from "../redux/API";
 import { success, fail } from "../redux/WebTostar";
-import NetworkStatus from "./NetworkStatus";
+
 
 export default function Signup() {
-  const dispatch = useDispatch();
-
+   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    id:0,
     name: "",
-    email_id: "",
     mobile_no: "",
+    email_id: "",
     password: "",
-    shopType: "",
-    companyName: "",
-    gstNumber: "",
-    panNumber: "",
-    state: "",
-    city: "",
-    pincode: "",
-    addressLine1: "",
-    logo: null,
+    confirmPassword: "",
   });
-
-  const [passwordMessage, setPasswordMessage] = useState("");
+  
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [logoPreview, setLogoPreview] = useState(null);
-
-  const handlePassword = (e) => {
-    const value = e.target.value;
-    setFormData({ ...formData, password: value });
-
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{12,}$/;
-
-    setPasswordMessage(
-      regex.test(value)
-        ? "Strong password"
-        : "Min 12 chars, 1 uppercase, 1 lowercase, 1 special character"
-    );
-  };
+  const [isHuman, setIsHuman] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
+    // Remove error while typing
     setErrors((prev) => ({
       ...prev,
-      [name]: value ? false : true,
+      [name]: "",
     }));
   };
 
-  const errorStyle = (field) => ({
-    border: errors[field] ? "1px solid red" : "1px solid #ddd",
-  });
-
   const validate = () => {
-    let temp = {};
+    const newErrors = {};
 
-    Object.keys(formData).forEach((key) => {
-      if (key === "gstNumber" || key === "panNumber" || key === "logo"||key=="id") return;
-      if (!formData[key]) temp[key] = true;
-    });
+    // Name
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = "Name must be at least 3 characters";
+    }
 
-    setErrors(temp);
-    return Object.keys(temp).length === 0;
+    // Mobile
+    if (!formData.mobile_no.trim()) {
+      newErrors.mobile_no = "Mobile number is required";
+    } else if (!/^[6-9]\d{9}$/.test(formData.mobile_no)) {
+      newErrors.mobile_no = "Enter a valid 10 digit mobile number";
+    }
+
+    // Email
+    if (!formData.email_id.trim()) {
+      newErrors.email_id = "Email is required";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email_id)
+    ) {
+      newErrors.email_id = "Enter a valid email address";
+    }
+
+    // Password
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{12,}$/.test(
+        formData.password
+      )
+    ) {
+      newErrors.password =
+        "Password must be 12+ characters with uppercase, lowercase and special character";
+    }
+
+    // Confirm Password
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword =
+        "Please confirm your password";
+    } else if (
+      formData.password !== formData.confirmPassword
+    ) {
+      newErrors.confirmPassword =
+        "Passwords do not match";
+    }
+
+    // Human verification
+    if (!isHuman) {
+      newErrors.human = "Please confirm that you are human";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    //  alert("----------------"+JSON.stringify(formData));
-   
-    if (!validate()) return;
 
+    if (!validate()) {
+      return;
+    }
     setLoading(true);
 
     const data = new FormData();
-    Object.keys(formData).forEach((key) => {
-      data.append(key, formData[key]);
-    });
-    //  alert(JSON.stringify(data));
-    try {
-      const res = await API.signupAccount(dispatch, data);
+      Object.keys(formData).forEach((key) => {
+        data.append(key, formData[key]);
+      });
+
+     try {
+      const res = API.signupAccount(dispatch, data);
 
       if (res.payload.code === "200") {
         success(res.payload.message);
@@ -98,213 +121,231 @@ export default function Signup() {
     }
   };
 
+  const inputStyle = (field) => ({
+    border: errors[field]
+      ? "1px solid #dc3545"
+      : "1px solid #ced4da",
+  });
+
   return (
-    <>
-     
     <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-lg-8 col-md-10">
+        <div className="col-lg-6 col-md-8">
 
-          <form className="card shadow p-4" autoComplete="off" onSubmit={handleSubmit}>
+          <form
+            className="card shadow p-4"
+            onSubmit={handleSubmit}
+            noValidate
+          >
             <h2 className="text-center mb-4">
               Create Account
             </h2>
 
-            {/* User Info */}
-            <div className="row g-3 mb-3">
-              <div className="col-md-6">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  placeholder="Name"
-                  onChange={handleChange}
-                  style={errorStyle("name")}
-                />
-              </div>
+            {/* Name */}
+            <div className="mb-3">
+              <label className="form-label">
+                Name
+              </label>
 
-              <div className="col-md-6">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="mobile_no"
-                  placeholder="Mobile Number"
-                  onChange={handleChange}
-                  style={errorStyle("mobile_no")}
-                />
-              </div>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                placeholder="Enter your name"
+                value={formData.name}
+                onChange={handleChange}
+                style={inputStyle("name")}
+              />
 
-              <div className="col-md-6">
-                <input
-                  type="email"
-                  className="form-control"
-                  name="email_id"
-                  placeholder="Email"
-                  onChange={handleChange}
-                  style={errorStyle("email_id")}
-                />
-              </div>
-
-              <div className="col-md-6">
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Password"
-                  onChange={handlePassword}
-                  style={errorStyle("password")}
-                />
-              </div>
+              {errors.name && (
+                <small className="text-danger">
+                  {errors.name}
+                </small>
+              )}
             </div>
 
-            <small
-              className={`mb-3 d-block ${
-                passwordMessage === "Strong password"
-                  ? "text-success"
-                  : "text-danger"
-              }`}
-            >
-              {passwordMessage}
-            </small>
+            {/* Mobile */}
+            <div className="mb-3">
+              <label className="form-label">
+                Mobile Number
+              </label>
 
-            <h4 className="mb-3">Company Information</h4>
+              <input
+                type="text"
+                className="form-control"
+                name="mobile_no"
+                placeholder="Enter 10 digit mobile number"
+                value={formData.mobile_no}
+                onChange={(e) => {
+                  const value = e.target.value;
 
-            <div className="row g-3">
+                  if (/^\d*$/.test(value) && value.length <= 10) {
+                    handleChange(e);
+                  }
+                }}
+                style={inputStyle("mobile_no")}
+              />
 
-              <div className="col-md-6">
-                <select
-                  className="form-select"
-                  name="shopType"
-                  onChange={handleChange}
-                >
-                  <option value="">Select Shop Type</option>
-                  <option value="mobile_shop">Mobile Shop</option>
-                  <option value="laptop_shop">Laptop Shop</option>
-                </select>
-              </div>
+              {errors.mobile_no && (
+                <small className="text-danger">
+                  {errors.mobile_no}
+                </small>
+              )}
+            </div>
 
-              <div className="col-md-6">
+            {/* Email */}
+            <div className="mb-3">
+              <label className="form-label">
+                Email
+              </label>
+
+              <input
+                type="email"
+                className="form-control"
+                name="email_id"
+                placeholder="Enter email"
+                value={formData.email_id}
+                onChange={handleChange}
+                style={inputStyle("email_id")}
+              />
+
+              {errors.email_id && (
+                <small className="text-danger">
+                  {errors.email_id}
+                </small>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="mb-3">
+              <label className="form-label">
+                Password
+              </label>
+
+              <input
+                type="password"
+                className="form-control"
+                name="password"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={handleChange}
+                style={inputStyle("password")}
+              />
+
+              {errors.password ? (
+                <small className="text-danger">
+                  {errors.password}
+                </small>
+              ) : formData.password ? (
+                <small className="text-success">
+                  Strong password
+                </small>
+              ) : null}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="mb-3">
+              <label className="form-label">
+                Confirm Password
+              </label>
+
+              <input
+                type="password"
+                className="form-control"
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                style={inputStyle("confirmPassword")}
+              />
+
+              {errors.confirmPassword && (
+                <small className="text-danger">
+                  {errors.confirmPassword}
+                </small>
+              )}
+
+              {!errors.confirmPassword &&
+                formData.confirmPassword &&
+                formData.password ===
+                  formData.confirmPassword && (
+                  <small className="text-success">
+                    Passwords match ✓
+                  </small>
+                )}
+            </div>
+
+            {/* Human Verification */}
+            <div className="mb-3">
+              <div
+                className={`border rounded p-3 d-flex align-items-center ${
+                  errors.human ? "border-danger" : ""
+                }`}
+                style={{
+                  backgroundColor: "#f8f9fa",
+                }}
+              >
                 <input
-                  type="text"
-                  className="form-control"
-                  name="companyName"
-                  placeholder="Company Name"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-6">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="gstNumber"
-                  placeholder="GST Number"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-6">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="panNumber"
-                  placeholder="PAN Number"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="state"
-                  placeholder="State"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="city"
-                  placeholder="city"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="pincode"
-                  placeholder="Pincode"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-12">
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  name="addressLine1"
-                  placeholder="Company Address"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-6">
-                <input
-                  type="file"
-                  className="form-control"
+                  type="checkbox"
+                  className="form-check-input me-3"
+                  id="humanCheck"
+                  checked={isHuman}
                   onChange={(e) => {
-                    const file = e.target.files[0];
-                    setFormData({ ...formData, logo: file });
+                    setIsHuman(e.target.checked);
 
-                    if (file) {
-                      setLogoPreview(URL.createObjectURL(file));
-                    }
+                    setErrors((prev) => ({
+                      ...prev,
+                      human: "",
+                    }));
+                  }}
+                  style={{
+                    width: "20px",
+                    height: "20px",
                   }}
                 />
+
+                <label
+                  htmlFor="humanCheck"
+                  className="mb-0"
+                  style={{ cursor: "pointer" }}
+                >
+                  I'm not a robot
+                </label>
+
+                <span
+                  className="ms-auto text-muted"
+                  style={{ fontSize: "12px" }}
+                >
+                  ✓ Human Verification
+                </span>
               </div>
 
-              <div className="col-md-6 text-center">
-                <div className="border rounded p-2">
-                  {logoPreview ? (
-                    <img
-                      src={logoPreview}
-                      alt="Logo Preview"
-                      className="img-fluid"
-                      style={{ maxHeight: "120px" }}
-                    />
-                  ) : (
-                    <span className="text-muted">
-                      No Logo Selected
-                    </span>
-                  )}
-                </div>
-              </div>
-
+              {errors.human && (
+                <small className="text-danger">
+                  {errors.human}
+                </small>
+              )}
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
-              className="btn btn-primary w-100 mt-4"
-              disabled={loading}
+              className="btn btn-primary w-100 mt-2"
             >
-              {loading ? "Creating..." : "Create Account"}
+              Create Account
             </button>
 
             <p className="text-center mt-3 mb-0">
               Already have an account?{" "}
-              <Link to="/login">Login</Link>
+              <Link to="/login">
+                Login
+              </Link>
             </p>
+
           </form>
 
         </div>
       </div>
     </div>
-
-    <NetworkStatus />
-  </>
-);
+  );
 }
