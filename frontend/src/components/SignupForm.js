@@ -146,7 +146,7 @@ export default function Signup() {
   });
 
   return (
-    <div className="container py-5">
+    <div className="container py-5 page-scroll">
       <div className="row justify-content-center">
         <div className="col-lg-6 col-md-8">
 

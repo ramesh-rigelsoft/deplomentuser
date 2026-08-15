@@ -277,12 +277,8 @@ const handleSubmit = (e) => {
   };
 
   return (
-    <div  className="container py-3"
-      style={{
-        minHeight: "100vh",
-        overflowY: "auto"
-      }}>
-      <Header
+    <div  className="container py-3 page-scroll">
+    <Header
         title="Office Mangement"
         subTitle="Manage everything in one place"
         dashboard="1"

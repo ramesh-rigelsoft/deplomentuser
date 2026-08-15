@@ -21,7 +21,7 @@ export default function Dashboards() {
   // };
 
   return (
-    <div className="min-vh-100 bg-light p-4">
+    <div className="bg-light page-scroll">
 
 {/* Coming Soon Overlay */}
 {/* <div className="coming-soon-overlay">

@@ -153,7 +153,7 @@ const fetchPermissionByRolePage = async () => {
   };
 
   return (
-    <div className="min-vh-100 bg-light p-4">
+    <div className="bg-light p-2 page-scroll">
 
       <Header
         title="RBAC Dashboard"

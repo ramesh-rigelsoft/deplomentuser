@@ -212,7 +212,7 @@ export default function ViewProfile() {
   });
 
   return (
-    <div className="min-vh-100 bg-light p-4">
+    <div className="container py-3  page-scroll">
 
       <Header
         title="User Management"

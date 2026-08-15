@@ -160,7 +160,7 @@ const AddSubUser = () => {
 
 
   return (
-    <div className="container py-3">
+    <div className="container py-3  page-scroll">
       <Header
         title="User Mangement"
         subTitle="Manage everything in one place"

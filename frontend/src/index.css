@@ -146,6 +146,40 @@ select:focus {
   margin-top: 4%;
 }
 
+/* .page-scroll {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+} */
+
+.page-scroll {
+  height: 100vh;
+  /* height: calc(100vh - 110px); */
+  overflow-y: scroll;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Chrome / Edge / Safari */
+.page-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.page-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.page-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+.page-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
 .nav-tabs .nav-link.active {
   background-color: orangered;  /* blue background */
 }
