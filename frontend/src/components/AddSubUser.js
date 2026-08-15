@@ -164,6 +164,7 @@ const AddSubUser = () => {
       <Header
         title="User Mangement"
         subTitle="Manage everything in one place"
+        dashboard="1"
       />
       <div className="row g-3">
 

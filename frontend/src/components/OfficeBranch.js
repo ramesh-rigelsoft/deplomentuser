@@ -46,17 +46,74 @@ const OfficeBranch = () => {
   };
   
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const { name, value } = e.target;
 
-    // clear error on typing
-    setErrors({
-      ...errors,
-      [e.target.name]: "",
-    });
-  };
+  let newValue = value;
+
+  if (name === "pincode") {
+    // Sirf numbers allow karega
+    newValue = value.replace(/\D/g, "").slice(0, 6);
+  }
+
+  if (name === "address") {
+    // Maximum 300 characters
+    newValue = value.slice(0, 300);
+  }
+
+  setFormData({
+    ...formData,
+    [name]: newValue,
+  });
+
+  if (name === "pincode") {
+    if (!newValue) {
+      setErrors({
+        ...errors,
+        pincode: "Pincode is required",
+      });
+    } else if (!/^[1-9][0-9]{5}$/.test(newValue)) {
+      setErrors({
+        ...errors,
+        pincode: "Please enter a valid 6-digit pincode",
+      });
+    } else {
+      const updatedErrors = { ...errors };
+      delete updatedErrors.pincode;
+      setErrors(updatedErrors);
+    }
+  }
+
+  if (name === "address") {
+    if (!newValue.trim()) {
+      setErrors({
+        ...errors,
+        address: "Address is required",
+      });
+    } else if (newValue.length > 300) {
+      setErrors({
+        ...errors,
+        address: "Address cannot exceed 300 characters",
+      });
+    } else {
+      const updatedErrors = { ...errors };
+      delete updatedErrors.address;
+      setErrors(updatedErrors);
+    }
+  }
+};
+  // const handleChange = (e) => {
+    
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.name]: e.target.value,
+  //   });
+
+  //   // clear error on typing
+  //   setErrors({
+  //     ...errors,
+  //     [e.target.name]: "",
+  //   });
+  // };
 
   // ✅ VALIDATION FUNCTION
   const validate = () => {
@@ -228,6 +285,7 @@ const handleSubmit = (e) => {
       <Header
         title="Office Mangement"
         subTitle="Manage everything in one place"
+        dashboard="1"
       />
       <div className="row g-3">
 
@@ -241,6 +299,7 @@ const handleSubmit = (e) => {
               <input
                 type="text"
                 name="branchName"
+                maxLength={200}
                 className="form-control form-control-sm mb-2"
                 placeholder="Branch Name"
                 value={formData.branchName}
@@ -340,6 +399,8 @@ const handleSubmit = (e) => {
                     className="form-control form-control-sm"
                     name="pincode"
                     placeholder="Pincode"
+                    maxLength={6}
+                    inputMode="numeric"
                     value={formData.pincode}
                     onChange={handleChange}
                   />

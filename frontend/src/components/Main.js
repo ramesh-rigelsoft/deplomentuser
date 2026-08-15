@@ -21,6 +21,7 @@ import SalesReport from '../pages/SalesReport';
 import EntryReport from '../pages/EntryReport';
 import GarbageItem from '../pages/GarbageItem';
 import BranchDashboard from '../pages/BranchDashboard';
+import AppLayout from '../layout/AppLayout';
 
 export default function Main() {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export default function Main() {
 
   return (
       <Routes>
+         {/* <Route element={<AppLayout />}> */}
         <Route exact path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginForm/>} />
         <Route path="/signup" element={<SignupForm/>} />
@@ -53,6 +55,7 @@ export default function Main() {
         {/* <Route path="/branchEntryReport" element={<OfficeBranch/>}/> */}
         <Route path="/branchExpense" element={<BranchExpense />}/>
         <Route path="/branchGarbage" element={<GarbageItem />}/>
+        {/* </Route> */}
       </Routes>
   );
 }

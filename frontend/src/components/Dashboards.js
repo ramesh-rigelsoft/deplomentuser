@@ -8,7 +8,7 @@ import Header from "./Header";
 export default function Dashboards() {
 
   const clickedCards =(name)=> {
-    localStorage.setItem("adTab",name);
+    localStorage.setItem("tab",name);
   };
 
 

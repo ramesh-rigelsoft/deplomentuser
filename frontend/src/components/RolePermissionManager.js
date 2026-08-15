@@ -158,6 +158,7 @@ const fetchPermissionByRolePage = async () => {
       <Header
         title="RBAC Dashboard"
         subTitle="Manage role-based permissions"
+        dashboard="1"
       />
 
       <div className="row justify-content-center">

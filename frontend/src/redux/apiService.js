@@ -18,7 +18,7 @@ export const callGetAPI = (dispatch, url, params) => {
 };
 
 export const multipartAPI = (dispatch, url, data) => {
-   return dispatch(MultipartPostRequest({ url, data }));//.unwrap();
+   return dispatch(MultipartPostRequest({ url, data })).unwrap();
 };
 
 export const branchApiCall = (dispatch, url, data) => {

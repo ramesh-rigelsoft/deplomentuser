@@ -409,7 +409,7 @@ useEffect(() => {
 
   return (
     <div>
-          <Header
+        <Header
           title="Branch Mangement"
           subTitle="Manage everything in one place"
           dashboard = "2"

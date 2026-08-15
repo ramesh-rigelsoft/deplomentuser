@@ -217,6 +217,7 @@ export default function ViewProfile() {
       <Header
         title="User Management"
         subTitle="Manage everything in one place"
+        dashboard="1"
       />
 
       <div className="row justify-content-center">

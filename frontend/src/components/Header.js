@@ -25,6 +25,7 @@ const Header = ({
       : branchDetails?.branchName||"All Location"
   );
   const [branches,setBranches]=useState([]);
+
   useEffect(() => {
     if (ownerId) {
       API.fetchOfficeBranch(dispatch, { userId: ownerId })
@@ -43,23 +44,23 @@ const Header = ({
         });
     }
   }, [ownerId, dispatch]);
-  const dropdownRef = useRef(null);
-  useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target)
-      ) {
-        setShowDropdown(false);
-      }
-    };
+const dropdownRef = useRef(null);
+useEffect(() => {
+  const handleOutsideClick = (event) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target)
+    ) {
+      setShowDropdown(false);
+    }
+  };
 
-    document.addEventListener("mousedown", handleOutsideClick);
+  document.addEventListener("mousedown", handleOutsideClick);
 
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
+  return () => {
+    document.removeEventListener("mousedown", handleOutsideClick);
+  };
+}, []);
 
 //  useEffect(() => {
 //     if (ownerId) {
@@ -164,7 +165,7 @@ const Header = ({
             {
             
             
-            (dashboard==="2"||dashboard==="4")&&localStorage.getItem("adTab")==="branchManagement"&&(
+            (dashboard==="4")&&(
               <div className="branch-switcher" ref={dropdownRef}>
                   <span>📍 {branchName}</span>
 

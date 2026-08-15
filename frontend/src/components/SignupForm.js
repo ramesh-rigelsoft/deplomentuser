@@ -93,32 +93,50 @@ export default function Signup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+      e.preventDefault();
 
-    if (!validate()) {
-      return;
-    }
-    setLoading(true);
+      if (!validate()) {
+        return;
+      }
 
-    const data = new FormData();
+      setLoading(true);
+
+      const data = new FormData();
+
       Object.keys(formData).forEach((key) => {
         data.append(key, formData[key]);
       });
 
-     try {
-      const res = API.signupAccount(dispatch, data);
+      try {
+        const res = await API.signupAccount(dispatch, data);
 
-      if (res.payload.code === "200") {
-        success(res.payload.message);
-      } else {
-        fail(res.payload.message);
+        console.log("Signup Response:", res);
+
+        // Success
+        if (res?.code === 200 || res?.code === "200") {
+          success(res?.message || "Your account has been created successfully.");
+        } 
+        // Backend error response
+        else {
+          fail(res?.message || "Signup failed.");
+        }
+
+      } catch (err) {
+        console.log("Signup Error:", err);
+
+        // Backend se exact message
+        const message =
+          err?.message ||
+          err?.response?.data?.message ||
+          err?.data?.message ||
+          "Server Down";
+
+        fail(message);
+
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      fail("Server Down");
-    } finally {
-      setLoading(false);
-    }
   };
 
   const inputStyle = (field) => ({
