@@ -686,7 +686,7 @@ const handlePay = () => {
 
             {/* START DATE */}
 
-            <div className="col-md-4">
+            <div className="col-md-3">
 
               <label className="form-label">
                 Subscription Start
@@ -702,27 +702,9 @@ const handlePay = () => {
 
             </div>
 
-            {/* CREATED DATE */}
-
-            <div className="col-md-4">
-
-              <label className="form-label">
-                Created At
-              </label>
-
-              <input
-                className="form-control"
-                value={formatDate(
-                  viewSubscription.createdAt
-                )}
-                readOnly
-              />
-
-            </div>
-
             {/* STATUS */}
 
-            <div className="col-md-4">
+            <div className="col-md-3">
 
               <label className="form-label">
                 Status

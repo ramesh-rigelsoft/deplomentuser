@@ -175,8 +175,8 @@ export default function ViewProfile() {
         dispatch,
         updateData
       );
-
-      if (res?.payload?.code === "200") {
+      
+      if (res.code === "200") {
         success(
           res?.payload?.message ||
             "Account updated successfully"
