@@ -27,7 +27,7 @@ const OfficeBranch = () => {
 });
 
   const [branchs, setBranchs] = useState([]);
-  const [editIndex, setEditIndex] = useState(null);
+  const [editBranchId, setEditBranchId] = useState(null);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -181,7 +181,7 @@ const handleSubmit = async (e) => {
       success(res.message);
       officeList();
       formReset();
-      setEditIndex(null);
+      setEditBranchId(null);
     } else {
       fail(res.message || "Something went wrong.");
     }
@@ -197,66 +197,57 @@ const handleSubmit = async (e) => {
   setErrors({});
 };
 
-  // CREATE / UPDATE USER
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//    if (!validate()) return; // ❌ stop if invalid
-// // alert(JSON.stringify(formData));
-//   //  return;
-//   console.log(JSON.stringify(formData));
-//     API.saveOfficeBranch(dispatch, formData)
-//     .then((res) => {
-//       if (res.payload.code === '200') {
-//         success(res.payload.message);
-//         // setFormData({
-//         //   id: "",
-//         //   branchName: "",
-//         //   address: "",
-//         //   ownerId: ownerId,
-//         // });
-//         officeList();
-//       } else {
-//         fail(res.payload.message);
-//       }
-//     }).catch((err) => {
-//       console.error(err);
-//       fail('Please contact to service provider.');
-//     });
+const handleEdit = (branchId) => {
+  const branchDetails = branchs.find(
+    (branch) => branch.id === branchId
+  );
 
-//     if (editIndex !== null) {
-//       // const updatedUsers = [...users];
-//       // updatedUsers[editIndex] = formData;
-//       // setUsers(updatedUsers);
-//       // setEditIndex(null);
+  if (!branchDetails) {
+    console.error("Branch not found:", branchId);
+    return;
+  }
 
-//     } else {
-//       // setUsers([...users, formData]);
-//     }
+  setFormData({
+    id: branchDetails.id || "",
+    branchName: branchDetails.branchName || "",
+    ownerId: ownerId,
+    status: branchDetails.status ?? true,
+    shopType: branchDetails.shopType || "",
+    gstNumber: branchDetails.gstNumber || "",
+    panNumber: branchDetails.panNumber || "",
+    state: branchDetails.state || "",
+    city: branchDetails.city || "",
+    pincode: branchDetails.pincode || "",
+    address: branchDetails.address || "",
+    logo: null
+  });
 
-    
+  setEditBranchId(branchDetails.id);
+  setErrors({});
 
-//     setErrors({});
-//   };
+  // Agar existing logo API se mil raha hai
+  // setLogoPreview(branchDetails.logo || null);
+};
 
-  const handleEdit = (index) => {
-    const branchDetails=branchs[index];
-    setFormData({
-      id: branchDetails?.id || "",
-      branchName: branchDetails?.branchName || "",
-      ownerId: ownerId,
-      status: branchDetails?.status ?? true,
-      shopType: branchDetails?.shopType || "",
-      gstNumber: branchDetails?.gstNumber || "",
-      panNumber: branchDetails?.panNumber || "",
-      state: branchDetails?.state || "",
-      city: branchDetails?.city || "",
-      pincode: branchDetails?.pincode || "",
-      address: branchDetails?.address || "",
-      logo: null
-    });
-    setEditIndex(index);
-    setErrors({});
-  };
+  // const handleEdit = (index) => {
+  //   const branchDetails=branchs[index];
+  //   setFormData({
+  //     id: branchDetails?.id || "",
+  //     branchName: branchDetails?.branchName || "",
+  //     ownerId: ownerId,
+  //     status: branchDetails?.status ?? true,
+  //     shopType: branchDetails?.shopType || "",
+  //     gstNumber: branchDetails?.gstNumber || "",
+  //     panNumber: branchDetails?.panNumber || "",
+  //     state: branchDetails?.state || "",
+  //     city: branchDetails?.city || "",
+  //     pincode: branchDetails?.pincode || "",
+  //     address: branchDetails?.address || "",
+  //     logo: null
+  //   });
+  //   setEditBranchId(index);
+  //   setErrors({});
+  // };
 
   const formReset=()=>{
     setFormData({
@@ -291,7 +282,7 @@ const handleSubmit = async (e) => {
         <div className="col-12 col-md-4">
           <div className="card shadow p-2 p-md-3">
             <h5 className="text-center mb-3">
-              {editIndex !== null ? "Update Office" : "Add Office"}
+              {editBranchId !== null ? "Update Office" : "Add Office"}
             </h5>
             <form onSubmit={handleSubmit}>
               <input
@@ -318,8 +309,9 @@ const handleSubmit = async (e) => {
                     onChange={handleChange}
                   >
                     <option value="">Select Shop Type</option>
-                    <option value="mobile_shop">Mobile Shop</option>
-                    <option value="laptop_shop">Laptop Shop</option>
+                    <option value="1">Mobile Shop</option>
+                    <option value="2">Laptop Shop</option>
+                    <option value="3">Electronics & Home Appliances Shop</option>
                   </select>
                   {errors.shopType && (
                     <small className="text-danger">{errors.shopType}</small>
@@ -538,10 +530,10 @@ const handleSubmit = async (e) => {
             </section>
             <button
                 className={`btn w-100 btn-sm ${
-                  editIndex !== null ? "btn-primary" : "btn-success"
+                  editBranchId !== null ? "btn-primary" : "btn-success"
                 }`}
               >
-                {editIndex !== null ? "Update Branch" : "Create Branch"}
+                {editBranchId !== null ? "Update Branch" : "Create Branch"}
               </button>
 
             </form>
@@ -574,15 +566,24 @@ const handleSubmit = async (e) => {
                     </tr>
                   ) : (
                     branchs.map((branch, index) => (
-                      <tr key={index}>
+                      <tr key={branch.id}>
                         <td>{branch.branchCode}</td>
                         <td>{branch.branchName}</td>
                         <td>{branch.address}</td>
-                        <td>{branch.status ? "Active" : "Inactive"}</td>
+                        <td>
+                          <span
+                            className={`badge rounded-pill ${
+                              branch.status ? "bg-success" : "bg-danger"
+                            }`}
+                          >
+                            {branch.status ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+
                         <td>
                           <button
                             className="btn btn-warning btn-sm"
-                            onClick={() => handleEdit(index)}
+                            onClick={() => handleEdit(branch.id)}
                           >
                             Edit
                           </button>

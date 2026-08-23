@@ -8,11 +8,11 @@ async ({ domain, endpoint, data }, { rejectWithValue }) => {
 try {
   const finalUrl = endpoint.replace(
     "http://localhost:8089",
-    "http://localhost:8088"
+    "http://localhost:8078"
   );
  const token = Cookies.get("token");
  const multipleBranch = Cookies.get("multipleBranch");
- const branchCode = Cookies.get("branchCode");      
+ const branchCode = Cookies.get("branchCode")||null;      
 
   const response = await axios.post(
     finalUrl,

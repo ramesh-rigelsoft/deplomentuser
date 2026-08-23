@@ -22,14 +22,14 @@ export default function BranchDashboard() {
       icon: "bi bi-box-seam"
     },
     {
-      title: "Sales Report",
+      title: "Sales",
       description: "View item-wise sales reports",
       path: "/branchSalesReport",
       color: "info",
       icon: "bi bi-bar-chart"
     },
     {
-      title: "Entry Report",
+      title: "Entry",
       description: "Track branch entries and records",
       path: "/branchEntryReport",
       color: "warning",

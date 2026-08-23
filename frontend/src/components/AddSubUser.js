@@ -16,6 +16,7 @@ const AddSubUser = () => {
     password: "",
     ownerId: ownerId,
     mobile_no: "",
+    status:1,
     role: "",
     branchCode:""
   });
@@ -23,6 +24,7 @@ const AddSubUser = () => {
   const [users, setUsers] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const [branches,setBranches]=useState([]);
   useEffect(() => {
@@ -113,7 +115,6 @@ const AddSubUser = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return; // ❌ stop if invalid
-
     API.addUser(dispatch, formData)
     .then((res) => {
       if (res.payload.code === '200') {
@@ -217,14 +218,34 @@ const AddSubUser = () => {
               )}
 
               {/* PASSWORD */}
-              <input
+              <div className="input-group input-group-sm mt-2 mb-1">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  className="form-control"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex="-1"
+                >
+                  <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"} />
+                </button>
+              </div>
+
+              {/* <input
                 type="password"
                 name="password"
                 className="form-control form-control-sm mb-1 mt-2"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-              />
+              /> */}
               {errors.password && (
                 <small className="text-danger">{errors.password}</small>
               )}
@@ -264,9 +285,9 @@ const AddSubUser = () => {
 
                {/* ROLE */}
               <select
-                name="role"
+                name="status"
                 className="form-select form-select-sm mb-1 mt-2"
-                value={formData.role}
+                value={formData.status}
                 onChange={handleChange}
               >
                 <option value="1">Active</option>
@@ -318,7 +339,16 @@ const AddSubUser = () => {
                         <td>{user.email_id}</td>
                         <td>{user.mobile_no}</td>
                         <td>{user.role}</td>
-                        <td>{user.status===1?'Active':'InActive'}</td>
+                        <td>
+                          <span
+                            className={`badge rounded-pill ${
+                              user.status === 1 ? "bg-success" : "bg-danger"
+                            }`}
+                          >
+                            {user.status === 1 ? "Active" : "InActive"}
+                          </span>
+                        </td>
+
                         <td>
                           <span
                             className="btn btn-warning btn-sm me-1"

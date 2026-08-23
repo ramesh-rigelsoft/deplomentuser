@@ -12,7 +12,7 @@ import PageHeader from "./PageHeader";
   /* ---------------- EXPENSE LIST ---------------- */
 
 const BranchExpense = () => {
-  
+  const dispatch = useDispatch();
   const secret2 = Cookies.get("secretCode");
   const [expenses, setExpenses] = useState([]);
   const [previousIndex, setPreviousIndex] = useState(0);
@@ -50,6 +50,7 @@ const BranchExpense = () => {
   }
   const searchExpenses = async () => {
     try {
+          
       API.expenseListAndSearch(dispatch, criteria)
         .then(res => {
           let expense = res.payload;

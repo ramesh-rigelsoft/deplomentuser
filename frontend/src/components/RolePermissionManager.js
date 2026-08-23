@@ -265,9 +265,7 @@ export default function RBACPermissionPanel() {
         );
 
       if (res?.payload?.code === "200") {
-        success(
-          "Permission added successfully"
-        );
+        success("Permission added successfully");
 
         await fetchPermittedPages();
       } else {

@@ -163,9 +163,8 @@ useEffect(() => {
               Business Management System
             </small>
             {
-            
-            
-            (dashboard==="4")&&(
+                        
+            (dashboard==="4"||dashboard==="2")&&(
               <div className="branch-switcher" ref={dropdownRef}>
                   <span>📍 {branchName}</span>
 
