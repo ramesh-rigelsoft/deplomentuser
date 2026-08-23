@@ -17,6 +17,8 @@ export const ENDPOINT = {
    ADD_SUBUSER: `${BASE_URL}/access/addSubUser`,
    SAVE_ROLES_PERMISSION: `${BASE_URL}/access/saveRolePermission`,
    FETCH_PERMISSION: `${BASE_URL}/access/fetch`,
+   FETCH_PERMITTED_PAGES: `${BASE_URL}/access/fetchPremittedPagesRoleWise`,
+   REMOVE_PERMITTED_PAGES: `${BASE_URL}/access/removedPermission`,
    FETCH_USERLIST: `${BASE_URL}/access/userList`,
    SUBSCRIPTION_LIST: `${BASE_URL}/access/subscriptionList`,
    USER_SUBSCRIPTION_LIST: `${BASE_URL}/access/userSubscriptionList`,

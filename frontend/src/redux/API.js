@@ -34,6 +34,12 @@ const API = {
   fetchPermission(dispatch, requestData) {
     return callAPI(dispatch, ENDPOINT.FETCH_PERMISSION, requestData);
   },
+  fetchPermittedPagesRoleWise(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.FETCH_PERMITTED_PAGES, requestData);
+  },
+  removePermisstion(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.REMOVE_PERMITTED_PAGES, requestData);
+  },
   fetchSubUser(dispatch, requestData) {
     return callAPI(dispatch, ENDPOINT.FETCH_USERLIST, requestData);
   },

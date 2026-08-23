@@ -242,7 +242,7 @@ const handleSubmit = async (e) => {
     const branchDetails=branchs[index];
     setFormData({
       id: branchDetails?.id || "",
-      branchName: branchDetails?.branchName || "dfghj",
+      branchName: branchDetails?.branchName || "",
       ownerId: ownerId,
       status: branchDetails?.status ?? true,
       shopType: branchDetails?.shopType || "",
