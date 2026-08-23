@@ -154,8 +154,7 @@ export default function RBACPermissionPanel() {
 
     setPermissions((prev) => ({
       ...prev,
-      branchCode: branchCode,
-      id: 0
+      branchCode: branchCode
     }));
   };
 
@@ -389,9 +388,9 @@ export default function RBACPermissionPanel() {
                   }
                 >
 
-                  <option value="">
+                  {/* <option value="">
                     Select Branch
-                  </option>
+                  </option> */}
 
                   {branches.map(
                     (branch) => (
