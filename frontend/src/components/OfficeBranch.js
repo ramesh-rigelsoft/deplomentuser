@@ -5,30 +5,42 @@ import { success, fail } from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import Header from "./Header";
+import GoogleMapLocationSelector from "./MapLocationSelector";
+import ConfirmModal from "./ConfirmModal";
 
 const OfficeBranch = () => {
   const ownerId= parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
   const [logoPreview, setLogoPreview] = useState(null);
-  const [formData, setFormData] = useState({
-  id: "",
-  branchName: "",
-  ownerId: ownerId,
-  status: true,
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
-  shopType: "",
-  gstNumber: "",
-  panNumber: "",
-  state: "",
-  city: "",
-  pincode: "",
-  address: "",
-  logo: null,
-});
+  const [formData, setFormData] = useState({
+    id: "",
+    branchName: "",
+    ownerId: ownerId,
+    status: true,
+
+    shopType: "",
+    gstNumber: "",
+    panNumber: "",
+    state: "",
+    city: "",
+    pincode: "",
+    address: "",
+    logo: null,
+
+
+  // geoLocation: "",
+  // latitude: "",
+  // longitude: "",
+  // gpsAccuracy: "",
+  // locationRadius: 100,
+  });
 
   const [branchs, setBranchs] = useState([]);
   const [editBranchId, setEditBranchId] = useState(null);
   const [errors, setErrors] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     officeList();
@@ -44,7 +56,10 @@ const OfficeBranch = () => {
         });
     }
   };
-  
+  const handleGeoLocation = () => {
+    setModalOpen(true);
+  };
+
   const handleChange = (e) => {
   const { name, value } = e.target;
 
@@ -249,6 +264,48 @@ const handleEdit = (branchId) => {
   //   setErrors({});
   // };
 
+  const updateLocation = async (selectedLocation) => {
+      const data = new FormData();
+      data.append("id", formData.id || "");
+      data.append("branchName", formData.branchName || "");
+      data.append("ownerId", formData.ownerId || "");
+      data.append("status", formData.status ?? true);
+  
+      data.append("shopType", formData.shopType || "");
+      data.append("gstNumber", formData.gstNumber || "");
+      data.append("panNumber", formData.panNumber || "");
+      data.append("state", formData.state || "");
+      data.append("city", formData.city || "");
+      data.append("pincode", formData.pincode || "");
+      data.append("address", formData.address || "");
+  
+      data.append("ofcLat", selectedLocation.latitude || "");
+      data.append("ofcLng", selectedLocation.longitude || "");
+      data.append("centerRedious", selectedLocation.selectedRadius || "");
+  
+      // Logo only when selected
+      if (formData.logo instanceof File) {
+        data.append("logo", formData.logo);
+      }
+  
+      // Check FormData
+      for (let pair of data.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+      try {
+      const res = await API.saveOfficeBranch(dispatch, data);
+        console.log("API RESPONSE:", res);
+        if (res.code === "200") {
+          success(res.message);
+        } else {
+          fail(res.message || "Something went wrong.");
+        }
+  
+      } catch (err) {
+        console.error("SAVE ERROR:", err);
+      }
+  };
+
   const formReset=()=>{
     setFormData({
       id: "",
@@ -344,15 +401,39 @@ const handleEdit = (branchId) => {
                 value={formData.gstNumber}
                 onChange={handleChange}
               />
-
+            {!editBranchId ? (
               <input
                 type="text"
-                className="form-control form-control-sm mb-2"
+                className="form-control form-control-sm mb-1"
                 name="panNumber"
                 placeholder="PAN Number"
                 value={formData.panNumber}
                 onChange={handleChange}
-              />
+              />):(
+              <div className="row">
+                {/* PAN Number */}
+                <div className="col-6 mb-2">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    name="panNumber"
+                    placeholder="PAN Number"
+                    value={formData.panNumber}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* Geo Location */}
+                <div className="col-6 mb-2">
+                  <span
+                    className="btn btn-outline-primary btn-sm w-100"
+                    onClick={handleGeoLocation}
+                  >
+                    📍 Geo Location
+                  </span>
+                </div>
+              </div>
+            )}
 
               <div className="row">
                 <div className="col-md-4 mb-2">
@@ -598,6 +679,37 @@ const handleEdit = (branchId) => {
         </div>
 
       </div>
+
+      <ConfirmModal
+        open={modalOpen}
+        title="Office Geo Location"
+        message="Map par apni office location select karein."
+        confirmText="Save Location"
+        cancelText="Cancel"
+        type="info"
+
+        onCancel={() => {
+          setModalOpen(false);
+          setSelectedLocation(null);
+        }}
+
+        onConfirm={() => {
+          if (!selectedLocation) {
+            fail("Please select office location.");
+            return;
+          }
+
+          updateLocation(selectedLocation);
+          setModalOpen(false);
+        }}
+      >
+        <GoogleMapLocationSelector
+          formData={formData}
+          onLocationChange={setSelectedLocation}
+        />
+      </ConfirmModal>
+
+
     </div>
   );
 };

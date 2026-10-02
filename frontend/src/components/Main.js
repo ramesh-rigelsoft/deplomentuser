@@ -23,6 +23,7 @@ import GarbageItem from '../pages/GarbageItem';
 import BranchDashboard from '../pages/BranchDashboard';
 import AppLayout from '../layout/AppLayout';
 import SubscriptionPlanList from './SubscriptionList';
+import Home from './Home';
 
 export default function Main() {
   const navigate = useNavigate();
@@ -34,7 +35,9 @@ export default function Main() {
   return (
       <Routes>
          {/* <Route element={<AppLayout />}> */}
-        <Route exact path="/" element={<Navigate to="/login" />} />
+        {/* <Route exact path="/" element={<Navigate to="" />} /> */}
+        
+        <Route path="/" element={<Home/>} />
         <Route path="/login" element={<LoginForm/>} />
         <Route path="/signup" element={<SignupForm/>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboards/></ProtectedRoute>} />
@@ -47,7 +50,6 @@ export default function Main() {
         <Route path="/officeLocation" element={<OfficeBranch/>}/>
         <Route path="/branchs" element={<BranchDashboard/>}/>
         <Route path="/subscriptionPlanList" element={<SubscriptionPlanList/>}/>
-       
        
         {/* branch route */}
         <Route path="/branchDashboard" element={<BranchSalesDashboar />}/>

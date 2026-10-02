@@ -3,6 +3,7 @@ import React,{ useState,useEffect } from "react";
 import Main from './components/Main';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SecretKeyProvider } from "./security/SecretKeyContext";
 
 function App() {
 //    const host = window.location.hostname;
@@ -12,8 +13,10 @@ function App() {
 // 	}
   return (
     	<div>
-	    	<Main/>
-			<ToastContainer />
+			<SecretKeyProvider>
+				<Main/>
+				<ToastContainer />
+			</SecretKeyProvider>
 	    </div>
   );
 }
