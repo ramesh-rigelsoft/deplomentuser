@@ -55,9 +55,14 @@ public class UserDetailService implements UserDetailsService {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
         if (role != null && !role.isBlank()) {
-            grantedAuthorities.add(
-                new SimpleGrantedAuthority(role)
-            );
+            grantedAuthorities.add(new SimpleGrantedAuthority(role));
+            String upper = role.toUpperCase();
+            if (!role.equalsIgnoreCase(upper)) {
+                grantedAuthorities.add(new SimpleGrantedAuthority(upper));
+            }
+            if (!upper.startsWith("ROLE_")) {
+                grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + upper));
+            }
         }
 
         return grantedAuthorities;

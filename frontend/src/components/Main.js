@@ -25,6 +25,18 @@ import AppLayout from '../layout/AppLayout';
 import SubscriptionPlanList from './SubscriptionList';
 import Home from './Home';
 
+// Super Admin Module
+import SuperAdminProtectedRoute from '../superadmin/security/SuperAdminProtectedRoute';
+import SuperAdminLogin from '../superadmin/pages/SuperAdminLogin';
+import SuperAdminDashboard from '../superadmin/pages/SuperAdminDashboard';
+import SuperAdminPlans from '../superadmin/pages/SuperAdminPlans';
+import SuperAdminAdmins from '../superadmin/pages/SuperAdminAdmins';
+import SuperAdminAdminDetail from '../superadmin/pages/SuperAdminAdminDetail';
+import SuperAdminUsers from '../superadmin/pages/SuperAdminUsers';
+import SuperAdminSubscriptions from '../superadmin/pages/SuperAdminSubscriptions';
+import SuperAdminReports from '../superadmin/pages/SuperAdminReports';
+import SuperAdminAuditLogs from '../superadmin/pages/SuperAdminAuditLogs';
+
 export default function Main() {
   const navigate = useNavigate();
 
@@ -60,6 +72,74 @@ export default function Main() {
         <Route path="/branchExpense" element={<BranchExpense />}/>
         <Route path="/branchGarbage" element={<GarbageItem />}/>
         {/* </Route> */}
+
+        {/* Super Admin Routes */}
+        <Route path="/super-admin/login" element={<SuperAdminLogin />} />
+        <Route path="/super-admin" element={<Navigate to="/super-admin/dashboard" replace />} />
+        <Route
+          path="/super-admin/dashboard"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminDashboard />
+            </SuperAdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/subscription-plans"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminPlans />
+            </SuperAdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/admins"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminAdmins />
+            </SuperAdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/admins/:id"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminAdminDetail />
+            </SuperAdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/users"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminUsers />
+            </SuperAdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/subscriptions"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminSubscriptions />
+            </SuperAdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/reports"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminReports />
+            </SuperAdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/audit-logs"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminAuditLogs />
+            </SuperAdminProtectedRoute>
+          }
+        />
       </Routes>
   );
 }
