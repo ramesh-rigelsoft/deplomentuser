@@ -56,11 +56,10 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
         }
 
         String username = loginRequest.getUsername().trim();
-        String password = loginRequest.getPassword().trim();
         List<User> users = entityManager.createQuery(
-                "SELECT u FROM User u WHERE (LOWER(u.email_id) = :identifier OR LOWER(u.name) = :identifier) AND UPPER(u.role) = 'SUPER_ADMIN'",
+                "SELECT u FROM User u WHERE (u.email_id = :identifier OR u.name = :identifier) AND u.role = 'SUPER_ADMIN'",
                 User.class
-        ).setParameter("identifier", username.toLowerCase()).getResultList();
+        ).setParameter("identifier", username).getResultList();
 
         if (users.isEmpty()) {
             throw new IllegalArgumentException("Invalid Super Admin credentials.");
@@ -71,9 +70,8 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
             throw new IllegalStateException("Super Admin account is inactive.");
         }
 
-        boolean passwordMatches = passwordEncoder.matches(password, superAdmin.getPassword())
-                || password.equals(superAdmin.getPassword())
-                || User.PASSWORD_ENCODER.matches(password, superAdmin.getPassword());
+        boolean passwordMatches = passwordEncoder.matches(loginRequest.getPassword(), superAdmin.getPassword())
+                || loginRequest.getPassword().equals(superAdmin.getPassword());
 
         if (!passwordMatches) {
             throw new IllegalArgumentException("Invalid Super Admin credentials.");
