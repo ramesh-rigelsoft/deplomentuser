@@ -120,9 +120,17 @@ export default function SuperAdminAdminDetail() {
                   <span>{admin?.subscriptionType || '-'}</span>
                 </div>
                 {admin?.subscriptionEndAt && (
-                  <div className="small text-muted">
+                  <div className="small text-muted mb-1">
                     <span className="fw-semibold text-dark">Expires: </span>
                     <span>{new Date(admin.subscriptionEndAt).toLocaleDateString()}</span>
+                  </div>
+                )}
+                {admin?.daysLeft != null && admin?.subscriptionStatus === 'ACTIVE' && (
+                  <div className="small text-muted">
+                    <span className="fw-semibold text-dark">Days Left: </span>
+                    <span className="badge bg-success-subtle text-success border border-success-subtle fw-bold ms-1">
+                      {admin.daysLeft} days remaining
+                    </span>
                   </div>
                 )}
               </div>
@@ -223,12 +231,13 @@ export default function SuperAdminAdminDetail() {
                   <th scope="col">Payment Status</th>
                   <th scope="col">Sub Status</th>
                   <th scope="col">Date</th>
+                  <th scope="col">Days Left</th>
                 </tr>
               </thead>
               <tbody>
                 {subscriptions.length === 0 ? (
                   <tr>
-                    <td colSpan="9" className="text-center py-4 text-muted">
+                    <td colSpan="10" className="text-center py-4 text-muted">
                       No subscription transactions on record.
                     </td>
                   </tr>
@@ -250,7 +259,7 @@ export default function SuperAdminAdminDetail() {
                       <td className="fw-semibold text-success">
                         ₹{s.totalAmount?.toLocaleString('en-IN')}
                       </td>
-                      <td className="small text-muted">{s.subscriptionDuration || 30} days</td>
+                      <td className="small text-muted">{s.month ? `${s.month} mo` : (s.subscriptionDuration || 1) + ' mo'}</td>
                       <td>
                         <span className={`badge ${s.paymentStatus === 'PAID' ? 'bg-success' : 'bg-warning text-dark'}`}>
                           {s.paymentStatus || 'PENDING'}
@@ -263,6 +272,23 @@ export default function SuperAdminAdminDetail() {
                       </td>
                       <td className="small text-muted">
                         {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '-'}
+                      </td>
+                      <td>
+                        {s.subscriptionStatus === 'ACTIVE' && s.daysLeft != null ? (
+                          <span
+                            className={`badge ${
+                              s.daysLeft > 30
+                                ? 'bg-success-subtle text-success border border-success-subtle'
+                                : s.daysLeft > 7
+                                ? 'bg-primary-subtle text-primary border border-primary-subtle'
+                                : 'bg-warning-subtle text-warning border border-warning-subtle'
+                            } fw-bold`}
+                          >
+                            {s.daysLeft} days
+                          </span>
+                        ) : (
+                          <span className="badge bg-secondary-subtle text-secondary border">Expired</span>
+                        )}
                       </td>
                     </tr>
                   ))

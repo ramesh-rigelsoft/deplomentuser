@@ -153,19 +153,20 @@ export default function SuperAdminSubscriptions() {
                 <th scope="col">Sub Status</th>
                 <th scope="col">Start Date</th>
                 <th scope="col">End Date</th>
+                <th scope="col">Days Left</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-5 text-muted">
+                  <td colSpan="10" className="text-center py-5 text-muted">
                     <div className="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
                     Loading subscriptions...
                   </td>
                 </tr>
               ) : subscriptions.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-5 text-muted">
+                  <td colSpan="10" className="text-center py-5 text-muted">
                     No subscriptions found.
                   </td>
                 </tr>
@@ -208,6 +209,27 @@ export default function SuperAdminSubscriptions() {
                       </td>
                       <td className="small text-muted">
                         {sub.subscriptionEndAt ? new Date(sub.subscriptionEndAt).toLocaleDateString() : '-'}
+                      </td>
+                      <td>
+                        {sub.subscriptionStatus === 'ACTIVE' && sub.daysLeft != null ? (
+                          <span
+                            className={`badge ${
+                              sub.daysLeft > 30
+                                ? 'bg-success-subtle text-success border border-success-subtle'
+                                : sub.daysLeft > 7
+                                ? 'bg-primary-subtle text-primary border border-primary-subtle'
+                                : sub.daysLeft > 0
+                                ? 'bg-warning-subtle text-warning border border-warning-subtle'
+                                : 'bg-danger-subtle text-danger border border-danger-subtle'
+                            } fw-bold`}
+                          >
+                            {sub.daysLeft > 0 ? `${sub.daysLeft} days left` : '0 days (Expired)'}
+                          </span>
+                        ) : (
+                          <span className="badge bg-secondary-subtle text-secondary border">
+                            Expired
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );

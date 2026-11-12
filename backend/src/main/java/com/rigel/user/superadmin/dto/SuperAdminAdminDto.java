@@ -28,6 +28,7 @@ public class SuperAdminAdminDto {
     private String subscriptionStatus; // ACTIVE, EXPIRED, NONE
     private LocalDateTime subscriptionStartAt;
     private LocalDateTime subscriptionEndAt;
+    private Long daysLeft; // Days remaining for current subscription
     private Double subscriptionAmount;
 
     // Users under this Admin

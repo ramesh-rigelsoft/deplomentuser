@@ -218,7 +218,12 @@ export default function SuperAdminAdmins() {
                         {admin.subscriptionEndAt ? (
                           <div>
                             <div>Exp: {new Date(admin.subscriptionEndAt).toLocaleDateString()}</div>
-                            <span className="text-success fw-semibold">₹{admin.subscriptionAmount?.toLocaleString('en-IN')}</span>
+                            {admin.daysLeft != null && admin.subscriptionStatus === 'ACTIVE' && (
+                              <span className="badge bg-success-subtle text-success border border-success-subtle my-1 d-inline-block">
+                                {admin.daysLeft} days left
+                              </span>
+                            )}
+                            <div><span className="text-success fw-semibold">₹{admin.subscriptionAmount?.toLocaleString('en-IN')}</span></div>
                           </div>
                         ) : (
                           'No expiry'

@@ -30,6 +30,7 @@ public class SuperAdminSubscriptionDto {
     private LocalDateTime subscriptionStartAt;
     private LocalDateTime subscriptionEndAt;
     private Integer subscriptionDuration;
+    private Long daysLeft; // Days remaining until expiry
     private boolean active;
     private boolean status;
     private String subscriptionStatus; // ACTIVE, EXPIRED

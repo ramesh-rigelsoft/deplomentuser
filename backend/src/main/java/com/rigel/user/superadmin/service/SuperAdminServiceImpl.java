@@ -25,6 +25,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -902,6 +903,7 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
         String planCode = "-";
         String billingType = "-";
 
+        Long daysLeft = 0L;
         if (sub != null) {
             planName = sub.getSubscriptionName();
             planCode = sub.getSubscriptionCode();
@@ -909,9 +911,9 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
             startAt = sub.getSubscriptionStartAt();
             amount = sub.getTotalAmount();
             if (startAt != null) {
-                int durationDays = sub.getSubscriptionDuration() > 0 ? sub.getSubscriptionDuration() : 30;
-                endAt = startAt.plusDays(durationDays);
-                if (sub.isStatus() && sub.isActive() && endAt.isAfter(LocalDateTime.now())) {
+                endAt = calculateSubscriptionEndAt(startAt, sub.getMonth(), sub.getSubscriptionDuration(), billingType);
+                daysLeft = calculateDaysLeft(endAt);
+                if (sub.isStatus() && sub.isActive() && endAt != null && endAt.isAfter(LocalDateTime.now())) {
                     subStatus = "ACTIVE";
                 } else {
                     subStatus = "EXPIRED";
@@ -935,6 +937,7 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
                 .subscriptionStatus(subStatus)
                 .subscriptionStartAt(startAt)
                 .subscriptionEndAt(endAt)
+                .daysLeft(daysLeft)
                 .subscriptionAmount(amount)
                 .totalUsers(totalUsers)
                 .activeUsers(activeUsers)
@@ -959,17 +962,60 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
                 .build();
     }
 
+    private LocalDateTime calculateSubscriptionEndAt(LocalDateTime startAt, int month, int duration, String subscriptionType) {
+        if (startAt == null) {
+            return null;
+        }
+
+        // 1. If explicit months are provided (> 0)
+        if (month > 0) {
+            return startAt.plusMonths(month);
+        }
+
+        // 2. If duration is provided (> 0)
+        if (duration > 0) {
+            if (duration <= 24) {
+                // Stored as months (as in UserController: setSubscriptionDuration(subscriptionPlan.getMonth()))
+                return startAt.plusMonths(duration);
+            } else {
+                // Stored as days
+                return startAt.plusDays(duration);
+            }
+        }
+
+        // 3. Fallback based on subscriptionType string
+        if (subscriptionType != null) {
+            String type = subscriptionType.trim().toUpperCase();
+            if (type.contains("YEAR")) {
+                return startAt.plusYears(1);
+            } else if (type.contains("HALF") || type.contains("HELF")) {
+                return startAt.plusMonths(6);
+            } else if (type.contains("QUAT") || type.contains("QUARTER")) {
+                return startAt.plusMonths(3);
+            }
+        }
+
+        // Default to 1 month
+        return startAt.plusMonths(1);
+    }
+
+    private Long calculateDaysLeft(LocalDateTime endAt) {
+        if (endAt == null) {
+            return 0L;
+        }
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = endAt.toLocalDate();
+        long days = ChronoUnit.DAYS.between(today, endDate);
+        return Math.max(0L, days);
+    }
+
     private SuperAdminSubscriptionDto toSubscriptionDto(UserSubscription us, User admin) {
         LocalDateTime startAt = us.getSubscriptionStartAt();
-        LocalDateTime endAt = null;
+        LocalDateTime endAt = calculateSubscriptionEndAt(startAt, us.getMonth(), us.getSubscriptionDuration(), us.getSubscriptionType());
+        Long daysLeft = calculateDaysLeft(endAt);
+
         String subStatus = "EXPIRED";
-        if (startAt != null) {
-            int durationDays = us.getSubscriptionDuration() > 0 ? us.getSubscriptionDuration() : 30;
-            endAt = startAt.plusDays(durationDays);
-            if (us.isStatus() && us.isActive() && endAt.isAfter(LocalDateTime.now())) {
-                subStatus = "ACTIVE";
-            }
-        } else if (us.isStatus() && us.isActive()) {
+        if (us.isStatus() && us.isActive() && endAt != null && endAt.isAfter(LocalDateTime.now())) {
             subStatus = "ACTIVE";
         }
 
@@ -989,6 +1035,7 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
                 .createdAt(us.getCreatedAt())
                 .subscriptionStartAt(startAt)
                 .subscriptionEndAt(endAt)
+                .daysLeft(daysLeft)
                 .subscriptionDuration(us.getSubscriptionDuration())
                 .active(us.isActive())
                 .status(us.isStatus())
