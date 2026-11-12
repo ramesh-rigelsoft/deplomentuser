@@ -17,6 +17,10 @@ services:
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID:-rzp_test_Tq0RoZ2YthqiqP}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET:-zYalDyZYGBKCOlwc05bN2TWT}
+      - RAZORPAY_WEBHOOK_SECRET=${RAZORPAY_WEBHOOK_SECRET:-whsec_test_placeholder}
+      - RAZORPAY_MOCK_MODE=${RAZORPAY_MOCK_MODE:-false}
     expose:
       - "8089"
     depends_on:

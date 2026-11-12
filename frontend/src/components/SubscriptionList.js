@@ -221,83 +221,152 @@ const SubscriptionPlanList = () => {
   };
 
   // =========================================
+  // RAZORPAY PAYMENT
+  // =========================================
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const openRazorpayCheckout = async (orderData) => {
+    const isLoaded = await loadRazorpayScript();
+    if (!isLoaded || !window.Razorpay) {
+      fail("Razorpay SDK failed to load. Please check your internet connection.");
+      return;
+    }
+
+    const options = {
+      key: orderData.keyId,
+      amount: orderData.amountInPaise,
+      currency: orderData.currency || "INR",
+      name: "RigelSoft Subscription",
+      description: orderData.subscriptionName || "Subscription Plan",
+      order_id: orderData.orderId,
+      handler: function (response) {
+        console.log("Razorpay payment response:", response);
+        const verificationData = {
+          userId: ownerId,
+          branchCode: branchCode,
+          subscriptionCode: subscriptionCode,
+          razorpayOrderId: response.razorpay_order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpaySignature: response.razorpay_signature,
+        };
+
+        API.paySubscription(dispatch, verificationData)
+          .then((verifyRes) => {
+            if (
+              verifyRes?.payload?.code === "201" ||
+              verifyRes?.payload?.status === "CREATED"
+            ) {
+              success(
+                verifyRes?.payload?.message ||
+                  "Subscription activated successfully!"
+              );
+              setSelectedPlan(null);
+              setSubscriptionCode("");
+              setBranchCode("");
+              fetchMySubscriptions();
+            } else {
+              fail(verifyRes?.payload?.message || "Payment verification failed.");
+            }
+          })
+          .catch((verifyErr) => {
+            console.error("Payment verification error:", verifyErr);
+            fail(
+              verifyErr?.response?.data?.message ||
+                "Payment verification error."
+            );
+          });
+      },
+      prefill: {
+        name: Cookies.get("name") || "",
+      },
+      theme: {
+        color: "#2563eb",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.on("payment.failed", function (response) {
+      console.error("Razorpay Payment Failed:", response.error);
+      fail(
+        "Payment failed: " +
+          (response.error?.description || "Transaction cancelled")
+      );
+    });
+    rzp.open();
+  };
+
+  // =========================================
   // PAY
   // =========================================
 
-const handlePay = () => {
+  const handlePay = () => {
+    if (!selectedPlan) {
+      fail("Please select a subscription plan.");
+      return;
+    }
 
-  if (!selectedPlan) {
-    fail("Please select a subscription plan.");
-    return;
-  }
+    if (!subscriptionCode) {
+      fail("Subscription code is required.");
+      return;
+    }
 
-  if (!subscriptionCode) {
-    fail("Subscription code is required.");
-    return;
-  }
+    if (!branchCode) {
+      fail("Please select a branch.");
+      return;
+    }
 
-  if (!branchCode) {
-    fail("Please select a branch.");
-    return;
-  }
+    const paymentData = {
+      userId: ownerId,
+      branchCode: branchCode,
+      subscriptionCode: subscriptionCode,
+    };
 
-  const paymentData = {
-    userId: ownerId,
-    branchCode: branchCode,
-    subscriptionCode: subscriptionCode
+    console.log("User Subscription Request:", paymentData);
+
+    API.paySubscription(dispatch, paymentData)
+      .then((res) => {
+        console.log("User Subscription Response:", res);
+
+        const payload = res?.payload;
+
+        // If Razorpay order created, trigger Razorpay modal
+        if (payload?.data?.paymentRequired && payload?.data?.orderId) {
+          openRazorpayCheckout(payload.data);
+          return;
+        }
+
+        if (
+          payload?.code === "201" ||
+          payload?.status === "CREATED"
+        ) {
+          success(payload?.message);
+          setSelectedPlan(null);
+          setSubscriptionCode("");
+          setBranchCode("");
+          fetchMySubscriptions();
+        } else {
+          fail(payload?.message);
+        }
+      })
+      .catch((err) => {
+        console.error("User Subscription Error:", err);
+        fail(err?.response?.data?.message || "Failed to process subscription.");
+      });
   };
-
-  console.log(
-    "User Subscription Request:",
-    paymentData
-  );
-
-  API.paySubscription(
-    dispatch,
-    paymentData
-  )
-    .then((res) => {
-
-      console.log(
-        "User Subscription Response:",
-        res
-      );
-
-      if (
-        res?.payload?.code === "201" ||
-        res?.payload?.status === "CREATED"
-      ) {
-
-        success(res?.payload?.message);
-
-        // Clear selected plan
-        setSelectedPlan(null);
-
-        setSubscriptionCode("");
-
-        setBranchCode("");
-
-        // Refresh My Subscribe Plan List
-        fetchMySubscriptions();
-
-      } else {
-
-        fail(res?.payload?.message);
-
-      }
-
-    })
-    .catch((err) => {
-
-      console.error(
-        "User Subscription Error:",
-        err
-      );
-
-      fail(err?.response?.data?.message);
-
-    });
-};
 
   // =========================================
   // DATE FORMAT
