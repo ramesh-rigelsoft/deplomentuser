@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class UserDto {
 	
-	private int id;
+	private Integer id;
 	
 	private String name;
 	
@@ -52,37 +52,16 @@ public class UserDto {
 	
 	private String gender;
 	private Date lastPasswordResetDate;
+	private int branchCount;
 	
-    private boolean multipleBranch;
-    private String branchCode;
-    private String branchName;
-	
-    // ================= COMPANY INFO =================
-	private String shopType;
-	private String softwareType;
-    private String companyName;
-    private String companyLogo;
-
-    private String gstNumber;
-    private String panNumber;
-    private String cinNumber;
-
-    private String addressLine1;
-    private String addressLine2;
-    private String city;
-    private String state;
-    private String country;
-    private String pincode;
-
-    private String website;
-    private String companyType; // Pvt Ltd, LLP, Proprietor, etc.
-    private Integer companyEmployeeCount;
+    
     // ================= RELATION =================
     
     private int ownerId;
+    private String branchCode;
+    private String branchName;
     
-    private String subscriptionCode;
 
-    private MultipartFile logo;
+    private MultipartFile profilePhoto;
 }
 

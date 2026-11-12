@@ -28,15 +28,35 @@ public class TaskException {
 		    }
             
             @ExceptionHandler(TaskTitleException.class)
-		    public ResponseEntity<Map<String,Object>> taskTitleException(TaskTitleException taskTitleException) {
-		        HashMap<String, Object> response=new  HashMap<>();		        
-		        HashMap<String, Object> data=new  HashMap<>();		        
+            public ResponseEntity<Map<String,Object>> taskTitleException(
+                    TaskTitleException exception) {
+
+                System.out.println("========== TASK EXCEPTION ==========");
+                System.out.println("Message = " + exception.getMessage());
+
+                HashMap<String, Object> response = new HashMap<>();
+                HashMap<String, Object> data = new HashMap<>();
+
                 response.put("data", data);
-        		response.put("status", "BAD_REQUEST");
-				response.put("code", "400");
-				response.put("message",taskTitleException.getMessage());
-		        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
-		    }
+                response.put("status", "BAD_REQUEST");
+                response.put("code", "400");
+                response.put("message", exception.getMessage());
+
+                System.out.println("Response = " + response);
+
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+            
+//            @ExceptionHandler(TaskTitleException.class)
+//		    public ResponseEntity<Map<String,Object>> taskTitleException(TaskTitleException taskTitleException) {
+//		        HashMap<String, Object> response=new  HashMap<>();		        
+//		        HashMap<String, Object> data=new  HashMap<>();		        
+//                response.put("data", data);
+//        		response.put("status", "BAD_REQUEST");
+//				response.put("code", "400");
+//				response.put("message",taskTitleException.getMessage());
+//		        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+//		    }
             
 //            @ExceptionHandler(Exception.class)
 //		    public ResponseEntity<Map<String,Object>> exception(Exception taskTitleException) {

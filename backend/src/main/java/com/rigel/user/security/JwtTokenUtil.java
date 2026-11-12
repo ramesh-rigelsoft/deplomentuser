@@ -201,7 +201,7 @@ public class JwtTokenUtil implements Serializable {
 //	    }
 
 		final Date expirationDate = calculateExpirationDate(createdDate);
-		return Jwts.builder().setClaims(claims).setId(String.valueOf(userDetails.getId()))
+		return Jwts.builder().setClaims(claims).setId(String.valueOf(userDetails.getOwnerId()))
 				.setSubject(userDetails.getUsername()).setIssuedAt(createdDate).setExpiration(expirationDate)
 				.signWith(key, SignatureAlgorithm.HS256).compact();
 	}

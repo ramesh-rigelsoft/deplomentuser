@@ -20,7 +20,7 @@ import lombok.ToString;
 @Builder
 public class RolesPagePermisionDto {
 
-	private Long id;
+	private String id;
 
     
  // ===== BASIC PAGE ACCESS =====
@@ -41,6 +41,9 @@ public class RolesPagePermisionDto {
  	
  	private int ownerId;
  	
+ 	private String branchCode;
+ 	
  	private PagesDto pageId;
+ 	
     private RolesDto roleId;
 }

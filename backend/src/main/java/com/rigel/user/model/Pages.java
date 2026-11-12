@@ -30,6 +30,8 @@ public class Pages implements Serializable {
     @Column(name = "path", nullable = false)
     private String path;
     private String icon;
+    private String parent;
+    private String chield;
     
     private boolean status;
     

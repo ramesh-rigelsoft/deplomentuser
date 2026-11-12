@@ -48,7 +48,6 @@ public class SecurityTokenConfig1 {
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((req, res, e) ->
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
-
             // ✅ AUTH RULES
             .authorizeHttpRequests(auth -> auth
 

@@ -78,48 +78,14 @@ public class User implements Serializable{
 	private String gender;
 	private Date lastPasswordResetDate;
 	
-    // ================= COMPANY INFO =================
-	// ================= COMPANY INFO =================
-
-	private String softwareType;
-	private String shopType;
-	private String companyName;
-    private String companyLogo;
-
-    private String gstNumber;
-    private String panNumber;
-    private String cinNumber;
-
-    private String addressLine1;
-    private String addressLine2;
-    private String city;
-    private String state;
-    private String country;
-    private String pincode;
-
-    private String website;
-    private String companyType; // Pvt Ltd, LLP, Proprietor, etc.
-    private Integer companyEmployeeCount;
-    // ================= RELATION =================
-    
-    private String logo;
+	private int branchCount;
+	private String branchCode;
+	private String profileLogo;
     private String softwareKey;
-    private String macAddress;
-    private String subscriptionCode;
-    
-//    @Column(columnDefinition = "boolean default false")
-    private boolean multipleBranch;
-    private String branchCode;
-    private String branchName;
-    
+    private String softwareType;
+        
     private int ownerId;
     
-//    private String branchId;
-       
-// 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//	@JsonManagedReference(value = "userOfc")
-//	private Set<OfficeBranch> OfficeBranch = new HashSet<>();
- 	
 	public static PasswordEncoder getPasswordEncoder() {
 		return PASSWORD_ENCODER;
 	}

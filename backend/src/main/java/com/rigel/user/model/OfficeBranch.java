@@ -24,34 +24,46 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Table(name = "OFFICE_BRANCH")
 public class OfficeBranch implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(length = 36, updatable = false, nullable = false)
-    private String id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(length = 36, updatable = false, nullable = false)
+	private String id;
 
-    @NotBlank(message = "Type is required")
-    private String branchCode;   // Travel, Food, Salary etc.
+	@NotBlank(message = "branchCode is required")
+	private String branchCode; // Travel, Food, Salary etc.
 
-    @NotBlank(message = "Scope is required")
-    private String branchName;  // Personal / Business
+	@NotBlank(message = "branchName is required")
+	private String branchName; // Personal / Business
 
-    @Column(length = 500)
-    private String address;
-   
-    @Column( name = "ownerId",insertable = true,updatable = false)
-    private int ownerId; // reference to the user/owner
-    
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    
-    private boolean status;
-    private String additionalDetails;
-    
-// 	@ManyToOne(fetch = FetchType.LAZY)
-// 	@JoinColumn(name="user")
-// 	@JsonBackReference(value = "userOfc")
-// 	private User user;
- 
+	@Column(length = 500)
+	private String address;
+
+	@Column(name = "ownerId", insertable = true, updatable = false)
+	private int ownerId; // reference to the user/owner
+
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
+
+	private boolean status;
+	private String additionalDetails;
+
+	private String branchLogo;
+
+	// ================= COMPANY INFO =================
+	private String shopType;
+
+	private String gstNumber;
+	private String panNumber;
+	private String cinNumber;
+	
+	private String ofcLat;
+	private String ofcLng;
+	private Integer centerRedious;
+	
+	private String city;
+	private String state;
+	private String pincode;
+
 }

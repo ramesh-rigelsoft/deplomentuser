@@ -13,22 +13,13 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rigel.user.dao.IBuyerDao;
-import com.rigel.user.dao.IInventoryDao;
 import com.rigel.user.dao.IRolesManagementDao;
-import com.rigel.user.dao.ISalesDao;
-import com.rigel.user.model.BuyerInfo;
-import com.rigel.user.model.Inventory;
 import com.rigel.user.model.OfficeBranch;
 import com.rigel.user.model.Pages;
 import com.rigel.user.model.RolesPagePermision;
-import com.rigel.user.model.SalesInfo;
 import com.rigel.user.model.SubscriptionPlan;
 import com.rigel.user.model.dto.MenuDto;
-import com.rigel.user.model.dto.SalesRequest;
-import com.rigel.user.model.dto.SalesResponse;
 import com.rigel.user.model.dto.SearchCriteria;
-import com.rigel.user.service.IBuyerInfoService;
 import com.rigel.user.service.IRolesManagementService;
 
 import jakarta.validation.ValidationException;
@@ -59,13 +50,13 @@ public class RolesManagementServiceImpl implements IRolesManagementService {
 	}
 
 	@Override
-	public RolesPagePermision findRolesPagePermissionById(Long id) {
+	public RolesPagePermision findRolesPagePermissionById(String id) {
 		return rolesManagementDao.findRolesPagePermissionById(id);
 	}
 
 	@Override
-	public List<MenuDto> getMenus(Long roleId, Integer ownerId) {
-		return rolesManagementDao.getMenus(roleId, ownerId);
+	public List<MenuDto> getMenus(Long roleId, Integer ownerId,String branchCode) {
+		return rolesManagementDao.getMenus(roleId, ownerId,branchCode);
 	}
 
 	@Override
@@ -93,6 +84,16 @@ public class RolesManagementServiceImpl implements IRolesManagementService {
 	@Override
 	public SubscriptionPlan findBySubscriptionCode(String code) {
 		return rolesManagementDao.findBySubscriptionCode(code);
+	}
+
+	@Override
+	public List<RolesPagePermision> fetchPermittedPagesRoleWise(SearchCriteria criteria) {
+		return rolesManagementDao.fetchPermittedPagesRoleWise(criteria);
+	}
+
+	@Override
+	public int removePagesPermission(SearchCriteria criteria) {
+		return rolesManagementDao.removePagesPermission(criteria);
 	}
 
 	
