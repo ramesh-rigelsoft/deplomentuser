@@ -101,29 +101,28 @@ export default function SuperAdminAdminDetail() {
             </div>
 
             <div className="col-12 col-md-4 border-start-md">
-              <div className="p-3 bg-light rounded">
-                <span className="text-muted small fw-semibold text-uppercase d-block mb-1">Current Subscription</span>
-                <div className="d-flex justify-content-between align-items-center mb-1">
-                  <div className="d-flex align-items-center">
-                    <span className="fw-bold text-dark fs-5">{admin?.subscriptionPlan || 'No Plan'}</span>
-                    {admin?.subscriptionCode && admin.subscriptionCode !== '-' && (
-                      <span className="badge bg-white text-primary border font-monospace ms-2">
-                        {admin.subscriptionCode}
-                      </span>
-                    )}
-                  </div>
+              <div className="p-3 bg-light rounded shadow-sm">
+                <span className="text-muted small fw-semibold text-uppercase d-block mb-2">Current Subscription</span>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <span className="fw-bold text-dark fs-5">{admin?.subscriptionPlan || 'No Plan'}</span>
                   <span className={`badge ${admin?.subscriptionStatus === 'ACTIVE' ? 'bg-success' : 'bg-secondary'}`}>
                     {admin?.subscriptionStatus}
                   </span>
                 </div>
-                <div className="small text-muted mb-1">
-                  <span className="fw-semibold">Plan Code: </span>
-                  <span className="font-monospace text-dark fw-bold">{admin?.subscriptionCode || '-'}</span>
+                <div className="small mb-1">
+                  <span className="fw-semibold text-dark">Plan Code: </span>
+                  <span className="badge bg-primary text-white font-monospace fw-bold px-2 py-1 ms-1">
+                    {admin?.subscriptionCode || '-'}
+                  </span>
                 </div>
-                <div className="small text-muted mb-2">Billing: {admin?.subscriptionType || '-'}</div>
+                <div className="small text-muted mb-1">
+                  <span className="fw-semibold text-dark">Billing: </span>
+                  <span>{admin?.subscriptionType || '-'}</span>
+                </div>
                 {admin?.subscriptionEndAt && (
                   <div className="small text-muted">
-                    Expires: {new Date(admin.subscriptionEndAt).toLocaleDateString()}
+                    <span className="fw-semibold text-dark">Expires: </span>
+                    <span>{new Date(admin.subscriptionEndAt).toLocaleDateString()}</span>
                   </div>
                 )}
               </div>
