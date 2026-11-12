@@ -509,8 +509,8 @@ public class UserController {
 			String subScriptionCode = searchCriteria.getSubscriptionCode();
 
 			UserSubscription userSubscription = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
-			if (userSubscription != null && userSubscription.isStatus()) {
-				throw new BadGatewayRequest("You already have an active subscription.");
+			if (userSubscription != null && userSubscription.isStatus() && !searchCriteria.isRenewal()) {
+				throw new BadGatewayRequest("You already have an active subscription. Please select the renewal option to extend.");
 			}
 
 			SubscriptionPlan subscriptionPlan = rolesManagementService.findBySubscriptionCode(subScriptionCode);
@@ -526,6 +526,7 @@ public class UserController {
 				notes.put("branchCode", branchCode);
 				notes.put("subscriptionCode", subScriptionCode);
 				notes.put("subscriptionName", subscriptionPlan.getSubscriptionName());
+				notes.put("isRenewal", String.valueOf(searchCriteria.isRenewal()));
 
 				Map<String, Object> orderDetails = razorpayService.createOrder(
 						subscriptionPlan.getTotalAmount(),
@@ -543,6 +544,7 @@ public class UserController {
 				data.put("subscriptionCode", subScriptionCode);
 				data.put("subscriptionName", subscriptionPlan.getSubscriptionName());
 				data.put("paymentRequired", true);
+				data.put("isRenewal", searchCriteria.isRenewal());
 
 				response.put("data", data);
 				response.put("status", "OK");
@@ -563,9 +565,11 @@ public class UserController {
 				}
 			}
 
-			// Activate subscription
+			// Activate or renew subscription
+			boolean isRenewal = searchCriteria.isRenewal();
 			if (userSubscription != null && userSubscription.getSubscriptionCode().equalsIgnoreCase(subScriptionCode)) {
 				userSubscription.setSubscriptionStartAt(LocalDateTime.now());
+				userSubscription.setSubscriptionDuration(subscriptionPlan.getMonth());
 				userSubscription.setStatus(true);
 				userSubscription.setActive(true);
 				userSubscription.setRazorpayOrderId(searchCriteria.getRazorpayOrderId());
@@ -591,6 +595,7 @@ public class UserController {
 				UserSubscription userSubscriptionNew = objectMapper.convertValue(subscription, UserSubscription.class);
 				userSubscriptionNew.setCreatedAt(LocalDateTime.now());
 				userSubscriptionNew.setSubscriptionStartAt(LocalDateTime.now());
+				userSubscriptionNew.setSubscriptionDuration(subscriptionPlan.getMonth());
 				userSubscriptionNew.setBranchCode(branchCode);
 				userSubscriptionNew.setOwnerId(ownerId);
 				userSubscriptionNew.setActive(true);
@@ -612,7 +617,7 @@ public class UserController {
 			response.put("data", data);
 			response.put("status", "CREATED");
 			response.put("code", "201");
-			response.put("message", "Subscription has been created successfully.");
+			response.put("message", isRenewal ? "Subscription has been renewed successfully." : "Subscription has been created successfully.");
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		}
 	}

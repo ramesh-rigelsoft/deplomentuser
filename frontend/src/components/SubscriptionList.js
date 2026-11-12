@@ -4,6 +4,8 @@ import { success, fail } from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import Header from "./Header";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const SubscriptionPlanList = () => {
   const dispatch = useDispatch();
@@ -23,6 +25,12 @@ const SubscriptionPlanList = () => {
 
   // Selected subscription
   const [selectedPlan, setSelectedPlan] = useState(null);
+
+  // Renewal mode
+  const [isRenewal, setIsRenewal] = useState(false);
+
+  // Receipt Modal for Print / Download Slip
+  const [receiptModal, setReceiptModal] = useState(null);
 
   // Selected subscribed plan for View
   const [viewSubscription, setViewSubscription] =
@@ -157,6 +165,7 @@ const SubscriptionPlanList = () => {
   // =========================================
 
   const handleSubscribe = (plan) => {
+    setIsRenewal(false);
     setViewSubscription(null);
 
     setSelectedPlan(plan);
@@ -179,6 +188,186 @@ const SubscriptionPlanList = () => {
   };
 
   // =========================================
+  // RENEW SUBSCRIPTION BUTTON
+  // =========================================
+
+  const handleRenewSubscription = (subscription) => {
+    setIsRenewal(true);
+    setViewSubscription(null);
+
+    const matchedPlan = plans.find(
+      (p) => p.subscriptionCode === subscription.subscriptionCode
+    ) || {
+      subscriptionName: subscription.subscriptionName,
+      subscriptionCode: subscription.subscriptionCode,
+      subscriptionType: subscription.subscriptionType,
+      amountPerMonth: subscription.amountPerMonth,
+      gst: subscription.gst,
+      totalAmount: subscription.totalAmount,
+      month:
+        subscription.month ||
+        subscription.subscriptionDuration ||
+        12,
+    };
+
+    setSelectedPlan(matchedPlan);
+    setSubscriptionCode(subscription.subscriptionCode || "");
+    setBranchCode(subscription.branchCode || "");
+
+    setTimeout(() => {
+      document
+        .getElementById("subscription-section")
+        ?.scrollIntoView({
+          behavior: "smooth",
+        });
+    }, 100);
+  };
+
+  // =========================================
+  // RECEIPT / SLIP MODAL HANDLERS
+  // =========================================
+
+  const handleOpenReceipt = (sub) => {
+    setReceiptModal(sub);
+  };
+
+  const handleCloseReceipt = () => {
+    setReceiptModal(null);
+  };
+
+  const handlePrintSlip = () => {
+    const printContent = document.getElementById("subscription-receipt-print");
+    if (!printContent) return;
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Subscription Payment Slip - ${receiptModal?.subscriptionCode || ""}</title>
+          <style>
+            body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 25px; color: #1e293b; }
+            .box { max-width: 650px; margin: 0 auto; border: 2px solid #2563eb; border-radius: 8px; padding: 25px; background: #fff; }
+            .header { text-align: center; border-bottom: 2px dashed #cbd5e1; padding-bottom: 15px; margin-bottom: 20px; }
+            .header h2 { margin: 0; color: #2563eb; font-size: 24px; text-transform: uppercase; font-weight: bold; }
+            .header h4 { margin: 4px 0; color: #0f172a; font-size: 16px; }
+            .header p { margin: 2px 0; color: #64748b; font-size: 13px; }
+            .badge-paid { display: inline-block; background-color: #16a34a; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 12px; margin-top: 6px; }
+            .info-grid { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 13px; }
+            .info-col { width: 48%; }
+            .info-row { margin-bottom: 6px; }
+            .info-label { color: #64748b; font-weight: 500; }
+            .info-val { font-weight: 600; color: #0f172a; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+            th, td { border: 1px solid #e2e8f0; padding: 10px; font-size: 13px; text-align: left; }
+            th { background-color: #f8fafc; color: #334155; }
+            .total-row { font-size: 15px; font-weight: bold; background-color: #f0fdf4; color: #15803d; }
+            .footer { text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; margin-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="box">
+            ${printContent.innerHTML}
+          </div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 400);
+  };
+
+  const handleDownloadPdf = (subData) => {
+    const sub = subData || receiptModal;
+    if (!sub) return;
+
+    try {
+      const doc = new jsPDF();
+
+      // Top colored banner
+      doc.setFillColor(37, 99, 235);
+      doc.rect(0, 0, 210, 26, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text("SUBSCRIPTION PAYMENT RECEIPT", 105, 16, { align: "center" });
+
+      doc.setTextColor(51, 65, 85);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+
+      const companyName = Cookies.get("name") || "Subscriber / Company";
+      const receiptDate = sub.createdAt
+        ? new Date(sub.createdAt).toLocaleString("en-IN")
+        : new Date().toLocaleString("en-IN");
+
+      doc.text(`Receipt Date: ${receiptDate}`, 14, 36);
+      doc.text(`Subscriber: ${companyName}`, 14, 42);
+      doc.text(`Branch Code: ${sub.branchCode || "-"}`, 14, 48);
+
+      doc.text(`Status: SUCCESS (PAID)`, 130, 36);
+      doc.text(`Razorpay Order ID: ${sub.razorpayOrderId || "N/A"}`, 130, 42);
+      doc.text(`Razorpay Payment ID: ${sub.razorpayPaymentId || "N/A"}`, 130, 48);
+
+      const tableBody = [
+        ["Plan Name", sub.subscriptionName || "Plan"],
+        ["Plan Code", sub.subscriptionCode || "-"],
+        ["Billing Cycle", sub.subscriptionType || "YEARLY"],
+        [
+          "Duration",
+          `${sub.subscriptionDuration || sub.month || 12} Months`,
+        ],
+        ["Monthly Rate", `INR ${sub.amountPerMonth || 0}`],
+        ["GST (18%)", `INR ${sub.gst || 0}`],
+        ["Total Amount Paid", `INR ${sub.totalAmount || 0}`],
+        [
+          "Start Date",
+          sub.subscriptionStartAt
+            ? new Date(sub.subscriptionStartAt).toLocaleDateString("en-IN")
+            : "-",
+        ],
+      ];
+
+      autoTable(doc, {
+        startY: 55,
+        head: [["Subscription Details", "Information"]],
+        body: tableBody,
+        theme: "striped",
+        headStyles: {
+          fillColor: [37, 99, 235],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+        },
+        styles: { fontSize: 10, cellPadding: 4 },
+        columnStyles: {
+          0: { cellWidth: 80, fontStyle: "bold" },
+          1: { cellWidth: 100 },
+        },
+      });
+
+      const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 18 : 160;
+      doc.setFontSize(9);
+      doc.setTextColor(148, 163, 184);
+      doc.text(
+        "Thank you for subscribing! This is an electronically generated payment receipt.",
+        105,
+        finalY,
+        { align: "center" }
+      );
+
+      const fileName = `Subscription_Receipt_${sub.subscriptionCode || "plan"}_${sub.branchCode || ""}.pdf`;
+      doc.save(fileName);
+      success("Receipt downloaded successfully!");
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      fail("Failed to generate PDF slip.");
+    }
+  };
+
+  // =========================================
   // CANCEL
   // =========================================
 
@@ -188,6 +377,8 @@ const SubscriptionPlanList = () => {
     setSubscriptionCode("");
 
     setBranchCode("");
+
+    setIsRenewal(false);
   };
 
   // =========================================
@@ -259,6 +450,7 @@ const SubscriptionPlanList = () => {
           userId: ownerId,
           branchCode: branchCode,
           subscriptionCode: subscriptionCode,
+          isRenewal: isRenewal,
           razorpayOrderId: response.razorpay_order_id,
           razorpayPaymentId: response.razorpay_payment_id,
           razorpaySignature: response.razorpay_signature,
@@ -270,13 +462,23 @@ const SubscriptionPlanList = () => {
               verifyRes?.payload?.code === "201" ||
               verifyRes?.payload?.status === "CREATED"
             ) {
+              const activatedSub =
+                verifyRes?.payload?.data?.userSubscription || {
+                  ...verificationData,
+                  ...selectedPlan,
+                  createdAt: new Date().toISOString(),
+                };
+              setReceiptModal(activatedSub);
               success(
                 verifyRes?.payload?.message ||
-                  "Subscription activated successfully!"
+                  (isRenewal
+                    ? "Subscription renewed successfully!"
+                    : "Subscription activated successfully!")
               );
               setSelectedPlan(null);
               setSubscriptionCode("");
               setBranchCode("");
+              setIsRenewal(false);
               fetchMySubscriptions();
             } else {
               fail(verifyRes?.payload?.message || "Payment verification failed.");
@@ -333,6 +535,7 @@ const SubscriptionPlanList = () => {
       userId: ownerId,
       branchCode: branchCode,
       subscriptionCode: subscriptionCode,
+      isRenewal: isRenewal,
     };
 
     console.log("User Subscription Request:", paymentData);
@@ -354,10 +557,23 @@ const SubscriptionPlanList = () => {
           payload?.code === "201" ||
           payload?.status === "CREATED"
         ) {
-          success(payload?.message);
+          const activatedSub =
+            payload?.data?.userSubscription || {
+              ...paymentData,
+              ...selectedPlan,
+              createdAt: new Date().toISOString(),
+            };
+          setReceiptModal(activatedSub);
+          success(
+            payload?.message ||
+              (isRenewal
+                ? "Subscription renewed successfully!"
+                : "Subscription activated successfully!")
+          );
           setSelectedPlan(null);
           setSubscriptionCode("");
           setBranchCode("");
+          setIsRenewal(false);
           fetchMySubscriptions();
         } else {
           fail(payload?.message);
@@ -423,9 +639,17 @@ const SubscriptionPlanList = () => {
         >
 
           <div className="d-flex justify-content-between align-items-center mb-3">
-
             <h5 className="mb-0 text-primary">
-              Subscribe to Plan
+              <i
+                className={`fa ${
+                  isRenewal
+                    ? "fa-refresh text-warning"
+                    : "fa-tag"
+                } me-2`}
+              ></i>
+              {isRenewal
+                ? "Renew Subscription Plan"
+                : "Subscribe to Plan"}
             </h5>
 
             <button
@@ -435,8 +659,22 @@ const SubscriptionPlanList = () => {
             >
               Cancel
             </button>
-
           </div>
+
+          {isRenewal && (
+            <div className="alert alert-warning py-2 px-3 mb-3 d-flex align-items-center">
+              <i className="fa fa-refresh me-2"></i>
+              <span>
+                <strong>Subscription Renewal Mode:</strong> You
+                are extending the subscription for plan{" "}
+                <strong>
+                  {selectedPlan?.subscriptionName}
+                </strong>
+                . Select your branch and complete payment to
+                renew.
+              </span>
+            </div>
+          )}
 
           <div className="row g-3 align-items-end">
 
@@ -554,10 +792,14 @@ const SubscriptionPlanList = () => {
 
               <button
                 type="button"
-                className="btn btn-success w-100"
+                className={`btn ${
+                  isRenewal
+                    ? "btn-warning text-dark fw-bold"
+                    : "btn-success"
+                } w-100`}
                 onClick={handlePay}
               >
-                Pay
+                {isRenewal ? "Renew" : "Pay"}
               </button>
 
             </div>
@@ -1141,22 +1383,49 @@ const SubscriptionPlanList = () => {
 
                       </td>
 
-                      {/* VIEW */}
+                      {/* ACTION BUTTONS: VIEW, RENEW, SLIP */}
 
                       <td>
+                        <div className="d-flex gap-1 flex-wrap">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-info text-white"
+                            onClick={() =>
+                              handleViewSubscription(
+                                subscription
+                              )
+                            }
+                            title="View Plan Details"
+                          >
+                            View
+                          </button>
 
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-info text-white"
-                          onClick={() =>
-                            handleViewSubscription(
-                              subscription
-                            )
-                          }
-                        >
-                          View
-                        </button>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-warning text-dark fw-bold"
+                            onClick={() =>
+                              handleRenewSubscription(
+                                subscription
+                              )
+                            }
+                            title="Renew Subscription"
+                          >
+                            <i className="fa fa-refresh me-1"></i> Renew
+                          </button>
 
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-success text-white"
+                            onClick={() =>
+                              handleOpenReceipt(
+                                subscription
+                              )
+                            }
+                            title="Print or Download Payment Slip"
+                          >
+                            <i className="fa fa-file-text-o me-1"></i> Slip
+                          </button>
+                        </div>
                       </td>
 
                     </tr>
@@ -1443,6 +1712,182 @@ const SubscriptionPlanList = () => {
         </div>
 
       </div>
+
+      {/* ========================================= */}
+      {/* PAYMENT SLIP / RECEIPT MODAL */}
+      {/* ========================================= */}
+      {receiptModal && (
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.6)", zIndex: 1050 }}
+        >
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content shadow-lg border-0">
+              <div className="modal-header bg-primary text-white">
+                <h5 className="modal-title mb-0">
+                  <i className="fa fa-file-text-o me-2"></i>
+                  Subscription Payment Receipt / Slip
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close btn-close-white"
+                  onClick={handleCloseReceipt}
+                ></button>
+              </div>
+
+              <div className="modal-body p-4 bg-light">
+                {/* Print and view container */}
+                <div
+                  id="subscription-receipt-print"
+                  className="p-4 bg-white border rounded shadow-sm"
+                >
+                  <div className="text-center pb-3 mb-3 border-bottom border-2 border-primary">
+                    <h3 className="text-primary mb-1 fw-bold">RIGELSOFT</h3>
+                    <h5 className="mb-1 text-dark">
+                      SUBSCRIPTION PAYMENT SLIP
+                    </h5>
+                    <p className="text-muted small mb-2">
+                      Computer Generated Confirmation
+                    </p>
+                    <span className="badge bg-success px-3 py-2 fs-6">
+                      <i className="fa fa-check me-1"></i> PAYMENT SUCCESS - ACTIVE
+                    </span>
+                  </div>
+
+                  <div className="row g-3 mb-3 small">
+                    <div className="col-12 col-md-6">
+                      <div className="mb-1">
+                        <span className="text-muted">Subscriber:</span>{" "}
+                        <strong>
+                          {Cookies.get("name") || "Valued Subscriber"}
+                        </strong>
+                      </div>
+                      <div className="mb-1">
+                        <span className="text-muted">User ID:</span>{" "}
+                        <strong>{ownerId || "-"}</strong>
+                      </div>
+                      <div className="mb-1">
+                        <span className="text-muted">Branch Code:</span>{" "}
+                        <strong>{receiptModal.branchCode || "-"}</strong>
+                      </div>
+                    </div>
+
+                    <div className="col-12 col-md-6 text-md-end">
+                      <div className="mb-1">
+                        <span className="text-muted">Receipt Date:</span>{" "}
+                        <strong>
+                          {receiptModal.createdAt
+                            ? new Date(
+                                receiptModal.createdAt
+                              ).toLocaleString("en-IN")
+                            : new Date().toLocaleString("en-IN")}
+                        </strong>
+                      </div>
+                      <div className="mb-1">
+                        <span className="text-muted">Order ID:</span>{" "}
+                        <code className="text-primary">
+                          {receiptModal.razorpayOrderId || "N/A"}
+                        </code>
+                      </div>
+                      <div className="mb-1">
+                        <span className="text-muted">Payment ID:</span>{" "}
+                        <code className="text-success">
+                          {receiptModal.razorpayPaymentId || "N/A"}
+                        </code>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="table-responsive">
+                    <table className="table table-bordered mb-2">
+                      <thead className="table-light">
+                        <tr>
+                          <th>Particulars</th>
+                          <th className="text-end">Details</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <strong>Subscription Plan</strong>
+                            <div className="text-muted small">
+                              Code: {receiptModal.subscriptionCode || "-"}
+                            </div>
+                          </td>
+                          <td className="text-end fw-bold">
+                            {receiptModal.subscriptionName || "Plan"}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Billing Cycle & Duration</td>
+                          <td className="text-end">
+                            {receiptModal.subscriptionType || "YEARLY"} (
+                            {receiptModal.subscriptionDuration ||
+                              receiptModal.month ||
+                              12}{" "}
+                            Months)
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Monthly Equivalent</td>
+                          <td className="text-end">
+                            ₹{receiptModal.amountPerMonth || 0}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>GST (18%)</td>
+                          <td className="text-end">
+                            ₹{receiptModal.gst || 0}
+                          </td>
+                        </tr>
+                        <tr className="table-success">
+                          <td className="fw-bold fs-6 text-success">
+                            Total Amount Paid
+                          </td>
+                          <td className="text-end fw-bold fs-6 text-success">
+                            ₹{receiptModal.totalAmount || 0}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="text-center text-muted small mt-3 pt-2 border-top">
+                    Thank you for subscribing to RigelSoft services! For billing support, please reach out to support@rigelsoft.com.
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer bg-light d-flex justify-content-between">
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={handleCloseReceipt}
+                >
+                  Close
+                </button>
+                <div className="d-flex gap-2">
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={handlePrintSlip}
+                  >
+                    <i className="fa fa-print me-1"></i> Print Slip
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handleDownloadPdf(receiptModal)}
+                  >
+                    <i className="fa fa-download me-1"></i> Download PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
