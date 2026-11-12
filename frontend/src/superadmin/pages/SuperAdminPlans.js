@@ -187,6 +187,12 @@ export default function SuperAdminPlans() {
         await superAdminApi.createPlan(formData);
       } else {
         await superAdminApi.updatePlan(selectedPlan.id, formData);
+        if (selectedPlan.status !== formData.status) {
+          await superAdminApi.togglePlanStatus(selectedPlan.id, {
+            active: formData.status,
+            status: formData.status ? 1 : 2,
+          });
+        }
       }
       setShowModal(false);
       fetchPlans();
@@ -207,14 +213,22 @@ export default function SuperAdminPlans() {
 
   const executeToggleStatus = async () => {
     if (!confirmModal.plan) return;
+    const planId = confirmModal.plan.id;
+    const newStatus = confirmModal.targetStatus;
     try {
-      await superAdminApi.togglePlanStatus(confirmModal.plan.id, {
-        active: confirmModal.targetStatus,
+      // Optimistic update so UI immediately changes
+      setPlans((prev) =>
+        prev.map((p) => (p.id === planId ? { ...p, status: newStatus } : p))
+      );
+      await superAdminApi.togglePlanStatus(planId, {
+        active: newStatus,
+        status: newStatus ? 1 : 2,
       });
       setConfirmModal({ show: false, plan: null, targetStatus: false });
-      fetchPlans();
+      await fetchPlans();
     } catch (err) {
       alert('Failed to change plan status: ' + (err.response?.data?.message || err.message));
+      await fetchPlans();
     }
   };
 
@@ -356,7 +370,20 @@ export default function SuperAdminPlans() {
 
       {/* ADD / EDIT PLAN MODAL */}
       {showModal && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1060,
+            overflowY: 'auto',
+          }}
+        >
           <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div className="modal-content border-0 shadow-lg">
               <div className="modal-header bg-dark text-white">
@@ -558,7 +585,22 @@ export default function SuperAdminPlans() {
 
       {/* CONFIRM TOGGLE STATUS MODAL */}
       {confirmModal.show && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1070,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 shadow">
               <div className="modal-header">

@@ -315,6 +315,7 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
         }
 
         SubscriptionPlan plan = new SubscriptionPlan();
+        plan.setStatus(dto.getStatus() != null ? dto.getStatus() : true);
         applyDtoToPlan(dto, plan);
         plan.setCreatedAt(LocalDateTime.now());
         plan.setUpdatedAt(LocalDateTime.now());
@@ -850,7 +851,9 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
         plan.setBranchCount(dto.getBranchCount() != null ? dto.getBranchCount() : 1);
         plan.setMultipleUser(dto.getIsMultipleUser() != null && dto.getIsMultipleUser());
         plan.setUserCount(dto.getUserCount() != null ? dto.getUserCount() : 5);
-        plan.setStatus(dto.getStatus() == null || dto.getStatus());
+        if (dto.getStatus() != null) {
+            plan.setStatus(dto.getStatus());
+        }
         plan.setPermissions(dto.getPermissions());
 
         plan.setRepaireAllow(dto.getIsRepaireAllow() != null && dto.getIsRepaireAllow());

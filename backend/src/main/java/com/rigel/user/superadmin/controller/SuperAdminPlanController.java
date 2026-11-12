@@ -53,16 +53,21 @@ public class SuperAdminPlanController {
         }
     }
 
-    @PatchMapping("/{id}/status")
+    @RequestMapping(value = "/{id}/status", method = {RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.POST})
     public ResponseEntity<?> togglePlanStatus(
             @PathVariable int id,
-            @RequestBody SuperAdminStatusUpdateRequest statusRequest,
+            @RequestBody(required = false) SuperAdminStatusUpdateRequest statusRequest,
+            @RequestParam(required = false) Boolean active,
             HttpServletRequest request
     ) {
         try {
-            boolean active = statusRequest.getActive() != null ? statusRequest.getActive() :
-                    (statusRequest.getStatus() != null && statusRequest.getStatus() == 1);
-            SuperAdminPlanDto updated = superAdminService.togglePlanStatus(id, active, request);
+            boolean isActive = false;
+            if (active != null) {
+                isActive = active;
+            } else if (statusRequest != null) {
+                isActive = Boolean.TRUE.equals(statusRequest.isEffectiveActive());
+            }
+            SuperAdminPlanDto updated = superAdminService.togglePlanStatus(id, isActive, request);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));

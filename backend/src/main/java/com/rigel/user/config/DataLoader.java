@@ -34,11 +34,20 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         try {
-            logger.info("Initializing default subscription plans in database...");
-            subscriptionPlanService.saveSubscriptionPlan();
-            logger.info("Default subscription plans initialized successfully.");
+            logger.info("Checking subscription plans in database...");
+            List<com.rigel.user.model.SubscriptionPlan> existingPlans = entityManager.createQuery(
+                    "SELECT sp FROM SubscriptionPlan sp", com.rigel.user.model.SubscriptionPlan.class
+            ).getResultList();
+
+            if (existingPlans == null || existingPlans.isEmpty()) {
+                logger.info("No subscription plans found. Initializing defaults...");
+                subscriptionPlanService.saveSubscriptionPlan();
+                logger.info("Default subscription plans initialized successfully.");
+            } else {
+                logger.info("Found {} existing subscription plan(s). Preserving existing statuses and pricing.", existingPlans.size());
+            }
         } catch (Exception e) {
-            logger.error("Error initializing subscription plans: {}", e.getMessage(), e);
+            logger.error("Error checking/initializing subscription plans: {}", e.getMessage(), e);
         }
 
         try {

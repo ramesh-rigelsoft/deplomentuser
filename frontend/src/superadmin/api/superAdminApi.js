@@ -51,7 +51,13 @@ export const superAdminApi = {
   getPlanById: (id) => superAdminClient.get(`/plans/${id}`),
   createPlan: (data) => superAdminClient.post('/plans', data),
   updatePlan: (id, data) => superAdminClient.put(`/plans/${id}`, data),
-  togglePlanStatus: (id, data) => superAdminClient.patch(`/plans/${id}/status`, data),
+  togglePlanStatus: (id, data) => {
+    const isActive = data.active !== undefined ? Boolean(data.active) : Boolean(data.status);
+    return superAdminClient.patch(`/plans/${id}/status`, {
+      active: isActive,
+      status: isActive ? 1 : 2,
+    });
+  },
 
   // Admins
   getAdmins: (params) => superAdminClient.get('/admins', { params }),

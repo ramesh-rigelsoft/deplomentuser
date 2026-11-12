@@ -182,6 +182,7 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 			    SubscriptionPlan existing = rolesManagementDao.findBySubscriptionCode(sp.getSubscriptionCode());
 			    if (existing != null) {
 			        sp.setId(existing.getId());
+			        sp.setStatus(existing.isStatus());
 			    }
 			    rolesManagementDao.saveSubscriptionPlan(sp);
 			}

@@ -48,8 +48,7 @@ public class SuperAdminAdminController {
             HttpServletRequest request
     ) {
         try {
-            int targetStatus = statusRequest.getStatus() != null ? statusRequest.getStatus() :
-                    (statusRequest.getActive() != null && statusRequest.getActive() ? 1 : 2);
+            int targetStatus = statusRequest.getStatusAsInteger();
             SuperAdminAdminDto updated = superAdminService.toggleAdminStatus(id, targetStatus, statusRequest.getReason(), request);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
