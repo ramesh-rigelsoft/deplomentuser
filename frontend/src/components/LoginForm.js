@@ -36,20 +36,6 @@ const HomePage = () => {
         Cookies.set("secretCode", data.user.ownerId, { expires: 1 });
         Cookies.set("secret", JSON.stringify(data.secret), { expires: 1 });
         Cookies.set("token", data.access_token, { expires: 1 });
-
-        // If user is SUPER_ADMIN, set superAdmin cookies and redirect to super-admin dashboard
-        if (data.user.role === "SUPER_ADMIN" || data.isSuperAdmin) {
-          Cookies.set("superAdminToken", data.access_token, { expires: 1 });
-          Cookies.set("superAdminUser", JSON.stringify({
-            id: data.user.id,
-            name: data.user.name,
-            email: data.user.email_id,
-            role: "SUPER_ADMIN",
-          }), { expires: 1 });
-          success(res.payload.message || "Super Admin logged in successfully");
-          navigateTo("/super-admin/dashboard");
-          return;
-        }
         
         success(res.payload.message);
         navigateTo("/dashboard");

@@ -316,27 +316,6 @@ public class UserController {
 		String username=login.getUsername()+"|admin";
         User user = userService.findUserByEmailId(username,0);
 		if (user == null) {
-			// Also check if superadmin credentials were entered on standard login form
-			User superAdmin = userService.findUserByEmailId(login.getUsername(), 0);
-			if (superAdmin != null && "SUPER_ADMIN".equalsIgnoreCase(superAdmin.getRole())) {
-				if (superAdmin.getStatus() != 1) {
-					throw new BadGatewayRequest("Super Admin account is inactive.");
-				}
-				if (!User.PASSWORD_ENCODER.matches(login.getPassword(), superAdmin.getPassword())
-						&& !login.getPassword().equals(superAdmin.getPassword())) {
-					throw new TaskTitleException("Wrong password");
-				}
-				final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(superAdmin.getEmail_id());
-				final String token = jwtTokenUtil.generateToken(userDetails, request);
-				data.put("access_token", token);
-				data.put("user", superAdmin);
-				data.put("isSuperAdmin", true);
-				response.put("data", data);
-				response.put("status", "OK");
-				response.put("code", "200");
-				response.put("message", "Super Admin logged in successfully.");
-				return new ResponseEntity<>(response, HttpStatus.OK);
-			}
 			throw new TaskTitleNotFound("Email id not existing with us.");
 		} else if (user.getStatus() != 1) {
 			throw new BadGatewayRequest("Admin account is inactive. Please contact Super Admin.");
