@@ -30,16 +30,17 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 		
 		List<SubscriptionPlan> plans = List.of(
 
-			    // STANDER PLAN
+			    // 1. BASIC PLAN
 			    SubscriptionPlan.builder()
 			            .subscriptionName("BASIC")
 			            .subscriptionCode("RASUB01")
-			            .subscriptionType("YEARILY")
-			            .amountPerMonth(899.0)
+			            .subscriptionType("YEARLY")
+			            .amountPerMonth(499.0)
 			            .branchCount(1)
 			            .month(12)
-			            .gst(1941.84)
-			            .totalAmount(12729.84)
+			            .gst(1077.84)
+			            .totalAmount(7065.84)
+			            .status(true)
 			            .permissions(Set.of(
 			                    PagePermission.DASHBOARD_VIEW,
 			                    PagePermission.INBOUND_VIEW,
@@ -57,7 +58,6 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 			                    PagePermission.TRANSACTION_VIEW
 			            ).stream().collect(java.util.stream.Collectors.joining(",")))      
 			            .SUKCount(5000)
-			            
 			            .isRepaireAllow(true)
 			            .isSalesAllow(true)
 			            .isEmployeeAllow(true)
@@ -65,8 +65,6 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 			            .perDayMobileSmartDevicesSalesCount(20)
 			            .perDayComputerLaptopSalesCount(15)
 			            .perDayNormalTypeSalesCount(20)
-			            
-			            
 			            .isMultipleBranch(false)
 			            .perBranchUser(1)
 			            .isMultipleUser(true)
@@ -81,14 +79,17 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 			            .createdAt(LocalDateTime.now())
 			            .build(),
 
-			    // POOER PLAN
+			    // 2. STANDARD PLAN
 			    SubscriptionPlan.builder()
-			            .subscriptionCode("POOER01")
+			            .subscriptionName("STANDARD")
+			            .subscriptionCode("RASUB02")
 			            .subscriptionType("YEARLY")
-			            .amountPerMonth(499.0)
+			            .amountPerMonth(899.0)
+			            .branchCount(3)
 			            .month(12)
-			            .gst(1077.84)
-			            .totalAmount(7065.84)
+			            .gst(1941.84)
+			            .totalAmount(12729.84)
+			            .status(true)
 			            .permissions(Set.of(
 			                    PagePermission.DASHBOARD_VIEW,
 			                    PagePermission.INBOUND_VIEW,
@@ -96,41 +97,48 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 			                    PagePermission.OUTBOUND_VIEW,
 			                    PagePermission.VENDOR_ADD,
 			                    PagePermission.VENDOR_LIST,
-			                    PagePermission.EXPENSE_VIEW
+			                    PagePermission.EXPENSE_VIEW,
+			                    PagePermission.ACCOUNT_SETTING,
+			                    PagePermission.SUMMARY_REPORT,
+			                    PagePermission.REPAIR_CREATE,
+			                    PagePermission.REPAIR_LIST,
+			                    PagePermission.REPAIR_VIEW,
+			                    PagePermission.GARBAGE_LIST,
+			                    PagePermission.TRANSACTION_VIEW
 			            ).stream().collect(java.util.stream.Collectors.joining(",")))
+			            .SUKCount(20000)
 			            .isMultipleBranch(true)
-			            .perBranchUser(1)
-			            .branchCount(1)
+			            .perBranchUser(2)
 			            .isMultipleUser(true)
-			            .userCount(1)
-			            
+			            .userCount(5)
 			            .isRepaireAllow(true)
 			            .isSalesAllow(true)
 			            .isEmployeeAllow(true)
-			            .perDayRepaireCount(10)
-			            .perDayMobileSmartDevicesSalesCount(20)
-			            .perDayComputerLaptopSalesCount(15)
-			            .perDayNormalTypeSalesCount(20)
-			            
-			            .isReplaceItem(false)
-			            .isReturnItem(false)
+			            .perDayRepaireCount(25)
+			            .perDayMobileSmartDevicesSalesCount(50)
+			            .perDayComputerLaptopSalesCount(40)
+			            .perDayNormalTypeSalesCount(50)
+			            .isReplaceItem(true)
+			            .isReturnItem(true)
 			            .isDownloadInvoice(true)
 			            .isfilterInventory(true)
 			            .isfilterSales(true)
 			            .isDownloadExcelSales(true)
-			            .isDownloadExcelEntryItem(false)
+			            .isDownloadExcelEntryItem(true)
 			            .createdAt(LocalDateTime.now())
 			            .build(),
 
-			    // PREMIUM PLAN
-			            SubscriptionPlan.builder()
+			    // 3. PREMIUM PLAN
+			    SubscriptionPlan.builder()
 			            .subscriptionName("PREMIUM")
 			            .subscriptionCode("RASUB03")
-			            .subscriptionType("YEARILY")
-			            .amountPerMonth(899.0)
+			            .subscriptionType("YEARLY")
+			            .amountPerMonth(1499.0)
+			            .branchCount(10)
 			            .month(12)
-			            .gst(1941.84)
-			            .totalAmount(12729.84)
+			            .gst(3237.84)
+			            .totalAmount(21225.84)
+			            .status(true)
 			            .permissions(Set.of(
 			                    PagePermission.DASHBOARD_VIEW,
 			                    PagePermission.INBOUND_VIEW,
@@ -148,20 +156,17 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 			                    PagePermission.TRANSACTION_VIEW
 			            ).stream().collect(java.util.stream.Collectors.joining(",")))      
 			            .SUKCount(50000)
-			            .isMultipleBranch(false)
-			            .perBranchUser(1)
+			            .isMultipleBranch(true)
+			            .perBranchUser(5)
 			            .isMultipleUser(true)
-			            .userCount(1)
-			            
+			            .userCount(20)
 			            .isRepaireAllow(true)
 			            .isSalesAllow(true)
 			            .isEmployeeAllow(true)
-			            .perDayRepaireCount(10)
-			            .perDayMobileSmartDevicesSalesCount(20)
-			            .perDayComputerLaptopSalesCount(15)
-			            .perDayNormalTypeSalesCount(20)
-			            
-			            
+			            .perDayRepaireCount(100)
+			            .perDayMobileSmartDevicesSalesCount(200)
+			            .perDayComputerLaptopSalesCount(150)
+			            .perDayNormalTypeSalesCount(200)
 			            .isReplaceItem(true)
 			            .isReturnItem(true)
 			            .isDownloadInvoice(true)
@@ -172,9 +177,14 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 			            .createdAt(LocalDateTime.now())
 			            .build()
 			);
-			plans.stream().forEach(sp->{
+
+			for (SubscriptionPlan sp : plans) {
+			    SubscriptionPlan existing = rolesManagementDao.findBySubscriptionCode(sp.getSubscriptionCode());
+			    if (existing != null) {
+			        sp.setId(existing.getId());
+			    }
 			    rolesManagementDao.saveSubscriptionPlan(sp);
-			});
+			}
 		
 		return null;
 	}
@@ -201,7 +211,12 @@ public class SubscriptionPlanServiceImpl implements ISubscriptionPlanService {
 
 	@Override
 	public List<SubscriptionPlan> subscriptionPlanList() {
-		return subscriptionPlanDao.subscriptionPlanList();
+		List<SubscriptionPlan> list = subscriptionPlanDao.subscriptionPlanList();
+		if (list == null || list.isEmpty()) {
+			saveSubscriptionPlan();
+			list = subscriptionPlanDao.subscriptionPlanList();
+		}
+		return list;
 	}
 
 	@Override
