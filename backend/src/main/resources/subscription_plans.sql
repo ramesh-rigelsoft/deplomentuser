@@ -49,3 +49,4 @@ ON CONFLICT (subscription_code) DO UPDATE SET
     sukcount = EXCLUDED.sukcount,
     status = EXCLUDED.status,
     permissions = EXCLUDED.permissions;
+
