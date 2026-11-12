@@ -19,3 +19,4 @@ public class SuperAdminPageResponse<T> {
     private int totalPages;
     private boolean last;
 }
+

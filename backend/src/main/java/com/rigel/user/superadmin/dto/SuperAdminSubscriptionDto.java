@@ -38,3 +38,4 @@ public class SuperAdminSubscriptionDto {
     private String razorpayPaymentId;
     private String paymentStatus;
 }
+

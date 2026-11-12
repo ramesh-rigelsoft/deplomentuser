@@ -26,3 +26,4 @@ public class SuperAdminUserController {
         return ResponseEntity.ok(superAdminService.getUsers(search, status, adminId, page, size));
     }
 }
+

@@ -35,3 +35,4 @@ public class SuperAdminAdminDto {
     private long activeUsers;
     private long inactiveUsers;
 }
+

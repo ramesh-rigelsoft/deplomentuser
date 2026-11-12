@@ -15,3 +15,4 @@ export default function SuperAdminLayout({ title, children }) {
     </div>
   );
 }
+

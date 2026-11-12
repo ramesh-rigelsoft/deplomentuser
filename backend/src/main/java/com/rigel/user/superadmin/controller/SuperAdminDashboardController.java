@@ -27,3 +27,4 @@ public class SuperAdminDashboardController {
         return ResponseEntity.ok(stats);
     }
 }
+

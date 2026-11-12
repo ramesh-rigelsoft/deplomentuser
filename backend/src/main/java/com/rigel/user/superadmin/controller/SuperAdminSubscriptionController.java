@@ -41,3 +41,4 @@ public class SuperAdminSubscriptionController {
         return ResponseEntity.ok(superAdminService.getSubscriptionReport(fromDate, toDate));
     }
 }
+

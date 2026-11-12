@@ -53,3 +53,4 @@ public class SuperAdminAuditLog implements Serializable {
         }
     }
 }
+

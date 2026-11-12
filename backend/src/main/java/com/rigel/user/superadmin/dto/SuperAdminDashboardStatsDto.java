@@ -47,3 +47,4 @@ public class SuperAdminDashboardStatsDto {
     // Plan-wise subscriber breakdown (e.g. Basic: 120, Pro: 85, ...)
     private List<Map<String, Object>> planWiseSubscribers;
 }
+

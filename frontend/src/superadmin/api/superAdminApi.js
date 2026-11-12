@@ -66,3 +66,4 @@ export const superAdminApi = {
 };
 
 export default superAdminApi;
+

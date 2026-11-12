@@ -27,3 +27,4 @@ public class SuperAdminUserDto {
     private String adminEmail;
     private Integer adminStatus; // 1 = ACTIVE, 2 = INACTIVE
 }
+

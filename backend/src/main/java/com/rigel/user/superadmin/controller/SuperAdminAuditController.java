@@ -23,3 +23,4 @@ public class SuperAdminAuditController {
         return ResponseEntity.ok(superAdminService.getAuditLogs(page, size));
     }
 }
+

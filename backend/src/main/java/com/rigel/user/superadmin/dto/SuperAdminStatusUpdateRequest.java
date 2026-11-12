@@ -14,3 +14,4 @@ public class SuperAdminStatusUpdateRequest {
     private Boolean active; // alternative boolean flag for plans
     private String reason;
 }
+

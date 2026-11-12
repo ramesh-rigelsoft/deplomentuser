@@ -62,3 +62,4 @@ public interface ISuperAdminService {
 
     SuperAdminPageResponse<SuperAdminAuditLog> getAuditLogs(int page, int size);
 }
+

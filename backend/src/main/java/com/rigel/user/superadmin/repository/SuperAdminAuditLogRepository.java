@@ -13,3 +13,4 @@ public interface SuperAdminAuditLogRepository extends JpaRepository<SuperAdminAu
     Page<SuperAdminAuditLog> findAllByOrderByCreatedAtDesc(Pageable pageable);
     List<SuperAdminAuditLog> findTop50ByOrderByCreatedAtDesc();
 }
+

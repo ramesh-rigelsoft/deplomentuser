@@ -54,3 +54,4 @@ public class SuperAdminPlanDto {
     private Long activeSubscriberCount;
     private Long totalSubscriberCount;
 }
+

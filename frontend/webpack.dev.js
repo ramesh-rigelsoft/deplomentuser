@@ -10,6 +10,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
+    publicPath: '/',
     clean: true // cleans old build files
   },
   module: {
@@ -53,19 +54,17 @@ module.exports = {
   })
   ],
   devServer: {
-    static: './dist',  // npx webpack serve //---karne pr auto buld create hojaiga
-
-    liveReload: true, // Live reload enable 
-    port: 3000, // आपका नया port
-    open: true, // Browser auto open 
-    hot: true, // Hot Module Replacement
-    watchFiles: ['src/**/*'], // Watch all source files
+    port: 3000,
+    open: true,
+    hot: true,
+    liveReload: true,
     historyApiFallback: true,
     static: {
-    directory: path.resolve(__dirname, 'public'),
-    serveIndex: false, // 🚫 prevents decode errors
-    watch: true
-  }
+      directory: path.resolve(__dirname, 'public'),
+    },
+    devMiddleware: {
+      publicPath: '/',
+    },
   },
   mode: 'development'
 };

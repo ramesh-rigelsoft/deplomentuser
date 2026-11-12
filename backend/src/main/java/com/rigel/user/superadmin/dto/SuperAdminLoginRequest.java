@@ -13,3 +13,4 @@ public class SuperAdminLoginRequest {
     private String username;
     private String password;
 }
+
