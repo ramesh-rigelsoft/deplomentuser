@@ -51,11 +51,11 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
 
     @Override
     public Map<String, Object> login(SuperAdminLoginRequest loginRequest, HttpServletRequest request) {
-        if (loginRequest == null || loginRequest.getUsername() == null || loginRequest.getPassword() == null) {
-            throw new IllegalArgumentException("Username and password are required.");
+        if (loginRequest == null || loginRequest.getEffectiveUsername() == null || loginRequest.getPassword() == null) {
+            throw new IllegalArgumentException("Username/email and password are required.");
         }
 
-        String username = loginRequest.getUsername().trim();
+        String username = loginRequest.getEffectiveUsername();
         List<User> users = entityManager.createQuery(
                 "SELECT u FROM User u WHERE (u.email_id = :identifier OR u.name = :identifier) AND u.role = 'SUPER_ADMIN'",
                 User.class
@@ -408,7 +408,7 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
 
         List<User> allAdmins = query.getResultList();
 
-        // Map and apply post-filters for subscription properties
+        // Map and apply filters for subscription properties
         List<SuperAdminAdminDto> dtoList = allAdmins.stream().map(this::toAdminDto).filter(adminDto -> {
             if (planCode != null && !planCode.trim().isEmpty() && !planCode.equalsIgnoreCase("ALL")) {
                 if (adminDto.getSubscriptionCode() == null || !adminDto.getSubscriptionCode().equalsIgnoreCase(planCode.trim())) {

@@ -14,6 +14,7 @@ export default function SuperAdminUsers() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
 
@@ -22,7 +23,7 @@ export default function SuperAdminUsers() {
     try {
       const params = {
         page,
-        size: 10,
+        size: pageSize,
         search: search.trim() || undefined,
         status: statusFilter === 'ACTIVE' ? 1 : statusFilter === 'INACTIVE' ? 2 : undefined,
       };
@@ -40,7 +41,7 @@ export default function SuperAdminUsers() {
 
   useEffect(() => {
     fetchUsers();
-  }, [page, statusFilter]);
+  }, [page, pageSize, statusFilter]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -178,10 +179,28 @@ export default function SuperAdminUsers() {
         </div>
 
         {/* PAGINATION */}
-        <div className="card-footer bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-          <small className="text-muted">
-            Page {page + 1} of {Math.max(totalPages, 1)} (Total {totalElements} users)
-          </small>
+        <div className="card-footer bg-white py-3 border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div className="d-flex align-items-center gap-2">
+            <small className="text-muted">
+              Showing page <strong>{page + 1}</strong> of <strong>{Math.max(totalPages, 1)}</strong> (Total <strong>{totalElements}</strong> users)
+            </small>
+            <span className="text-muted small">| Rows per page:</span>
+            <select
+              className="form-select form-select-sm"
+              style={{ width: '80px' }}
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(parseInt(e.target.value));
+                setPage(0);
+              }}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+
           <div className="btn-group btn-group-sm">
             <button
               className="btn btn-outline-secondary"
@@ -190,6 +209,18 @@ export default function SuperAdminUsers() {
             >
               <ChevronLeft /> Previous
             </button>
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, idx) => {
+              const pageIdx = totalPages > 5 && page > 2 ? Math.min(page - 2 + idx, totalPages - 1) : idx;
+              return (
+                <button
+                  key={pageIdx}
+                  className={`btn ${page === pageIdx ? 'btn-primary' : 'btn-outline-secondary'}`}
+                  onClick={() => setPage(pageIdx)}
+                >
+                  {pageIdx + 1}
+                </button>
+              );
+            })}
             <button
               className="btn btn-outline-secondary"
               disabled={page >= totalPages - 1}

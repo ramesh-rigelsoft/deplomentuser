@@ -1,10 +1,14 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8089';
+// If REACT_APP_API_URL is "http://localhost:8089/api", strip the trailing "/api"
+// so we don't accidentally produce duplicate "/api/api/super-admin/..."
+const rawUrl = process.env.REACT_APP_API_URL || 'http://localhost:8089';
+const cleanHost = rawUrl.replace(/\/+$/, '').replace(/\/api$/, '');
+const SUPER_ADMIN_BASE = `${cleanHost}/api/super-admin`;
 
 const superAdminClient = axios.create({
-  baseURL: `${API_BASE_URL}/api/super-admin`,
+  baseURL: SUPER_ADMIN_BASE,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -37,7 +41,7 @@ superAdminClient.interceptors.response.use(
 
 export const superAdminApi = {
   // Auth
-  login: (data) => axios.post(`${API_BASE_URL}/api/super-admin/auth/login`, data),
+  login: (data) => axios.post(`${SUPER_ADMIN_BASE}/auth/login`, data),
   
   // Dashboard
   getDashboardStats: (params) => superAdminClient.get('/dashboard/stats', { params }),
@@ -66,4 +70,5 @@ export const superAdminApi = {
 };
 
 export default superAdminApi;
+
 

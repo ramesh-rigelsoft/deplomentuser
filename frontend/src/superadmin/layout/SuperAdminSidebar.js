@@ -33,7 +33,15 @@ export default function SuperAdminSidebar() {
   ];
 
   return (
-    <aside className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style={{ width: '260px', minHeight: '100vh', boxShadow: '2px 0 6px rgba(0,0,0,0.15)' }}>
+    <aside
+      className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+      style={{
+        width: '260px',
+        height: '100vh',
+        overflowY: 'auto',
+        boxShadow: '2px 0 6px rgba(0,0,0,0.15)',
+      }}
+    >
       <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none px-2 py-1">
         <ShieldLock size={28} className="text-warning me-2" />
         <span className="fs-5 fw-bold tracking-wide">SUPER ADMIN</span>

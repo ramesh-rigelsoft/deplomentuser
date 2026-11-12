@@ -29,8 +29,14 @@ export default function SuperAdminLogin() {
     setError('');
 
     try {
-      const res = await superAdminApi.login(formData);
+      console.log('[SuperAdminLogin] Submitting login request with payload:', { username: formData.username.trim() });
+      const res = await superAdminApi.login({
+        username: formData.username.trim(),
+        password: formData.password.trim(),
+      });
       const data = res.data;
+      console.log('[SuperAdminLogin] Received login response:', data);
+
       if (data && data.token) {
         Cookies.set('superAdminToken', data.token, { expires: 1 });
         Cookies.set('superAdminUser', JSON.stringify({
@@ -45,7 +51,15 @@ export default function SuperAdminLogin() {
         setError('Login failed: Token not received.');
       }
     } catch (err) {
-      const msg = err.response?.data?.message || 'Invalid Super Admin credentials or inactive account.';
+      console.error('[SuperAdminLogin] Login error:', err);
+      let msg = err.response?.data?.message;
+      if (!msg) {
+        if (err.message && err.message.includes('Network Error')) {
+          msg = 'Network Error: Cannot connect to backend server on port 8089. Please check if backend is running.';
+        } else {
+          msg = err.message || 'Invalid Super Admin credentials or inactive account.';
+        }
+      }
       setError(msg);
     } finally {
       setLoading(false);
