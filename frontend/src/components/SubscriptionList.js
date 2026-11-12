@@ -342,10 +342,11 @@ const SubscriptionPlanList = () => {
         console.log("User Subscription Response:", res);
 
         const payload = res?.payload;
+        const orderData = payload?.data || payload;
 
         // If Razorpay order created, trigger Razorpay modal
-        if (payload?.data?.paymentRequired && payload?.data?.orderId) {
-          openRazorpayCheckout(payload.data);
+        if (orderData?.orderId || orderData?.paymentRequired) {
+          openRazorpayCheckout(orderData);
           return;
         }
 
