@@ -202,6 +202,11 @@ export default function SuperAdminAdmins() {
                         <span className="badge bg-primary-subtle text-primary border border-primary-subtle">
                           {admin.subscriptionPlan || 'No Plan'}
                         </span>
+                        {admin.subscriptionCode && admin.subscriptionCode !== '-' && (
+                          <span className="badge bg-light text-secondary border font-monospace ms-1">
+                            {admin.subscriptionCode}
+                          </span>
+                        )}
                         <div className="small text-muted mt-1">{admin.subscriptionType || '-'}</div>
                       </td>
                       <td>

@@ -84,12 +84,18 @@ export default function SuperAdminAdminDetail() {
                   <span>{cleanMobile}</span>
                 </div>
                 <div className="col-12 col-sm-6">
-                  <span className="fw-semibold">Created At: </span>
-                  <span>{admin?.created_at ? new Date(admin.created_at).toLocaleString() : '-'}</span>
+                  <span className="fw-semibold">Subscription Code: </span>
+                  <span className="badge bg-light text-primary border font-monospace">
+                    {admin?.subscriptionCode || '-'}
+                  </span>
                 </div>
                 <div className="col-12 col-sm-6">
                   <span className="fw-semibold">Total Users: </span>
                   <span>{admin?.totalUsers || 0} ({admin?.activeUsers || 0} active, {admin?.inactiveUsers || 0} inactive)</span>
+                </div>
+                <div className="col-12 col-sm-6">
+                  <span className="fw-semibold">Created At: </span>
+                  <span>{admin?.created_at ? new Date(admin.created_at).toLocaleString() : '-'}</span>
                 </div>
               </div>
             </div>
@@ -98,10 +104,21 @@ export default function SuperAdminAdminDetail() {
               <div className="p-3 bg-light rounded">
                 <span className="text-muted small fw-semibold text-uppercase d-block mb-1">Current Subscription</span>
                 <div className="d-flex justify-content-between align-items-center mb-1">
-                  <span className="fw-bold text-dark fs-5">{admin?.subscriptionPlan || 'No Plan'}</span>
+                  <div className="d-flex align-items-center">
+                    <span className="fw-bold text-dark fs-5">{admin?.subscriptionPlan || 'No Plan'}</span>
+                    {admin?.subscriptionCode && admin.subscriptionCode !== '-' && (
+                      <span className="badge bg-white text-primary border font-monospace ms-2">
+                        {admin.subscriptionCode}
+                      </span>
+                    )}
+                  </div>
                   <span className={`badge ${admin?.subscriptionStatus === 'ACTIVE' ? 'bg-success' : 'bg-secondary'}`}>
                     {admin?.subscriptionStatus}
                   </span>
+                </div>
+                <div className="small text-muted mb-1">
+                  <span className="fw-semibold">Plan Code: </span>
+                  <span className="font-monospace text-dark fw-bold">{admin?.subscriptionCode || '-'}</span>
                 </div>
                 <div className="small text-muted mb-2">Billing: {admin?.subscriptionType || '-'}</div>
                 {admin?.subscriptionEndAt && (
@@ -200,6 +217,7 @@ export default function SuperAdminAdminDetail() {
                 <tr>
                   <th scope="col" className="ps-4">Order ID</th>
                   <th scope="col">Plan</th>
+                  <th scope="col">Code</th>
                   <th scope="col">Type</th>
                   <th scope="col">Amount</th>
                   <th scope="col">Duration</th>
@@ -211,7 +229,7 @@ export default function SuperAdminAdminDetail() {
               <tbody>
                 {subscriptions.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="text-center py-4 text-muted">
+                    <td colSpan="9" className="text-center py-4 text-muted">
                       No subscription transactions on record.
                     </td>
                   </tr>
@@ -222,6 +240,11 @@ export default function SuperAdminAdminDetail() {
                         {s.razorpayOrderId || `ORD-${s.id}`}
                       </td>
                       <td className="fw-bold text-dark">{s.subscriptionName}</td>
+                      <td>
+                        <span className="badge bg-light text-primary border font-monospace">
+                          {s.subscriptionCode || '-'}
+                        </span>
+                      </td>
                       <td>
                         <span className="badge bg-light text-secondary border">{s.subscriptionType}</span>
                       </td>
