@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rigel.user.util.PagePermission;
 
 @Builder
@@ -18,6 +19,7 @@ import com.rigel.user.util.PagePermission;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserSubscriptionDto{
 	
 	private int id;
@@ -73,9 +75,4 @@ public class UserSubscriptionDto{
     private boolean isEmployeeAllow;
     
     private int SUKCount;
-
-    private String razorpayOrderId;
-    private String razorpayPaymentId;
-    private String razorpaySignature;
-    private String paymentStatus;
 }

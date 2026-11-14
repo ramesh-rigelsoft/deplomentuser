@@ -243,7 +243,7 @@ public class RolesManagementDaoImpl implements IRolesManagementDao {
 
 		List<Object[]> rows;
 
-		if (roleId == 1) {
+		if (roleId != null && roleId == 1) {
 
 			rows = entityManager.createQuery("""
 					SELECT p.tab,
@@ -256,27 +256,61 @@ public class RolesManagementDaoImpl implements IRolesManagementDao {
 					ORDER BY p.id
 					""", Object[].class).getResultList();
 
-		} else {
+		} else if (roleId != null) {
 
-			rows = entityManager.createQuery("""
-					SELECT p.tab,
-					       p.label,
-					       p.path,
-					       p.icon,
-					       p.parent
-					FROM RolesPagePermision rpp
-					JOIN rpp.pageId p
-					WHERE rpp.roleId.id = :roleId
-					  AND rpp.ownerId = :ownerId
-					  AND rpp.branchCode = :branchCode
-					  AND rpp.canView = true
-					  AND p.status = true
-					ORDER BY p.id
-					""", Object[].class)
-					.setParameter("roleId", roleId)
-					.setParameter("ownerId", ownerId)
-					.setParameter("branchCode", branchCode)
-					.getResultList();
+			if (branchCode != null && !branchCode.trim().isEmpty()) {
+				try {
+					rows = entityManager.createQuery("""
+							SELECT p.tab,
+							       p.label,
+							       p.path,
+							       p.icon,
+							       p.parent
+							FROM RolesPagePermision rpp
+							JOIN rpp.pageId p
+							WHERE rpp.roleId.id = :roleId
+							  AND rpp.ownerId = :ownerId
+							  AND LOWER(rpp.branchCode) = LOWER(:branchCode)
+							  AND rpp.canView = true
+							  AND p.status = true
+							ORDER BY p.id
+							""", Object[].class)
+							.setParameter("roleId", roleId)
+							.setParameter("ownerId", ownerId)
+							.setParameter("branchCode", branchCode.trim())
+							.getResultList();
+				} catch (Exception e) {
+					rows = new ArrayList<>();
+				}
+			} else {
+				rows = new ArrayList<>();
+			}
+
+			if (rows.isEmpty()) {
+				try {
+					rows = entityManager.createQuery("""
+							SELECT p.tab,
+							       p.label,
+							       p.path,
+							       p.icon,
+							       p.parent
+							FROM RolesPagePermision rpp
+							JOIN rpp.pageId p
+							WHERE rpp.roleId.id = :roleId
+							  AND rpp.ownerId = :ownerId
+							  AND rpp.canView = true
+							  AND p.status = true
+							ORDER BY p.id
+							""", Object[].class)
+							.setParameter("roleId", roleId)
+							.setParameter("ownerId", ownerId)
+							.getResultList();
+				} catch (Exception e) {
+					rows = new ArrayList<>();
+				}
+			}
+		} else {
+			rows = new ArrayList<>();
 		}
 
 		Map<String, MenuDto> menuMap = new LinkedHashMap<>();
@@ -332,15 +366,48 @@ public class RolesManagementDaoImpl implements IRolesManagementDao {
 
 	@Override
 	public UserSubscription getSubscriptionPlanByOwnerId(Integer ownerId, String branchCode) {
-	    try {
-	        return entityManager
-	                .createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND s.branchCode = :branchCode", UserSubscription.class)
-	                .setParameter("ownerId", ownerId)
-	                .setParameter("branchCode", branchCode)
-	                .getSingleResult();
-	    } catch (Exception e) {
-	        return null;
-	    }
+		if (ownerId == null || ownerId <= 0) {
+			return null;
+		}
+
+		if (branchCode != null && !branchCode.trim().isEmpty()) {
+			try {
+				return entityManager
+						.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND LOWER(s.branchCode) = LOWER(:branchCode) AND s.active = true AND s.status = true ORDER BY s.id DESC", UserSubscription.class)
+						.setParameter("ownerId", ownerId)
+						.setParameter("branchCode", branchCode.trim())
+						.setMaxResults(1)
+						.getSingleResult();
+			} catch (Exception ignored) {}
+
+			try {
+				return entityManager
+						.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND LOWER(s.branchCode) = LOWER(:branchCode) ORDER BY s.id DESC", UserSubscription.class)
+						.setParameter("ownerId", ownerId)
+						.setParameter("branchCode", branchCode.trim())
+						.setMaxResults(1)
+						.getSingleResult();
+			} catch (Exception ignored) {}
+		}
+
+		// Fallback without branchCode constraint
+		try {
+			return entityManager
+					.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND s.active = true AND s.status = true ORDER BY s.id DESC", UserSubscription.class)
+					.setParameter("ownerId", ownerId)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (Exception ignored) {}
+
+		try {
+			return entityManager
+					.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId ORDER BY s.id DESC", UserSubscription.class)
+					.setParameter("ownerId", ownerId)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 
 	@Override

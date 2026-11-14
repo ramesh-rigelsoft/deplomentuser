@@ -56,7 +56,10 @@ public class SecurityTokenConfig1 {
                 	"/api/user/signup",
                     "/api/user/**",
                     "/api/user/login/**",
-                    "/authenticate"
+                    "/authenticate",
+                    "/api/superadmin/auth/**",
+                    "/api/superadmin/**",
+                    "/api/payment/razorpay/webhook"
                 ).permitAll()
 
                 // ✅ STATIC

@@ -25,6 +25,16 @@ import AppLayout from '../layout/AppLayout';
 import SubscriptionPlanList from './SubscriptionList';
 import Home from './Home';
 
+// Super Admin Module
+import SuperAdminLogin from '../superadmin/SuperAdminLogin';
+import SuperAdminProtectedRoute from '../superadmin/SuperAdminProtectedRoute';
+import SuperAdminDashboard from '../superadmin/SuperAdminDashboard';
+import SubscriptionPlans from '../superadmin/SubscriptionPlans';
+import SubscriptionSalesReport from '../superadmin/SubscriptionSalesReport';
+import OwnersManagement from '../superadmin/OwnersManagement';
+import SuperAdminSubscriptions from '../superadmin/SuperAdminSubscriptions';
+import SuperAdminPayments from '../superadmin/SuperAdminPayments';
+
 export default function Main() {
   const navigate = useNavigate();
 
@@ -59,6 +69,18 @@ export default function Main() {
         {/* <Route path="/branchEntryReport" element={<OfficeBranch/>}/> */}
         <Route path="/branchExpense" element={<BranchExpense />}/>
         <Route path="/branchGarbage" element={<GarbageItem />}/>
+
+        {/* ================================================= */}
+        {/* SUPER ADMIN MODULE ROUTES (SEPARATE & SECURE)    */}
+        {/* ================================================= */}
+        <Route path="/superadmin/login" element={<SuperAdminLogin />} />
+        <Route path="/superadmin" element={<Navigate to="/superadmin/dashboard" replace />} />
+        <Route path="/superadmin/dashboard" element={<SuperAdminProtectedRoute><SuperAdminDashboard /></SuperAdminProtectedRoute>} />
+        <Route path="/superadmin/subscription-plans" element={<SuperAdminProtectedRoute><SubscriptionPlans /></SuperAdminProtectedRoute>} />
+        <Route path="/superadmin/reports" element={<SuperAdminProtectedRoute><SubscriptionSalesReport /></SuperAdminProtectedRoute>} />
+        <Route path="/superadmin/owners" element={<SuperAdminProtectedRoute><OwnersManagement /></SuperAdminProtectedRoute>} />
+        <Route path="/superadmin/subscriptions" element={<SuperAdminProtectedRoute><SuperAdminSubscriptions /></SuperAdminProtectedRoute>} />
+        <Route path="/superadmin/payments" element={<SuperAdminProtectedRoute><SuperAdminPayments /></SuperAdminProtectedRoute>} />
         {/* </Route> */}
       </Routes>
   );

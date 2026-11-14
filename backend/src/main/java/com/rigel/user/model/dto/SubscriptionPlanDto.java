@@ -57,6 +57,11 @@ public class SubscriptionPlanDto{
     private boolean isDownloadExcelSales;
     private boolean isDownloadExcelEntryItem;
     private int SUKCount;
-      
+    private String description;
+    private String currency;
+    private String durationUnit;
+    private Integer durationValue;
+    private String features;
+    private LocalDateTime updatedAt;
 }
 

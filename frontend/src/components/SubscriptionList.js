@@ -33,6 +33,40 @@ const SubscriptionPlanList = () => {
     useState("");
 
   const [branchCode, setBranchCode] = useState("");
+  const [isQueueSelected, setIsQueueSelected] = useState(false);
+  const [subscriptionFilter, setSubscriptionFilter] = useState("ALL");
+  const [showOnlyActivePlans, setShowOnlyActivePlans] = useState(true);
+
+  // Date and Remaining Days helpers
+  const getSubscriptionExpiryDate = (sub) => {
+    if (!sub) return null;
+    if (sub.subscriptionEndAt) {
+      return new Date(sub.subscriptionEndAt);
+    }
+    if (sub.subscriptionStartAt) {
+      const d = new Date(sub.subscriptionStartAt);
+      const months = sub.subscriptionDuration || sub.month || 1;
+      d.setMonth(d.getMonth() + months);
+      return d;
+    }
+    return null;
+  };
+
+  const getDaysLeft = (sub) => {
+    const expiry = getSubscriptionExpiryDate(sub);
+    if (!expiry || isNaN(expiry.getTime())) return null;
+    const now = new Date();
+    const diffMs = expiry.getTime() - now.getTime();
+    return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  };
+
+  const isSubscriptionExpired = (sub) => {
+    if (!sub) return true;
+    if (sub.isQueued || sub.queueStatus === "QUEUED") return false;
+    const days = getDaysLeft(sub);
+    if (days !== null && days <= 0) return true;
+    return sub.active === false || sub.status === false;
+  };
 
   // =========================================
   // GET SUBSCRIPTION PLANS
@@ -224,8 +258,21 @@ const SubscriptionPlanList = () => {
   // PAY
   // =========================================
 
-const handlePay = () => {
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
+const handlePay = () => {
   if (!selectedPlan) {
     fail("Please select a subscription plan.");
     return;
@@ -244,58 +291,108 @@ const handlePay = () => {
   const paymentData = {
     userId: ownerId,
     branchCode: branchCode,
-    subscriptionCode: subscriptionCode
+    subscriptionCode: subscriptionCode,
+    isQueued: isQueueSelected,
   };
 
-  console.log(
-    "User Subscription Request:",
-    paymentData
-  );
+  API.paySubscription(dispatch, paymentData)
+    .then(async (res) => {
+      const orderData = res?.payload?.data;
 
-  API.paySubscription(
-    dispatch,
-    paymentData
-  )
-    .then((res) => {
+      // Handle Razorpay Payment flow
+      if (orderData?.paymentRequired || orderData?.orderId) {
+        const isLoaded = await loadRazorpayScript();
+        if (!isLoaded && !orderData.mockMode) {
+          fail("Unable to load Razorpay payment gateway. Please check your internet connection.");
+          return;
+        }
 
-      console.log(
-        "User Subscription Response:",
-        res
-      );
+        if (orderData.mockMode || !window.Razorpay) {
+          const proceed = window.confirm(
+            `Razorpay Test/Mock Mode: Complete payment of ₹${orderData.amount} for ${orderData.subscriptionName}?`
+          );
+          if (proceed) {
+            completeVerification({
+              ...paymentData,
+              razorpayOrderId: orderData.orderId,
+              razorpayPaymentId: "pay_mock_" + Date.now(),
+              razorpaySignature: "mock_signature",
+            });
+          }
+          return;
+        }
+
+        const options = {
+          key: orderData.keyId,
+          amount: orderData.amountInPaise,
+          currency: orderData.currency || "INR",
+          name: "RigelSoft Technologies",
+          description: orderData.subscriptionName || "Subscription Plan",
+          order_id: orderData.orderId,
+          handler: function (response) {
+            completeVerification({
+              ...paymentData,
+              razorpayOrderId: response.razorpay_order_id || orderData.orderId,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+          },
+          prefill: {
+            name: Cookies.get("userName") || "Business Owner",
+            email: Cookies.get("userEmail") || "",
+            contact: Cookies.get("userMobile") || "",
+          },
+          theme: {
+            color: "#2563eb",
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (resp) {
+          fail("Payment failed: " + (resp.error?.description || "Transaction declined"));
+        });
+        rzp.open();
+        return;
+      }
 
       if (
         res?.payload?.code === "201" ||
         res?.payload?.status === "CREATED"
       ) {
-
-        success(res?.payload?.message);
-
-        // Clear selected plan
+        success(res?.payload?.message || "Subscription activated successfully!");
         setSelectedPlan(null);
-
         setSubscriptionCode("");
-
         setBranchCode("");
-
-        // Refresh My Subscribe Plan List
+        setIsQueueSelected(false);
         fetchMySubscriptions();
-
       } else {
-
-        fail(res?.payload?.message);
-
+        fail(res?.payload?.message || "Subscription request failed.");
       }
-
     })
     .catch((err) => {
+      fail(err?.response?.data?.message || err?.message || "Error initiating subscription payment.");
+    });
+};
 
-      console.error(
-        "User Subscription Error:",
-        err
-      );
-
-      fail(err?.response?.data?.message);
-
+const completeVerification = (verifyData) => {
+  API.paySubscription(dispatch, verifyData)
+    .then((res) => {
+      if (
+        res?.payload?.code === "201" ||
+        res?.payload?.status === "CREATED"
+      ) {
+        success(res?.payload?.message || "Payment verified & subscription activated!");
+        setSelectedPlan(null);
+        setSubscriptionCode("");
+        setBranchCode("");
+        setIsQueueSelected(false);
+        fetchMySubscriptions();
+      } else {
+        fail(res?.payload?.message || "Payment verification failed.");
+      }
+    })
+    .catch((err) => {
+      fail(err?.response?.data?.message || "Payment verification failed.");
     });
 };
 
@@ -341,6 +438,70 @@ const handlePay = () => {
         subTitle="Choose the subscription plan that suits your business"
         dashboard="1"
       />
+
+      {/* ACTIVE SUBSCRIPTION OVERVIEW BANNER */}
+      {(() => {
+        const activeSub = mySubscriptions.find(
+          (s) => !isSubscriptionExpired(s) && !s.isQueued && s.queueStatus !== "QUEUED"
+        );
+        if (activeSub) {
+          const days = getDaysLeft(activeSub);
+          const isExpiringSoon = days !== null && days <= 30;
+          return (
+            <div className={`alert ${isExpiringSoon ? "alert-warning border-warning" : "alert-info border-info"} shadow-sm mb-4`}>
+              <div className="d-flex flex-wrap justify-content-between align-items-center">
+                <div>
+                  <h6 className="mb-1 fw-bold text-dark">
+                    🌟 Active Plan: {activeSub.subscriptionName} ({activeSub.subscriptionType || "Active"})
+                  </h6>
+                  <div className="small text-muted">
+                    Branch: <strong>{activeSub.branchCode || "Primary"}</strong> | 
+                    Valid From: <strong>{formatDate(activeSub.subscriptionStartAt)}</strong> | 
+                    Expiry: <strong>{formatDate(getSubscriptionExpiryDate(activeSub))}</strong>
+                  </div>
+                </div>
+                <div className="mt-2 mt-md-0 d-flex align-items-center gap-2">
+                  <span className={`badge ${isExpiringSoon ? "bg-warning text-dark" : "bg-success"} fs-6`}>
+                    {days !== null ? `${days} Days Left` : "Active"}
+                  </span>
+                  {isExpiringSoon && (
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-primary"
+                      onClick={() => {
+                        const p = plans.find((x) => x.subscriptionCode === activeSub.subscriptionCode) || plans[0];
+                        if (p) handleSubscribe(p);
+                      }}
+                    >
+                      Renew Now
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        } else if (mySubscriptions.length > 0) {
+          return (
+            <div className="alert alert-danger border-danger shadow-sm mb-4 d-flex justify-content-between align-items-center flex-wrap">
+              <div>
+                <h6 className="mb-1 fw-bold text-danger">⚠ Your subscription has expired!</h6>
+                <small className="text-muted">Please renew your plan or choose an active plan below to continue full access.</small>
+              </div>
+              <button
+                type="button"
+                className="btn btn-sm btn-danger mt-2 mt-md-0"
+                onClick={() => {
+                  const p = plans.find((x) => x.status !== false);
+                  if (p) handleSubscribe(p);
+                }}
+              >
+                Subscribe Now
+              </button>
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* ========================================= */}
       {/* SELECTED SUBSCRIPTION SECTION */}
@@ -490,6 +651,22 @@ const handlePay = () => {
                 Pay
               </button>
 
+            </div>
+
+            {/* QUEUE OPTION */}
+            <div className="col-12 mt-2">
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="queueSubscriptionCheck"
+                  checked={isQueueSelected}
+                  onChange={(e) => setIsQueueSelected(e.target.checked)}
+                />
+                <label className="form-check-label text-muted small" htmlFor="queueSubscriptionCheck">
+                  <strong>Queue for Future Activation:</strong> Check this if you already have an active plan and wish to pre-pay for the subsequent renewal cycle without losing your remaining days.
+                </label>
+              </div>
             </div>
 
           </div>
@@ -881,7 +1058,7 @@ const handlePay = () => {
       )}
 
       {/* ========================================= */}
-      {/* MY SUBSCRIBE PLAN LIST */}
+      {/* MY ACTIVE SUBSCRIPTION */}
       {/* ========================================= */}
 
       <div className="card shadow p-2 p-md-3 mb-4">
@@ -889,12 +1066,12 @@ const handlePay = () => {
         <div className="d-flex justify-content-between align-items-center mb-3">
 
           <div>
-            <h5 className="mb-0">
-              My Subscribe Plan List
+            <h5 className="mb-0 text-success">
+              My Active Subscriptions
             </h5>
 
             <small className="text-muted">
-              Your subscription history
+              Active & queued subscription details
             </small>
           </div>
 
@@ -904,9 +1081,7 @@ const handlePay = () => {
             onClick={fetchMySubscriptions}
             disabled={subscriptionLoading}
           >
-            {subscriptionLoading
-              ? "Loading..."
-              : "Refresh"}
+            {subscriptionLoading ? "Loading..." : "Refresh"}
           </button>
 
         </div>
@@ -917,7 +1092,7 @@ const handlePay = () => {
 
             <thead>
 
-              <tr>
+              <tr className="table-light">
 
                 <th>#</th>
 
@@ -935,7 +1110,9 @@ const handlePay = () => {
 
                 <th>Start Date</th>
 
-                {/* <th>Active</th> */}
+                <th>Expiry Date</th>
+
+                <th>Days Left</th>
 
                 <th>Status</th>
 
@@ -952,32 +1129,39 @@ const handlePay = () => {
                 <tr>
 
                   <td
-                    colSpan="11"
-                    className="text-center"
+                    colSpan="12"
+                    className="text-center py-3 text-muted"
                   >
-                    Loading My Subscriptions...
+                    Loading Subscriptions...
                   </td>
 
                 </tr>
 
-              ) : mySubscriptions.length === 0 ? (
+              ) : mySubscriptions.filter((s) => !isSubscriptionExpired(s)).length === 0 ? (
 
                 <tr>
 
                   <td
-                    colSpan="11"
-                    className="text-center"
+                    colSpan="12"
+                    className="text-center py-3 text-muted"
                   >
-                    No Subscribed Plans Found
+                    No Active Subscription Found. Please subscribe to an active plan below.
                   </td>
 
                 </tr>
 
               ) : (
 
-                mySubscriptions.map(
-                  (subscription, index) => (
+                mySubscriptions
+                  .filter((sub) => !isSubscriptionExpired(sub))
+                  .map(
+                  (subscription, index) => {
+                    const expiryDate = getSubscriptionExpiryDate(subscription);
+                    const daysLeft = getDaysLeft(subscription);
+                    const isQueued = subscription.isQueued || subscription.queueStatus === "QUEUED";
+                    const isExpiringSoon = !isQueued && daysLeft !== null && daysLeft <= 30;
 
+                    return (
                     <tr
                       key={
                         subscription.id ||
@@ -1039,59 +1223,73 @@ const handlePay = () => {
                         )}
                       </td>
 
-                      {/* ACTIVE */}
-
-                      {/* <td>
-
-                        {subscription.active ? (
-                          <span className="badge bg-success">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="badge bg-secondary">
-                            Inactive
-                          </span>
-                        )}
-
-                      </td> */}
-
-                      {/* STATUS */}
-
                       <td>
-
-                        {subscription.status ? (
-                          <span className="badge bg-success">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="badge bg-danger">
-                            Expaired
-                          </span>
-                        )}
-
+                        {formatDate(expiryDate)}
                       </td>
 
-                      {/* VIEW */}
-
+                      {/* DAYS LEFT */}
                       <td>
+                        {isQueued ? (
+                          <span className="badge bg-info text-white">
+                            Queued Plan
+                          </span>
+                        ) : isExpiringSoon ? (
+                          <span className="badge bg-warning text-dark fw-bold">
+                            ⚠ {daysLeft} Days Left
+                          </span>
+                        ) : (
+                          <span className="badge bg-success">
+                            {daysLeft !== null ? `${daysLeft} Days Left` : "Active"}
+                          </span>
+                        )}
+                      </td>
 
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-info text-white"
-                          onClick={() =>
-                            handleViewSubscription(
-                              subscription
-                            )
-                          }
-                        >
-                          View
-                        </button>
+                      {/* STATUS */}
+                      <td>
+                        {isQueued ? (
+                          <span className="badge bg-info text-white">
+                            Queued
+                          </span>
+                        ) : (
+                          <span className="badge bg-success">
+                            Active
+                          </span>
+                        )}
+                      </td>
 
+                      {/* ACTION */}
+                      <td>
+                        <div className="d-flex gap-1 flex-wrap">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-info text-white"
+                            onClick={() =>
+                              handleViewSubscription(
+                                subscription
+                              )
+                            }
+                          >
+                            View
+                          </button>
+
+                          {isExpiringSoon && (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-warning text-dark fw-bold"
+                              onClick={() => {
+                                const matchingPlan = plans.find((p) => p.subscriptionCode === subscription.subscriptionCode && p.status !== false) || plans.find((p) => p.status !== false);
+                                if (matchingPlan) handleSubscribe(matchingPlan);
+                              }}
+                            >
+                              Renew Now
+                            </button>
+                          )}
+                        </div>
                       </td>
 
                     </tr>
-
-                  )
+                    );
+                  }
                 )
 
               )}
@@ -1112,16 +1310,19 @@ const handlePay = () => {
 
         <div className="d-flex justify-content-between align-items-center mb-3">
 
-          <h5 className="mb-0">
-            Subscription Plan List
-          </h5>
+          <div>
+            <h5 className="mb-0">
+              Subscription Plan List
+            </h5>
+            <small className="text-muted">
+              Active plans available to purchase
+            </small>
+          </div>
 
           <button
             type="button"
             className="btn btn-primary btn-sm"
-            onClick={
-              subscriptionPlanList
-            }
+            onClick={subscriptionPlanList}
           >
             Refresh
           </button>
@@ -1134,7 +1335,7 @@ const handlePay = () => {
 
             <thead>
 
-              <tr>
+              <tr className="table-light">
 
                 <th>#</th>
 
@@ -1176,29 +1377,29 @@ const handlePay = () => {
 
                   <td
                     colSpan="14"
-                    className="text-center"
+                    className="text-center py-3 text-muted"
                   >
                     Loading...
                   </td>
 
                 </tr>
 
-              ) : plans.length === 0 ? (
+              ) : plans.filter((p) => p.status !== false).length === 0 ? (
 
                 <tr>
 
                   <td
                     colSpan="14"
-                    className="text-center"
+                    className="text-center py-3 text-muted"
                   >
-                    No Subscription Plans Found
+                    No Active Subscription Plans Found
                   </td>
 
                 </tr>
 
               ) : (
 
-                plans.map(
+                plans.filter((p) => p.status !== false).map(
                   (plan, index) => (
 
                     <tr

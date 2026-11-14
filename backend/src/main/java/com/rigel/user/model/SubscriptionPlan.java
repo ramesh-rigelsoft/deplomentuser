@@ -61,6 +61,15 @@ public class SubscriptionPlan implements Serializable {
    
     @Column(name = "permissions")
     private String permissions;
+
+    private String description;
+    @Builder.Default
+    private String currency = "INR";
+    private String durationUnit; // DAY, MONTH, YEAR
+    private Integer durationValue;
+    @Column(length = 2000)
+    private String features;
+    private LocalDateTime updatedAt;
     
     private boolean isRepaireAllow;
     private boolean isSalesAllow;

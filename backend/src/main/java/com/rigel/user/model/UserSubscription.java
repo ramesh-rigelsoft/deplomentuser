@@ -94,4 +94,8 @@ public class UserSubscription implements Serializable {
     private String razorpayPaymentId;
     private String razorpaySignature;
     private String paymentStatus;
+
+    private LocalDateTime subscriptionEndAt;
+    private boolean isQueued;
+    private String queueStatus;
 }

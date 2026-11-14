@@ -111,6 +111,9 @@ public class UserController {
 
 	@Autowired
 	private IRazorpayService razorpayService;
+
+	@Autowired(required = false)
+	private com.rigel.user.dao.ISuperAdminDao superAdminDao;
 	
 //	@Autowired
 //	private IUserLogOutIn userLogOutIn;
@@ -313,8 +316,13 @@ public class UserController {
 			HttpServletRequest request) {
 		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> data = new HashMap<>();
-		String username=login.getUsername()+"|admin";
-        User user = userService.findUserByEmailId(username,0);
+		String username = login.getUsername() != null && login.getUsername().endsWith("|admin")
+				? login.getUsername()
+				: (login.getUsername() + "|admin");
+		User user = userService.findUserByEmailId(username, 0);
+		if (user == null) {
+			user = userService.findUserByEmailId(login.getUsername(), 0);
+		}
 		if (user == null) {
 			throw new TaskTitleNotFound("Email id not existing with us.");
 		} else if (!(User.PASSWORD_ENCODER.matches(login.getPassword(), user.getPassword()))) {
@@ -322,8 +330,44 @@ public class UserController {
 		} else {
 			final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
 			final String token = jwtTokenUtil.generateToken(userDetails, request);
+
+			int effectiveOwnerId = (user.getOwnerId() > 0) ? user.getOwnerId() : user.getId();
+			if (user.getOwnerId() <= 0) {
+				user.setOwnerId(effectiveOwnerId);
+			}
+
+			String branchCode = (login.getBranchCode() != null && !login.getBranchCode().trim().isEmpty())
+					? login.getBranchCode().trim()
+					: (user.getBranchCode() != null && !user.getBranchCode().trim().isEmpty()
+							? user.getBranchCode().trim()
+							: null);
+
+			OfficeBranch branch = rolesManagementService.searchOfficeBranch(
+					SearchCriteria.builder().userId(effectiveOwnerId).branchCode(branchCode).build()
+			).stream().findFirst().orElse(null);
+
+			if (branch == null) {
+				branch = rolesManagementService.searchOfficeBranch(
+						SearchCriteria.builder().userId(effectiveOwnerId).build()
+				).stream().findFirst().orElse(null);
+			}
+
+			if (branch != null && branchCode == null) {
+				branchCode = branch.getBranchCode();
+			}
+
+			OfficeBranchDto officeBranchDto = (branch != null) ? objectMapper.convertValue(branch, OfficeBranchDto.class) : null;
+			Long roleId = rolesManagementService.getRoleIdByRole(user.getRole());
+			List<MenuDto> menuDto = rolesManagementService.getMenus(roleId, effectiveOwnerId, branchCode);
+			UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(
+					subscriptionPlanService.getSubscriptionPlanByOwnerId(effectiveOwnerId, branchCode)
+			).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
+
 			data.put("access_token", token);
 			data.put("user", user);
+			data.put("branch", officeBranchDto);
+			data.put("page_access", menuDto);
+			data.put("subscription_plan", userSubscriptionDto);
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -337,8 +381,11 @@ public class UserController {
 			HttpServletRequest request) {
 		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> data = new HashMap<>();
-		String username=login.getUsername();
-        User user = userService.findUserByEmailId(username,0);
+		String username = login.getUsername();
+		User user = userService.findUserByEmailId(username, 0);
+		if (user == null && username != null && !username.endsWith("|admin")) {
+			user = userService.findUserByEmailId(username + "|admin", 0);
+		}
 		if (user == null) {
 			throw new TaskTitleNotFound("Email id not existing with us.");
 		} else if (!(User.PASSWORD_ENCODER.matches(login.getPassword(), user.getPassword()))) {
@@ -346,11 +393,39 @@ public class UserController {
 		} else {
 			final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
 			final String token = jwtTokenUtil.generateToken(userDetails, request);
-			Long roleId=rolesManagementService.getRoleIdByRole(user.getRole());
-			OfficeBranch branch=rolesManagementService.searchOfficeBranch(SearchCriteria.builder().userId(user.getOwnerId()).branchCode(login.getBranchCode()).build()).stream().findFirst().orElse(null);
-			OfficeBranchDto officeBranchDto=objectMapper.convertValue(branch, OfficeBranchDto.class);
-			List<MenuDto> menuDto=rolesManagementService.getMenus(roleId, user.getOwnerId(),login.getBranchCode());
-			UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(subscriptionPlanService.getSubscriptionPlanByOwnerId(user.getOwnerId(), login.getBranchCode())).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
+
+			int effectiveOwnerId = (user.getOwnerId() > 0) ? user.getOwnerId() : user.getId();
+			if (user.getOwnerId() <= 0) {
+				user.setOwnerId(effectiveOwnerId);
+			}
+
+			String branchCode = (login.getBranchCode() != null && !login.getBranchCode().trim().isEmpty())
+					? login.getBranchCode().trim()
+					: (user.getBranchCode() != null && !user.getBranchCode().trim().isEmpty()
+							? user.getBranchCode().trim()
+							: null);
+
+			OfficeBranch branch = rolesManagementService.searchOfficeBranch(
+					SearchCriteria.builder().userId(effectiveOwnerId).branchCode(branchCode).build()
+			).stream().findFirst().orElse(null);
+
+			if (branch == null) {
+				branch = rolesManagementService.searchOfficeBranch(
+						SearchCriteria.builder().userId(effectiveOwnerId).build()
+				).stream().findFirst().orElse(null);
+			}
+
+			if (branch != null && branchCode == null) {
+				branchCode = branch.getBranchCode();
+			}
+
+			OfficeBranchDto officeBranchDto = (branch != null) ? objectMapper.convertValue(branch, OfficeBranchDto.class) : null;
+			Long roleId = rolesManagementService.getRoleIdByRole(user.getRole());
+			List<MenuDto> menuDto = rolesManagementService.getMenus(roleId, effectiveOwnerId, branchCode);
+			UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(
+					subscriptionPlanService.getSubscriptionPlanByOwnerId(effectiveOwnerId, branchCode)
+			).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
+
 			data.put("access_token", token);
 			data.put("user", user);
 			data.put("branch", officeBranchDto);
@@ -375,11 +450,39 @@ public class UserController {
 		} else {
 			final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
 			final String token = jwtTokenUtil.generateToken(userDetails, request);
-			Long roleId=rolesManagementService.getRoleIdByRole(user.getRole());
-			OfficeBranch branch=rolesManagementService.searchOfficeBranch(SearchCriteria.builder().userId(user.getOwnerId()).branchCode(login.getBranchCode()).build()).stream().findFirst().orElse(null);
-			OfficeBranchDto officeBranchDto=objectMapper.convertValue(branch, OfficeBranchDto.class);
-			List<MenuDto> menuDto=rolesManagementService.getMenus(roleId, user.getOwnerId(),login.getBranchCode());
-			UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(subscriptionPlanService.getSubscriptionPlanByOwnerId(user.getOwnerId(), login.getBranchCode())).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
+
+			int effectiveOwnerId = (user.getOwnerId() > 0) ? user.getOwnerId() : user.getId();
+			if (user.getOwnerId() <= 0) {
+				user.setOwnerId(effectiveOwnerId);
+			}
+
+			String branchCode = (login.getBranchCode() != null && !login.getBranchCode().trim().isEmpty())
+					? login.getBranchCode().trim()
+					: (user.getBranchCode() != null && !user.getBranchCode().trim().isEmpty()
+							? user.getBranchCode().trim()
+							: null);
+
+			OfficeBranch branch = rolesManagementService.searchOfficeBranch(
+					SearchCriteria.builder().userId(effectiveOwnerId).branchCode(branchCode).build()
+			).stream().findFirst().orElse(null);
+
+			if (branch == null) {
+				branch = rolesManagementService.searchOfficeBranch(
+						SearchCriteria.builder().userId(effectiveOwnerId).build()
+				).stream().findFirst().orElse(null);
+			}
+
+			if (branch != null && branchCode == null) {
+				branchCode = branch.getBranchCode();
+			}
+
+			OfficeBranchDto officeBranchDto = (branch != null) ? objectMapper.convertValue(branch, OfficeBranchDto.class) : null;
+			Long roleId = rolesManagementService.getRoleIdByRole(user.getRole());
+			List<MenuDto> menuDto = rolesManagementService.getMenus(roleId, effectiveOwnerId, branchCode);
+			UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(
+					subscriptionPlanService.getSubscriptionPlanByOwnerId(effectiveOwnerId, branchCode)
+			).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
+
 			data.put("access_token", token);
 			data.put("user", user);
 			data.put("branch", officeBranchDto);
@@ -509,13 +612,41 @@ public class UserController {
 			String subScriptionCode = searchCriteria.getSubscriptionCode();
 
 			UserSubscription userSubscription = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
-			if (userSubscription != null && userSubscription.isStatus()) {
-				throw new BadGatewayRequest("You already have an active subscription.");
+			LocalDateTime now = LocalDateTime.now();
+			boolean queueNext = false;
+			LocalDateTime activeEndAt = null;
+
+			if (userSubscription != null && userSubscription.isStatus() && userSubscription.isActive() && !userSubscription.isQueued()) {
+				activeEndAt = userSubscription.getSubscriptionEndAt();
+				if (activeEndAt == null && userSubscription.getSubscriptionStartAt() != null) {
+					int durationMonths = userSubscription.getMonth() > 0 ? userSubscription.getMonth()
+							: (userSubscription.getSubscriptionDuration() > 0 ? userSubscription.getSubscriptionDuration() : 1);
+					activeEndAt = userSubscription.getSubscriptionStartAt().plusMonths(durationMonths);
+				}
+
+				if (activeEndAt != null) {
+					if (now.isAfter(activeEndAt)) {
+						// Current subscription has expired
+						userSubscription.setActive(false);
+						userSubscription.setStatus(false);
+						subscriptionPlanService.saveUserSubscriptionPlan(userSubscription);
+					} else if (now.isAfter(activeEndAt.minusMonths(1)) || Boolean.TRUE.equals(searchCriteria.getIsQueued())) {
+						// Within 1 month of expiry or explicitly requested to queue
+						queueNext = true;
+					} else {
+						throw new BadGatewayRequest("You already have an active subscription valid until "
+								+ activeEndAt.toLocalDate() + ". Renewal opens 1 month before expiry ("
+								+ activeEndAt.minusMonths(1).toLocalDate() + "), or you may queue your next subscription.");
+					}
+				}
 			}
 
 			SubscriptionPlan subscriptionPlan = rolesManagementService.findBySubscriptionCode(subScriptionCode);
 			if (subscriptionPlan == null) {
 				throw new BadGatewayRequest("Invalid subscription Code.");
+			}
+			if (!subscriptionPlan.isStatus()) {
+				throw new BadGatewayRequest("This subscription plan is currently inactive and cannot be purchased.");
 			}
 
 			// If payment details are not passed and the plan requires payment, initiate Razorpay Order
@@ -526,6 +657,7 @@ public class UserController {
 				notes.put("branchCode", branchCode);
 				notes.put("subscriptionCode", subScriptionCode);
 				notes.put("subscriptionName", subscriptionPlan.getSubscriptionName());
+				notes.put("isQueued", String.valueOf(queueNext));
 
 				Map<String, Object> orderDetails = razorpayService.createOrder(
 						subscriptionPlan.getTotalAmount(),
@@ -533,6 +665,25 @@ public class UserController {
 						"INR",
 						notes
 				);
+
+				// Pre-create PaymentTransaction
+				if (superAdminDao != null) {
+					try {
+						superAdminDao.savePaymentTransaction(com.rigel.user.model.PaymentTransaction.builder()
+								.ownerId(ownerId)
+								.branchCode(branchCode)
+								.subscriptionCode(subScriptionCode)
+								.subscriptionName(subscriptionPlan.getSubscriptionName())
+								.orderId(String.valueOf(orderDetails.get("orderId")))
+								.amount(subscriptionPlan.getTotalAmount())
+								.currency("INR")
+								.status("CREATED")
+								.gateway("RAZORPAY")
+								.createdAt(now)
+								.updatedAt(now)
+								.build());
+					} catch (Exception ignored) {}
+				}
 
 				data.put("razorpayOrder", orderDetails);
 				data.put("orderId", orderDetails.get("orderId"));
@@ -543,6 +694,10 @@ public class UserController {
 				data.put("subscriptionCode", subScriptionCode);
 				data.put("subscriptionName", subscriptionPlan.getSubscriptionName());
 				data.put("paymentRequired", true);
+				data.put("isQueued", queueNext);
+				if (queueNext && activeEndAt != null) {
+					data.put("effectiveStartDate", activeEndAt.toLocalDate().toString());
+				}
 
 				response.put("data", data);
 				response.put("status", "OK");
@@ -563,56 +718,66 @@ public class UserController {
 				}
 			}
 
-			// Activate subscription
-			if (userSubscription != null && userSubscription.getSubscriptionCode().equalsIgnoreCase(subScriptionCode)) {
-				userSubscription.setSubscriptionStartAt(LocalDateTime.now());
-				userSubscription.setStatus(true);
-				userSubscription.setActive(true);
-				userSubscription.setRazorpayOrderId(searchCriteria.getRazorpayOrderId());
-				userSubscription.setRazorpayPaymentId(searchCriteria.getRazorpayPaymentId());
-				userSubscription.setRazorpaySignature(searchCriteria.getRazorpaySignature());
-				userSubscription.setPaymentStatus("SUCCESS");
-				userSubscription = subscriptionPlanService.saveUserSubscriptionPlan(userSubscription);
-				UserSubscriptionDto userSubscriptionDto1 = objectMapper.convertValue(userSubscription, UserSubscriptionDto.class);
-				data.put("userSubscription", userSubscriptionDto1);
+			int planMonths = subscriptionPlan.getMonth() > 0 ? subscriptionPlan.getMonth() : 1;
+			LocalDateTime startAt = queueNext && activeEndAt != null ? activeEndAt : now;
+			LocalDateTime endAt = startAt.plusMonths(planMonths);
 
-				// log
-				UserSubscriptionLog userSubscriptionLog = objectMapper.convertValue(userSubscriptionDto1, UserSubscriptionLog.class);
-				userSubscriptionLog.setId(null);
-				subscriptionPlanService.saveUserSubscriptionLogPlan(userSubscriptionLog);
-			} else {
-				if (userSubscription != null) {
-					userSubscription.setActive(false);
-					userSubscription.setStatus(false);
-					subscriptionPlanService.saveUserSubscriptionPlan(userSubscription);
-				}
+			SubscriptionPlanDto subscription = objectMapper.convertValue(subscriptionPlan, SubscriptionPlanDto.class);
+			UserSubscription userSubscriptionNew = objectMapper.convertValue(subscription, UserSubscription.class);
+			userSubscriptionNew.setCreatedAt(now);
+			userSubscriptionNew.setSubscriptionStartAt(startAt);
+			userSubscriptionNew.setSubscriptionEndAt(endAt);
+			userSubscriptionNew.setSubscriptionDuration(planMonths);
+			userSubscriptionNew.setBranchCode(branchCode);
+			userSubscriptionNew.setOwnerId(ownerId);
+			userSubscriptionNew.setActive(!queueNext);
+			userSubscriptionNew.setStatus(true);
+			userSubscriptionNew.setQueued(queueNext);
+			userSubscriptionNew.setQueueStatus(queueNext ? "QUEUED" : "ACTIVE");
+			userSubscriptionNew.setRazorpayOrderId(searchCriteria.getRazorpayOrderId());
+			userSubscriptionNew.setRazorpayPaymentId(searchCriteria.getRazorpayPaymentId());
+			userSubscriptionNew.setRazorpaySignature(searchCriteria.getRazorpaySignature());
+			userSubscriptionNew.setPaymentStatus("SUCCESS");
 
-				SubscriptionPlanDto subscription = objectMapper.convertValue(subscriptionPlan, SubscriptionPlanDto.class);
-				UserSubscription userSubscriptionNew = objectMapper.convertValue(subscription, UserSubscription.class);
-				userSubscriptionNew.setCreatedAt(LocalDateTime.now());
-				userSubscriptionNew.setSubscriptionStartAt(LocalDateTime.now());
-				userSubscriptionNew.setBranchCode(branchCode);
-				userSubscriptionNew.setOwnerId(ownerId);
-				userSubscriptionNew.setActive(true);
-				userSubscriptionNew.setStatus(true);
-				userSubscriptionNew.setRazorpayOrderId(searchCriteria.getRazorpayOrderId());
-				userSubscriptionNew.setRazorpayPaymentId(searchCriteria.getRazorpayPaymentId());
-				userSubscriptionNew.setRazorpaySignature(searchCriteria.getRazorpaySignature());
-				userSubscriptionNew.setPaymentStatus("SUCCESS");
-				userSubscriptionNew = subscriptionPlanService.saveUserSubscriptionPlan(userSubscriptionNew);
-				UserSubscriptionDto userSubscriptionDto2 = objectMapper.convertValue(userSubscriptionNew, UserSubscriptionDto.class);
-				data.put("userSubscription", userSubscriptionDto2);
+			userSubscriptionNew = subscriptionPlanService.saveUserSubscriptionPlan(userSubscriptionNew);
+			UserSubscriptionDto userSubscriptionDto = objectMapper.convertValue(userSubscriptionNew, UserSubscriptionDto.class);
+			data.put("userSubscription", userSubscriptionDto);
+			data.put("isQueued", queueNext);
+			data.put("startDate", startAt.toLocalDate().toString());
+			data.put("expiryDate", endAt.toLocalDate().toString());
 
-				// log
-				UserSubscriptionLog userSubscriptionLog = objectMapper.convertValue(userSubscriptionDto2, UserSubscriptionLog.class);
-				userSubscriptionLog.setId(null);
-				subscriptionPlanService.saveUserSubscriptionLogPlan(userSubscriptionLog);
+			// Save payment transaction
+			if (superAdminDao != null) {
+				try {
+					superAdminDao.savePaymentTransaction(com.rigel.user.model.PaymentTransaction.builder()
+							.ownerId(ownerId)
+							.branchCode(branchCode)
+							.subscriptionId(userSubscriptionNew.getId())
+							.subscriptionCode(subScriptionCode)
+							.subscriptionName(subscriptionPlan.getSubscriptionName())
+							.orderId(searchCriteria.getRazorpayOrderId())
+							.paymentId(searchCriteria.getRazorpayPaymentId())
+							.amount(subscriptionPlan.getTotalAmount())
+							.currency("INR")
+							.status("SUCCESS")
+							.gateway("RAZORPAY")
+							.createdAt(now)
+							.updatedAt(now)
+							.build());
+				} catch (Exception ignored) {}
 			}
+
+			// Audit Log
+			UserSubscriptionLog userSubscriptionLog = objectMapper.convertValue(userSubscriptionNew, UserSubscriptionLog.class);
+			userSubscriptionLog.setId(null);
+			subscriptionPlanService.saveUserSubscriptionLogPlan(userSubscriptionLog);
 
 			response.put("data", data);
 			response.put("status", "CREATED");
 			response.put("code", "201");
-			response.put("message", "Subscription has been created successfully.");
+			response.put("message", queueNext
+					? "Subscription has been queued successfully. It will activate on " + startAt.toLocalDate() + "."
+					: "Subscription has been activated successfully.");
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		}
 	}
@@ -634,13 +799,39 @@ public class UserController {
 		String subScriptionCode = searchCriteria.getSubscriptionCode();
 
 		UserSubscription userSubscription = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
-		if (userSubscription != null && userSubscription.isStatus()) {
-			throw new BadGatewayRequest("You already have an active subscription.");
+		LocalDateTime now = LocalDateTime.now();
+		boolean queueNext = false;
+		LocalDateTime activeEndAt = null;
+
+		if (userSubscription != null && userSubscription.isStatus() && userSubscription.isActive() && !userSubscription.isQueued()) {
+			activeEndAt = userSubscription.getSubscriptionEndAt();
+			if (activeEndAt == null && userSubscription.getSubscriptionStartAt() != null) {
+				int durationMonths = userSubscription.getMonth() > 0 ? userSubscription.getMonth()
+						: (userSubscription.getSubscriptionDuration() > 0 ? userSubscription.getSubscriptionDuration() : 1);
+				activeEndAt = userSubscription.getSubscriptionStartAt().plusMonths(durationMonths);
+			}
+
+			if (activeEndAt != null) {
+				if (now.isAfter(activeEndAt)) {
+					userSubscription.setActive(false);
+					userSubscription.setStatus(false);
+					subscriptionPlanService.saveUserSubscriptionPlan(userSubscription);
+				} else if (now.isAfter(activeEndAt.minusMonths(1)) || Boolean.TRUE.equals(searchCriteria.getIsQueued())) {
+					queueNext = true;
+				} else {
+					throw new BadGatewayRequest("You already have an active subscription valid until "
+							+ activeEndAt.toLocalDate() + ". Renewal starts 1 month before expiry ("
+							+ activeEndAt.minusMonths(1).toLocalDate() + "), or you may queue your next subscription.");
+				}
+			}
 		}
 
 		SubscriptionPlan subscriptionPlan = rolesManagementService.findBySubscriptionCode(subScriptionCode);
 		if (subscriptionPlan == null) {
 			throw new BadGatewayRequest("Invalid subscription Code.");
+		}
+		if (!subscriptionPlan.isStatus()) {
+			throw new BadGatewayRequest("This subscription plan is currently inactive and cannot be purchased.");
 		}
 
 		Map<String, String> notes = new HashMap<>();
@@ -648,6 +839,7 @@ public class UserController {
 		notes.put("branchCode", branchCode);
 		notes.put("subscriptionCode", subScriptionCode);
 		notes.put("subscriptionName", subscriptionPlan.getSubscriptionName());
+		notes.put("isQueued", String.valueOf(queueNext));
 
 		Map<String, Object> orderDetails = razorpayService.createOrder(
 				subscriptionPlan.getTotalAmount(),
@@ -655,6 +847,25 @@ public class UserController {
 				"INR",
 				notes
 		);
+
+		// Record in PaymentTransaction as CREATED
+		if (superAdminDao != null) {
+			try {
+				superAdminDao.savePaymentTransaction(com.rigel.user.model.PaymentTransaction.builder()
+						.ownerId(ownerId)
+						.branchCode(branchCode)
+						.subscriptionCode(subScriptionCode)
+						.subscriptionName(subscriptionPlan.getSubscriptionName())
+						.orderId(String.valueOf(orderDetails.get("orderId")))
+						.amount(subscriptionPlan.getTotalAmount())
+						.currency("INR")
+						.status("CREATED")
+						.gateway("RAZORPAY")
+						.createdAt(now)
+						.updatedAt(now)
+						.build());
+			} catch (Exception ignored) {}
+		}
 
 		data.put("razorpayOrder", orderDetails);
 		data.put("orderId", orderDetails.get("orderId"));
@@ -664,12 +875,62 @@ public class UserController {
 		data.put("keyId", razorpayService.getKeyId());
 		data.put("subscriptionCode", subScriptionCode);
 		data.put("subscriptionName", subscriptionPlan.getSubscriptionName());
+		data.put("isQueued", queueNext);
+		if (queueNext && activeEndAt != null) {
+			data.put("effectiveStartDate", activeEndAt.toLocalDate().toString());
+		}
 
 		response.put("data", data);
 		response.put("status", "OK");
 		response.put("code", "200");
 		response.put("message", "Razorpay order created successfully.");
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "subscriptionEligibility")
+	public ResponseEntity<Map<String, Object>> subscriptionEligibility(
+			@RequestBody(required = true) SearchCriteria searchCriteria) {
+		Map<String, Object> response = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+
+		int ownerId = searchCriteria.getUserId();
+		String branchCode = searchCriteria.getBranchCode();
+		UserSubscription sub = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
+		LocalDateTime now = LocalDateTime.now();
+
+		if (sub != null && sub.isStatus() && sub.isActive() && !sub.isQueued()) {
+			LocalDateTime endAt = sub.getSubscriptionEndAt();
+			if (endAt == null && sub.getSubscriptionStartAt() != null) {
+				int m = sub.getMonth() > 0 ? sub.getMonth() : (sub.getSubscriptionDuration() > 0 ? sub.getSubscriptionDuration() : 1);
+				endAt = sub.getSubscriptionStartAt().plusMonths(m);
+			}
+
+			long daysRemaining = 0;
+			if (endAt != null) {
+				daysRemaining = java.time.temporal.ChronoUnit.DAYS.between(now.toLocalDate(), endAt.toLocalDate());
+			}
+
+			boolean canRenew = endAt == null || now.isAfter(endAt.minusMonths(1)) || now.isAfter(endAt);
+			data.put("hasActiveSubscription", true);
+			data.put("currentPlanName", sub.getSubscriptionName());
+			data.put("currentPlanCode", sub.getSubscriptionCode());
+			data.put("startDate", sub.getSubscriptionStartAt());
+			data.put("expiryDate", endAt);
+			data.put("daysRemaining", Math.max(0, daysRemaining));
+			data.put("canRenew", canRenew);
+			data.put("canQueue", true);
+			data.put("renewalWindowStartDate", endAt != null ? endAt.minusMonths(1).toLocalDate().toString() : now.toLocalDate().toString());
+		} else {
+			data.put("hasActiveSubscription", false);
+			data.put("canRenew", true);
+			data.put("canQueue", false);
+			data.put("daysRemaining", 0);
+		}
+
+		response.put("data", data);
+		response.put("status", "OK");
+		response.put("code", "200");
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping(value = "verifySubscriptionPayment")
