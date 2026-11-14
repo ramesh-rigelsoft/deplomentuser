@@ -1,9 +1,7 @@
 package com.rigel.user.controller;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -319,8 +317,6 @@ public class UserController {
         User user = userService.findUserByEmailId(username,0);
 		if (user == null) {
 			throw new TaskTitleNotFound("Email id not existing with us.");
-		} else if (user.getStatus() != 1) {
-			throw new BadGatewayRequest("Admin account is inactive. Please contact Super Admin.");
 		} else if (!(User.PASSWORD_ENCODER.matches(login.getPassword(), user.getPassword()))) {
 			throw new TaskTitleException("Wrong password");
 		} else {
@@ -345,34 +341,6 @@ public class UserController {
         User user = userService.findUserByEmailId(username,0);
 		if (user == null) {
 			throw new TaskTitleNotFound("Email id not existing with us.");
-		} else if (user.getStatus() != 1) {
-			throw new BadGatewayRequest("User account is inactive. Please contact Administrator.");
-		} else if (user.getOwnerId() > 0 && user.getOwnerId() != user.getId()) {
-			User ownerAdmin = userService.findUserById(user.getOwnerId());
-			if (ownerAdmin != null && ownerAdmin.getStatus() != 1) {
-				throw new BadGatewayRequest("Administrator account is inactive. Please contact Super Admin.");
-			}
-			if (!(User.PASSWORD_ENCODER.matches(login.getPassword(), user.getPassword()))) {
-				throw new TaskTitleException("Wrong password");
-			} else {
-				final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
-				final String token = jwtTokenUtil.generateToken(userDetails, request);
-				Long roleId=rolesManagementService.getRoleIdByRole(user.getRole());
-				OfficeBranch branch=rolesManagementService.searchOfficeBranch(SearchCriteria.builder().userId(user.getOwnerId()).branchCode(login.getBranchCode()).build()).stream().findFirst().orElse(null);
-				OfficeBranchDto officeBranchDto=objectMapper.convertValue(branch, OfficeBranchDto.class);
-				List<MenuDto> menuDto=rolesManagementService.getMenus(roleId, user.getOwnerId(),login.getBranchCode());
-				UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(subscriptionPlanService.getSubscriptionPlanByOwnerId(user.getOwnerId(), login.getBranchCode())).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
-				data.put("access_token", token);
-				data.put("user", user);
-				data.put("branch", officeBranchDto);
-				data.put("page_access", menuDto);
-				data.put("subscription_plan", userSubscriptionDto);
-				response.put("data", data);
-				response.put("status", "OK");
-				response.put("code", "200");
-				response.put("message", "Your account has been logined successfully.");
-				return new ResponseEntity<>(response, HttpStatus.OK);
-			}
 		} else if (!(User.PASSWORD_ENCODER.matches(login.getPassword(), user.getPassword()))) {
 			throw new TaskTitleException("Wrong password");
 		} else {
@@ -541,26 +509,8 @@ public class UserController {
 			String subScriptionCode = searchCriteria.getSubscriptionCode();
 
 			UserSubscription userSubscription = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
-			LocalDateTime oldEndAt = null;
-			long daysLeft = -1;
-
-			if (userSubscription != null && userSubscription.isStatus() && userSubscription.isActive()) {
-				oldEndAt = calculateSubscriptionEndAt(
-						userSubscription.getSubscriptionStartAt(),
-						userSubscription.getMonth(),
-						userSubscription.getSubscriptionDuration(),
-						userSubscription.getSubscriptionType()
-				);
-				daysLeft = calculateDaysRemaining(oldEndAt);
-
-				// RULE: Can only renew or subscribe to another plan within 1 month (30 days) before expiry!
-				if (daysLeft > 30) {
-					throw new BadGatewayRequest(
-							"Renewal or subscribing to another plan is only allowed within 30 days before current subscription expiry. " +
-							"Your current plan (" + userSubscription.getSubscriptionName() + ") is valid until " +
-							(oldEndAt != null ? oldEndAt.toLocalDate() : "expiry") + " (" + daysLeft + " days remaining)."
-					);
-				}
+			if (userSubscription != null && userSubscription.isStatus()) {
+				throw new BadGatewayRequest("You already have an active subscription.");
 			}
 
 			SubscriptionPlan subscriptionPlan = rolesManagementService.findBySubscriptionCode(subScriptionCode);
@@ -576,7 +526,6 @@ public class UserController {
 				notes.put("branchCode", branchCode);
 				notes.put("subscriptionCode", subScriptionCode);
 				notes.put("subscriptionName", subscriptionPlan.getSubscriptionName());
-				notes.put("isRenewal", String.valueOf(searchCriteria.isRenewal()));
 
 				Map<String, Object> orderDetails = razorpayService.createOrder(
 						subscriptionPlan.getTotalAmount(),
@@ -594,7 +543,6 @@ public class UserController {
 				data.put("subscriptionCode", subScriptionCode);
 				data.put("subscriptionName", subscriptionPlan.getSubscriptionName());
 				data.put("paymentRequired", true);
-				data.put("isRenewal", searchCriteria.isRenewal());
 
 				response.put("data", data);
 				response.put("status", "OK");
@@ -615,36 +563,11 @@ public class UserController {
 				}
 			}
 
-			// Activate or renew subscription
-			boolean isRenewal = searchCriteria.isRenewal();
-			boolean isSamePlan = (userSubscription != null && userSubscription.getSubscriptionCode().equalsIgnoreCase(subScriptionCode));
-
-			LocalDateTime newStartAt = LocalDateTime.now();
-			// "after complete old cycle, new cycle will start"
-			// If old cycle is still active (not expired yet, oldEndAt is in the future),
-			// new cycle will start after old cycle completes!
-			if (oldEndAt != null && oldEndAt.isAfter(LocalDateTime.now())) {
-				newStartAt = oldEndAt;
-			}
-
-			if (userSubscription != null && isSamePlan) {
-				// RENEWAL: Extend the same plan!
-				// If old cycle still active, new cycle starts after old cycle completes!
-				if (oldEndAt != null && oldEndAt.isAfter(LocalDateTime.now())) {
-					int currentMonths = userSubscription.getMonth() > 0 ? userSubscription.getMonth() : userSubscription.getSubscriptionDuration();
-					int additionalMonths = subscriptionPlan.getMonth() > 0 ? subscriptionPlan.getMonth() : 1;
-					userSubscription.setMonth(currentMonths + additionalMonths);
-					userSubscription.setSubscriptionDuration(currentMonths + additionalMonths);
-				} else {
-					userSubscription.setSubscriptionStartAt(LocalDateTime.now());
-					userSubscription.setSubscriptionDuration(subscriptionPlan.getMonth());
-					userSubscription.setMonth(subscriptionPlan.getMonth());
-				}
+			// Activate subscription
+			if (userSubscription != null && userSubscription.getSubscriptionCode().equalsIgnoreCase(subScriptionCode)) {
+				userSubscription.setSubscriptionStartAt(LocalDateTime.now());
 				userSubscription.setStatus(true);
 				userSubscription.setActive(true);
-				userSubscription.setTotalAmount(subscriptionPlan.getTotalAmount());
-				userSubscription.setAmountPerMonth(subscriptionPlan.getAmountPerMonth());
-				userSubscription.setGst(subscriptionPlan.getGst());
 				userSubscription.setRazorpayOrderId(searchCriteria.getRazorpayOrderId());
 				userSubscription.setRazorpayPaymentId(searchCriteria.getRazorpayPaymentId());
 				userSubscription.setRazorpaySignature(searchCriteria.getRazorpaySignature());
@@ -653,17 +576,12 @@ public class UserController {
 				UserSubscriptionDto userSubscriptionDto1 = objectMapper.convertValue(userSubscription, UserSubscriptionDto.class);
 				data.put("userSubscription", userSubscriptionDto1);
 
-				// log entry with the newly purchased cycle period
+				// log
 				UserSubscriptionLog userSubscriptionLog = objectMapper.convertValue(userSubscriptionDto1, UserSubscriptionLog.class);
 				userSubscriptionLog.setId(null);
-				userSubscriptionLog.setSubscriptionStartAt(newStartAt);
-				userSubscriptionLog.setMonth(subscriptionPlan.getMonth());
-				userSubscriptionLog.setSubscriptionDuration(subscriptionPlan.getMonth());
 				subscriptionPlanService.saveUserSubscriptionLogPlan(userSubscriptionLog);
 			} else {
-				// SUBSCRIBING TO ANOTHER PLAN (or first time subscription)
-				// If old subscription was already expired, deactivate it
-				if (userSubscription != null && (oldEndAt == null || !oldEndAt.isAfter(LocalDateTime.now()))) {
+				if (userSubscription != null) {
 					userSubscription.setActive(false);
 					userSubscription.setStatus(false);
 					subscriptionPlanService.saveUserSubscriptionPlan(userSubscription);
@@ -672,10 +590,7 @@ public class UserController {
 				SubscriptionPlanDto subscription = objectMapper.convertValue(subscriptionPlan, SubscriptionPlanDto.class);
 				UserSubscription userSubscriptionNew = objectMapper.convertValue(subscription, UserSubscription.class);
 				userSubscriptionNew.setCreatedAt(LocalDateTime.now());
-				// "after complete old cycle, new cycle will start"
-				userSubscriptionNew.setSubscriptionStartAt(newStartAt);
-				userSubscriptionNew.setSubscriptionDuration(subscriptionPlan.getMonth());
-				userSubscriptionNew.setMonth(subscriptionPlan.getMonth());
+				userSubscriptionNew.setSubscriptionStartAt(LocalDateTime.now());
 				userSubscriptionNew.setBranchCode(branchCode);
 				userSubscriptionNew.setOwnerId(ownerId);
 				userSubscriptionNew.setActive(true);
@@ -697,7 +612,7 @@ public class UserController {
 			response.put("data", data);
 			response.put("status", "CREATED");
 			response.put("code", "201");
-			response.put("message", isRenewal ? "Subscription has been renewed successfully." : "Subscription has been created successfully.");
+			response.put("message", "Subscription has been created successfully.");
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		}
 	}
@@ -719,23 +634,8 @@ public class UserController {
 		String subScriptionCode = searchCriteria.getSubscriptionCode();
 
 		UserSubscription userSubscription = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
-		if (userSubscription != null && userSubscription.isStatus() && userSubscription.isActive()) {
-			LocalDateTime oldEndAt = calculateSubscriptionEndAt(
-					userSubscription.getSubscriptionStartAt(),
-					userSubscription.getMonth(),
-					userSubscription.getSubscriptionDuration(),
-					userSubscription.getSubscriptionType()
-			);
-			long daysLeft = calculateDaysRemaining(oldEndAt);
-
-			// RULE: Can only renew or subscribe to another plan within 1 month (30 days) before expiry!
-			if (daysLeft > 30) {
-				throw new BadGatewayRequest(
-						"Renewal or subscribing to another plan is only allowed within 30 days before current subscription expiry. " +
-						"Your current plan (" + userSubscription.getSubscriptionName() + ") is valid until " +
-						(oldEndAt != null ? oldEndAt.toLocalDate() : "expiry") + " (" + daysLeft + " days remaining)."
-				);
-			}
+		if (userSubscription != null && userSubscription.isStatus()) {
+			throw new BadGatewayRequest("You already have an active subscription.");
 		}
 
 		SubscriptionPlan subscriptionPlan = rolesManagementService.findBySubscriptionCode(subScriptionCode);
@@ -800,41 +700,5 @@ public class UserController {
 		response.put("code", "200");
 		response.put("message", "Webhook received and verified successfully.");
 		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-
-	private LocalDateTime calculateSubscriptionEndAt(LocalDateTime startAt, int month, int duration, String subscriptionType) {
-		if (startAt == null) {
-			return null;
-		}
-		if (month > 0) {
-			return startAt.plusMonths(month);
-		}
-		if (duration > 0) {
-			if (duration <= 24) {
-				return startAt.plusMonths(duration);
-			} else {
-				return startAt.plusDays(duration);
-			}
-		}
-		if (subscriptionType != null) {
-			String type = subscriptionType.trim().toUpperCase();
-			if (type.contains("YEAR")) {
-				return startAt.plusYears(1);
-			} else if (type.contains("HALF") || type.contains("HELF")) {
-				return startAt.plusMonths(6);
-			} else if (type.contains("QUAT") || type.contains("QUARTER")) {
-				return startAt.plusMonths(3);
-			}
-		}
-		return startAt.plusMonths(1);
-	}
-
-	private long calculateDaysRemaining(LocalDateTime endAt) {
-		if (endAt == null) {
-			return 0L;
-		}
-		LocalDate today = LocalDate.now();
-		LocalDate endDate = endAt.toLocalDate();
-		return ChronoUnit.DAYS.between(today, endDate);
 	}
 }

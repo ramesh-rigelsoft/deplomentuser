@@ -30,9 +30,6 @@ public class SubscriptionPlan implements Serializable {
 
     private String subscriptionName;
     
-    @Column(length = 1000)
-    private String description;
-    
     @Column(unique = true)
     private String subscriptionCode;   // SUB01
 
@@ -59,7 +56,6 @@ public class SubscriptionPlan implements Serializable {
     private int userCount; 
     
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     
     private boolean status;
    

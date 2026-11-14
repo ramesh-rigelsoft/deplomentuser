@@ -59,16 +59,6 @@ public class SecurityTokenConfig1 {
                     "/authenticate"
                 ).permitAll()
 
-                // ✅ SUPER ADMIN AUTH
-                .requestMatchers(
-                    "/api/super-admin/auth/**"
-                ).permitAll()
-
-                // 🔐 SUPER ADMIN SECURED
-                .requestMatchers(
-                    "/api/super-admin/**"
-                ).hasAnyAuthority("SUPER_ADMIN", "ROLE_SUPER_ADMIN")
-
                 // ✅ STATIC
                 .requestMatchers(
                     "/",

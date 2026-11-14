@@ -86,8 +86,6 @@ public class User implements Serializable{
         
     private int ownerId;
     
-    private String disabledReason; // MANUAL, ADMIN_INACTIVE, SUBSCRIPTION_EXPIRED
-    
 	public static PasswordEncoder getPasswordEncoder() {
 		return PASSWORD_ENCODER;
 	}

@@ -64,21 +64,15 @@ public class RazorpayServiceImpl implements IRazorpayService {
             }
 
             Order order = razorpayClient.orders.create(orderRequest);
-            Object idObj = order.get("id");
-            String orderId = idObj != null ? idObj.toString() : null;
-            Object amountObj = order.get("amount");
-            Object currencyObj = order.get("currency");
-            Object receiptObj = order.get("receipt");
-            Object statusObj = order.get("status");
-
+            String orderId = String.valueOf(order.get("id"));
             logger.info("Created Razorpay Order successfully: id={}", orderId);
 
             response.put("id", orderId);
             response.put("orderId", orderId);
-            response.put("amount", amountObj != null ? amountObj : amountInPaise);
-            response.put("currency", currencyObj != null ? currencyObj.toString() : "INR");
-            response.put("receipt", receiptObj != null ? receiptObj.toString() : receipt);
-            response.put("status", statusObj != null ? statusObj.toString() : "created");
+            response.put("amount", order.get("amount"));
+            response.put("currency", order.get("currency"));
+            response.put("receipt", order.get("receipt"));
+            response.put("status", order.get("status"));
             response.put("keyId", razorpayConfig.getKeyId());
             response.put("mockMode", false);
             return response;
