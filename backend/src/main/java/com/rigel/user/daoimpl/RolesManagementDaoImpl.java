@@ -1,5 +1,6 @@
 package com.rigel.user.daoimpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -333,11 +334,41 @@ public class RolesManagementDaoImpl implements IRolesManagementDao {
 	@Override
 	public UserSubscription getSubscriptionPlanByOwnerId(Integer ownerId, String branchCode) {
 	    try {
-	        return entityManager
-	                .createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND s.branchCode = :branchCode", UserSubscription.class)
+	        List<UserSubscription> list = entityManager
+	                .createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND s.branchCode = :branchCode AND s.status = true ORDER BY s.id DESC", UserSubscription.class)
 	                .setParameter("ownerId", ownerId)
 	                .setParameter("branchCode", branchCode)
-	                .getSingleResult();
+	                .getResultList();
+	        if (list.isEmpty()) {
+	            list = entityManager
+	                    .createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND s.branchCode = :branchCode ORDER BY s.id DESC", UserSubscription.class)
+	                    .setParameter("ownerId", ownerId)
+	                    .setParameter("branchCode", branchCode)
+	                    .getResultList();
+	            if (list.isEmpty()) {
+	                return null;
+	            }
+	        }
+	        LocalDateTime now = LocalDateTime.now();
+	        // Find currently running subscription (startAt <= now and endAt >= now)
+	        for (UserSubscription sub : list) {
+	            if (!sub.isStatus() || !sub.isActive()) {
+	                continue;
+	            }
+	            LocalDateTime start = sub.getSubscriptionStartAt();
+	            int duration = sub.getMonth() > 0 ? sub.getMonth() : (sub.getSubscriptionDuration() > 0 ? sub.getSubscriptionDuration() : 1);
+	            LocalDateTime end = start != null ? (duration <= 24 ? start.plusMonths(duration) : start.plusDays(duration)) : null;
+	            if (start != null && !start.isAfter(now) && (end == null || !end.isBefore(now))) {
+	                return sub;
+	            }
+	        }
+	        // If none is strictly currently running, return the first active one or the latest one
+	        for (UserSubscription sub : list) {
+	            if (sub.isStatus() && sub.isActive()) {
+	                return sub;
+	            }
+	        }
+	        return list.get(0);
 	    } catch (Exception e) {
 	        return null;
 	    }

@@ -161,10 +161,50 @@ const SubscriptionPlanList = () => {
   }, [ownerId, dispatch]);
 
   // =========================================
+  // SUBSCRIPTION EXPIRY & 30-DAY WINDOW HELPER
+  // =========================================
+
+  const getSubscriptionExpiryInfo = (sub) => {
+    if (!sub || !sub.subscriptionStartAt) {
+      return { endAt: null, daysLeft: 0, isExpired: true, canRenewOrSwitch: true };
+    }
+    const startDate = new Date(sub.subscriptionStartAt);
+    const months = sub.month || sub.subscriptionDuration || 1;
+    const endAt = new Date(startDate);
+    if (months <= 24) {
+      endAt.setMonth(endAt.getMonth() + months);
+    } else {
+      endAt.setDate(endAt.getDate() + months);
+    }
+    const now = new Date();
+    const diffMs = endAt.getTime() - now.getTime();
+    const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    const isExpired = daysLeft <= 0 || sub.status === false || sub.active === false;
+    // RULE: Can only renew or switch plan within 1 month (30 days) before expiry!
+    const canRenewOrSwitch = isExpired || daysLeft <= 30;
+    return { endAt, daysLeft: Math.max(0, daysLeft), isExpired, canRenewOrSwitch };
+  };
+
+  const activeSubscription = mySubscriptions.find(
+    (s) => s.status === true && s.active === true
+  ) || null;
+
+  const activeSubInfo = activeSubscription
+    ? getSubscriptionExpiryInfo(activeSubscription)
+    : { endAt: null, daysLeft: 0, isExpired: true, canRenewOrSwitch: true };
+
+  // =========================================
   // SUBSCRIBE BUTTON
   // =========================================
 
   const handleSubscribe = (plan) => {
+    if (activeSubscription && !activeSubInfo.canRenewOrSwitch) {
+      fail(
+        `Renewal or subscribing to another plan is only allowed within 30 days before your current subscription expires. Your current plan (${activeSubscription.subscriptionName}) expires on ${activeSubInfo.endAt?.toLocaleDateString()} (${activeSubInfo.daysLeft} days remaining).`
+      );
+      return;
+    }
+
     setIsRenewal(false);
     setViewSubscription(null);
 
@@ -192,6 +232,14 @@ const SubscriptionPlanList = () => {
   // =========================================
 
   const handleRenewSubscription = (subscription) => {
+    const subInfo = getSubscriptionExpiryInfo(subscription);
+    if (!subInfo.canRenewOrSwitch) {
+      fail(
+        `Renewal is only allowed within 30 days before current subscription expires. Your plan expires on ${subInfo.endAt?.toLocaleDateString()} (${subInfo.daysLeft} days remaining).`
+      );
+      return;
+    }
+
     setIsRenewal(true);
     setViewSubscription(null);
 
@@ -629,15 +677,105 @@ const SubscriptionPlanList = () => {
       />
 
       {/* ========================================= */}
+      {/* CURRENT ACTIVE SUBSCRIPTION BANNER */}
+      {/* ========================================= */}
+      {activeSubscription && (
+        <div
+          className={`card shadow-sm border mb-4 ${
+            activeSubInfo.canRenewOrSwitch
+              ? "border-warning bg-warning bg-opacity-10"
+              : "border-primary bg-primary bg-opacity-10"
+          }`}
+        >
+          <div className="card-body p-3">
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+              <div>
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <span className="badge bg-primary">
+                    <i className="fa fa-star me-1"></i> CURRENT ACTIVE PLAN
+                  </span>
+                  <span className="fw-bold fs-5 text-dark">
+                    {activeSubscription.subscriptionName}
+                  </span>
+                  <span className="badge bg-secondary">
+                    {activeSubscription.subscriptionCode}
+                  </span>
+                  {activeSubInfo.daysLeft <= 30 ? (
+                    <span className="badge bg-warning text-dark fw-bold">
+                      <i className="fa fa-clock-o me-1"></i> Renewal Window Open
+                    </span>
+                  ) : (
+                    <span className="badge bg-success">Active & Healthy</span>
+                  )}
+                </div>
+                <div className="text-muted small">
+                  <span>
+                    <strong>Billing:</strong>{" "}
+                    {activeSubscription.subscriptionType || "Custom"} (
+                    {activeSubscription.subscriptionDuration ||
+                      activeSubscription.month ||
+                      0}{" "}
+                    Months)
+                  </span>
+                  <span className="mx-2">|</span>
+                  <span>
+                    <strong>Expires on:</strong>{" "}
+                    {activeSubInfo.endAt
+                      ? activeSubInfo.endAt.toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "-"}
+                  </span>
+                  <span className="mx-2">|</span>
+                  <span
+                    className={
+                      activeSubInfo.daysLeft <= 30
+                        ? "text-danger fw-bold"
+                        : "text-success fw-bold"
+                    }
+                  >
+                    <i className="fa fa-hourglass-half me-1"></i>
+                    {activeSubInfo.daysLeft} Day(s) Left
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-md-end">
+                {activeSubInfo.canRenewOrSwitch ? (
+                  <div className="text-warning-emphasis small fw-semibold">
+                    <i className="fa fa-check-circle text-success me-1"></i>
+                    You can renew or switch plans now. Your new cycle will start
+                    after{" "}
+                    {activeSubInfo.endAt?.toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                    .
+                  </div>
+                ) : (
+                  <div className="text-muted small">
+                    <i className="fa fa-lock me-1"></i> Renewal / plan switch
+                    opens when <strong>&le; 30 days</strong> remain (in{" "}
+                    {activeSubInfo.daysLeft - 30} days).
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================= */}
       {/* SELECTED SUBSCRIPTION SECTION */}
       {/* ========================================= */}
-
       {selectedPlan && (
         <div
           id="subscription-section"
           className="card shadow p-3 mb-4 border-primary"
         >
-
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h5 className="mb-0 text-primary">
               <i
@@ -660,6 +798,46 @@ const SubscriptionPlanList = () => {
               Cancel
             </button>
           </div>
+
+          {/* CYCLE CONTINUATION NOTICE */}
+          {activeSubscription && activeSubInfo.endAt && (
+            <div className="alert alert-info py-2 px-3 mb-3 d-flex align-items-center">
+              <i className="fa fa-calendar-check-o fa-lg me-2 text-info"></i>
+              <div className="small">
+                <strong>Seamless Cycle Continuation: </strong>
+                {isRenewal ? (
+                  <span>
+                    Your renewal will extend your current subscription starting
+                    from{" "}
+                    <strong>
+                      {activeSubInfo.endAt.toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </strong>
+                    . No remaining days will be lost.
+                  </span>
+                ) : (
+                  <span>
+                    Your current plan (
+                    <strong>{activeSubscription.subscriptionName}</strong>)
+                    remains active until{" "}
+                    <strong>
+                      {activeSubInfo.endAt.toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </strong>
+                    . Your new plan (
+                    <strong>{selectedPlan.subscriptionName}</strong>) will
+                    automatically begin right after your current cycle completes!
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           {isRenewal && (
             <div className="alert alert-warning py-2 px-3 mb-3 d-flex align-items-center">
@@ -1247,7 +1425,9 @@ const SubscriptionPlanList = () => {
 
                 <th>Start Date</th>
 
-                {/* <th>Active</th> */}
+                <th>End Date</th>
+
+                <th>Days Left</th>
 
                 <th>Status</th>
 
@@ -1288,7 +1468,9 @@ const SubscriptionPlanList = () => {
               ) : (
 
                 mySubscriptions.map(
-                  (subscription, index) => (
+                  (subscription, index) => {
+                    const rowSubInfo = getSubscriptionExpiryInfo(subscription);
+                    return (
 
                     <tr
                       key={
@@ -1351,21 +1533,29 @@ const SubscriptionPlanList = () => {
                         )}
                       </td>
 
-                      {/* ACTIVE */}
+                      <td>
+                        {rowSubInfo.endAt
+                          ? rowSubInfo.endAt.toLocaleDateString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "-"}
+                      </td>
 
-                      {/* <td>
-
-                        {subscription.active ? (
-                          <span className="badge bg-success">
-                            Active
+                      <td>
+                        {rowSubInfo.isExpired ? (
+                          <span className="badge bg-secondary">Expired</span>
+                        ) : rowSubInfo.daysLeft <= 30 ? (
+                          <span className="badge bg-danger">
+                            {rowSubInfo.daysLeft} Day(s) Left
                           </span>
                         ) : (
-                          <span className="badge bg-secondary">
-                            Inactive
+                          <span className="badge bg-success">
+                            {rowSubInfo.daysLeft} Day(s)
                           </span>
                         )}
-
-                      </td> */}
+                      </td>
 
                       {/* STATUS */}
 
@@ -1377,7 +1567,7 @@ const SubscriptionPlanList = () => {
                           </span>
                         ) : (
                           <span className="badge bg-danger">
-                            Expaired
+                            Expired
                           </span>
                         )}
 
@@ -1400,18 +1590,29 @@ const SubscriptionPlanList = () => {
                             View
                           </button>
 
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-warning text-dark fw-bold"
-                            onClick={() =>
-                              handleRenewSubscription(
-                                subscription
-                              )
-                            }
-                            title="Renew Subscription"
-                          >
-                            <i className="fa fa-refresh me-1"></i> Renew
-                          </button>
+                          {rowSubInfo.canRenewOrSwitch ? (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-warning text-dark fw-bold"
+                              onClick={() =>
+                                handleRenewSubscription(
+                                  subscription
+                                )
+                              }
+                              title="Renew Subscription (Window Open)"
+                            >
+                              <i className="fa fa-refresh me-1"></i> Renew
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-secondary"
+                              disabled
+                              title={`Renewal opens within 30 days of expiry (${rowSubInfo.daysLeft} days remaining)`}
+                            >
+                              <i className="fa fa-lock me-1"></i> Locked ({rowSubInfo.daysLeft}d)
+                            </button>
+                          )}
 
                           <button
                             type="button"
@@ -1430,7 +1631,8 @@ const SubscriptionPlanList = () => {
 
                     </tr>
 
-                  )
+                  );
+                  }
                 )
 
               )}
@@ -1671,19 +1873,28 @@ const SubscriptionPlanList = () => {
                       <td>
 
                         {plan.status ? (
-
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-success"
-                            onClick={() =>
-                              handleSubscribe(
-                                plan
-                              )
-                            }
-                          >
-                            Subscribe
-                          </button>
-
+                          activeSubscription && !activeSubInfo.canRenewOrSwitch ? (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-secondary"
+                              disabled
+                              title={`Subscribing or switching plans is only allowed within 30 days before current subscription expiry (${activeSubInfo.daysLeft} days remaining)`}
+                            >
+                              <i className="fa fa-lock me-1"></i> Locked ({activeSubInfo.daysLeft}d)
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-success"
+                              onClick={() =>
+                                handleSubscribe(
+                                  plan
+                                )
+                              }
+                            >
+                              {activeSubscription ? "Switch / Subscribe" : "Subscribe"}
+                            </button>
+                          )
                         ) : (
 
                           <button
