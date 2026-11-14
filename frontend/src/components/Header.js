@@ -12,19 +12,19 @@ const Header = ({
   dashboard = "4"
 }) => {
   const dispatch = useDispatch();
-  
-  const ownerId= parseInt(Cookies.get("secretCode"));
+
+  const ownerId = parseInt(Cookies.get("secretCode"));
 
   const [logo, setLogo] = useState("");
   const companyName = Cookies.get("name");
   const [showDropdown, setShowDropdown] = useState(false);
-  const branchDetails=JSON.parse(localStorage.getItem("branchDetails"));
+  const branchDetails = JSON.parse(localStorage.getItem("branchDetails"));
   const [branchName, setBranchName] = useState(
     branchDetails?.id === 0
       ? "All Location"
-      : branchDetails?.branchName||"All Location"
+      : branchDetails?.branchName || "All Location"
   );
-  const [branches,setBranches]=useState([]);
+  const [branches, setBranches] = useState([]);
 
   useEffect(() => {
     if (ownerId) {
@@ -44,35 +44,35 @@ const Header = ({
         });
     }
   }, [ownerId, dispatch]);
-const dropdownRef = useRef(null);
-useEffect(() => {
-  const handleOutsideClick = (event) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target)
-    ) {
-      setShowDropdown(false);
-    }
-  };
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    };
 
-  document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("mousedown", handleOutsideClick);
 
-  return () => {
-    document.removeEventListener("mousedown", handleOutsideClick);
-  };
-}, []);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
-//  useEffect(() => {
-//     if (ownerId) {
-//       API.fetchOfficeBranch(dispatch, { userId: ownerId })
-//         .then((res) => {
-//           setBranches(res.payload.data.branchList||[]);
-//         })
-//         .catch((err) => {
-//           console.error(err);
-//         });
-//     }
-//   }, [ownerId, dispatch]);
+  //  useEffect(() => {
+  //     if (ownerId) {
+  //       API.fetchOfficeBranch(dispatch, { userId: ownerId })
+  //         .then((res) => {
+  //           setBranches(res.payload.data.branchList||[]);
+  //         })
+  //         .catch((err) => {
+  //           console.error(err);
+  //         });
+  //     }
+  //   }, [ownerId, dispatch]);
 
   // const branches = [
   //   "all",
@@ -98,13 +98,13 @@ useEffect(() => {
   // }, [dispatch, fileName]);
 
   const handleLogout = (status) => {
-    if(status==="1"){
+    if (status === "1") {
       navigateTo("/dashboard");
-    } else if(status==="2"){
-       navigateTo("/branchs");
-    } else if(status==="4"){
+    } else if (status === "2") {
+      navigateTo("/branchs");
+    } else if (status === "4") {
       navigateTo("/dashboard");
-    }else{
+    } else {
       Cookies.remove("tab");
       Cookies.remove("companyName");
       Cookies.remove("username");
@@ -126,7 +126,7 @@ useEffect(() => {
       }}
     >
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-        
+
         {/* Left Section */}
         <div className="d-flex align-items-center">
           <div className="me-3">
@@ -150,7 +150,7 @@ useEffect(() => {
                   fontSize: "22px",
                 }}
               >
-                {companyName.charAt(0).toUpperCase()}
+                {companyName?.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
@@ -163,9 +163,9 @@ useEffect(() => {
               Business Management System
             </small>
             {
-                        
-            (dashboard==="4"||dashboard==="2")&&(
-              <div className="branch-switcher" ref={dropdownRef}>
+
+              (dashboard === "4" || dashboard === "2") && (
+                <div className="branch-switcher" ref={dropdownRef}>
                   <span>📍 {branchName}</span>
 
                   <button
@@ -185,18 +185,18 @@ useEffect(() => {
                             setShowDropdown(false);
                             if (b.id === 0) {
                               setBranchName("All Location");
-                              Cookies.set("multipleBranch",false);
+                              Cookies.set("multipleBranch", false);
                               localStorage.setItem("branchDetails", JSON.stringify({ id: 0, branchName: "All Location" }));
                               Cookies.remove("branchCode");
-                            }else{
+                            } else {
                               localStorage.setItem("branchDetails", JSON.stringify(b));
-                              Cookies.set("multipleBranch",true);
-                              Cookies.set("branchCode",JSON.stringify(b.branchCode));
+                              Cookies.set("multipleBranch", true);
+                              Cookies.set("branchCode", JSON.stringify(b.branchCode));
                             }
                             window.location.reload();
                           }}
                         >
-                           {b.branchName}
+                          {b.branchName}
                         </div>
                       ))}
                     </div>
@@ -219,10 +219,10 @@ useEffect(() => {
         <div>
           <span
             onClick={() => handleLogout(dashboard)}
-            className={`btn ${dashboard==="3"?"btn-danger":"btn-secondary"} px-4 rounded-pill`}
+            className={`btn ${dashboard === "3" ? "btn-danger" : "btn-secondary"} px-4 rounded-pill`}
           >
             <FaSignOutAlt className="me-2" />
-            {dashboard==="3"?("Logout"):"Back"}
+            {dashboard === "3" ? ("Logout") : "Back"}
           </span>
         </div>
       </div>

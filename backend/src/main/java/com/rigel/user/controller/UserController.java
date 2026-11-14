@@ -540,7 +540,7 @@ public class UserController {
 
 			UserSubscription userSubscription = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
 			if (userSubscription != null && userSubscription.isStatus() && !searchCriteria.isRenewal()) {
-				throw new BadGatewayRequest("You already have an active subscription. Please select the renewal option to extend.");
+				throw new BadGatewayRequest("You already have an active subscription.");
 			}
 
 			SubscriptionPlan subscriptionPlan = rolesManagementService.findBySubscriptionCode(subScriptionCode);
