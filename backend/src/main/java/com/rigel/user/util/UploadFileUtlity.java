@@ -48,6 +48,89 @@ public class UploadFileUtlity {
 //        }
 //    }
 	
+	public static String uploadLogo(MultipartFile logo,String branchCode) {
+
+	    // Logo nahi diya gaya
+	    if (logo == null || logo.isEmpty()) {
+	        return null;
+	    }
+
+	 
+	    // File Type
+	    String contentType = logo.getContentType();
+
+	    if (contentType == null) {
+	    	 return null;
+//	        throw new IllegalArgumentException(
+//	            "File type not found"
+//	        );
+	    }
+
+	    // Allowed image types
+	    if (!contentType.equalsIgnoreCase("image/jpeg")
+	            && !contentType.equalsIgnoreCase("image/png")
+	            && !contentType.equalsIgnoreCase("image/webp")) {
+	    	 return null;
+//
+//	        throw new IllegalArgumentException(
+//	            "Only JPG, PNG and WEBP images are allowed"
+//	        );
+	    }
+	    
+	    // Maximum 2 MB
+	    long maxSize = 2 * 1024 * 1024;
+
+	    if (logo.getSize() > maxSize) {
+	        throw new IllegalArgumentException(
+	            "Logo size must be less than 2 MB"
+	        );
+	    }
+
+	    // Upload
+	    return uploadImageLogo(
+	        logo,
+	        "logo",
+	        branchCode
+	    );
+	}
+	
+	public static String uploadImageLogo(MultipartFile files, String location,String branchCode) {
+        if (files == null || files.isEmpty()) {
+            return null;
+        }
+
+        try {
+            // Clean filename and extract extension safely
+            String originalFilename = StringUtils.cleanPath(files.getOriginalFilename());
+            String extension = "";
+            int dotIndex = originalFilename.lastIndexOf(".");
+            if (dotIndex > 0) {
+                extension = originalFilename.substring(dotIndex);
+            }
+
+            String filename = branchCode + extension;
+
+            // Create directories if not exist
+            Path uploadPath = Paths.get(getPath(location));
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(filename);
+
+            // Copy file safely with try-with-resources
+            try (InputStream inputStream = files.getInputStream()) {
+                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            return filename;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+	
 	public static String uploadFiles(MultipartFile files, String location,String fileName) {
         if (files == null || files.isEmpty()) {
             return null;

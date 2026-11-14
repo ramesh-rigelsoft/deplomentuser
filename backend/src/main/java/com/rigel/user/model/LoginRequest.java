@@ -23,5 +23,6 @@ import lombok.Builder.Default;
 public class LoginRequest{
     private String username;
     private String password;
-//    private String macAddress;
+    private Integer ownerId;
+    private String branchCode;
 }

@@ -202,7 +202,9 @@ public class UserServiceImpl implements IUserService {
 		target.setEmail_id(source.getEmail_id());
 		target.setMobile_no(source.getMobile_no());
 //		target.setCountry_code(source.getCountry_code());
-		target.setGender(source.getGender());
+		if(source.getPassword()!=null&&!source.getPassword().isBlank()&&!source.getPassword().equalsIgnoreCase("null")) {
+		   target.setPassword(source.getPassword());
+		}
 //		target.setRole(source.getRole());
 //		target.setStatus(source.getStatus());
 
@@ -214,24 +216,24 @@ public class UserServiceImpl implements IUserService {
 //	    }
 
 		// ===== COMPANY INFO =====
-		target.setSoftwareType(source.getSoftwareType());
-		target.setShopType(source.getShopType());
-		target.setCompanyName(source.getCompanyName());
-//		target.setCompanyLogo(source.getCompanyLogo());
-
-		target.setGstNumber(source.getGstNumber());
-		target.setPanNumber(source.getPanNumber());
-		target.setCinNumber(source.getCinNumber());
-
-		target.setAddressLine1(source.getAddressLine1());
-		target.setAddressLine2(source.getAddressLine2());
-		target.setCity(source.getCity());
-		target.setState(source.getState());
-		target.setCountry(source.getCountry());
-		target.setPincode(source.getPincode());
-
-		target.setWebsite(source.getWebsite());
-		target.setCompanyType(source.getCompanyType());
+//		target.setSoftwareType(source.getSoftwareType());
+//		target.setShopType(source.getShopType());
+//		target.setCompanyName(source.getCompanyName());
+////		target.setCompanyLogo(source.getCompanyLogo());
+//
+//		target.setGstNumber(source.getGstNumber());
+//		target.setPanNumber(source.getPanNumber());
+//		target.setCinNumber(source.getCinNumber());
+//
+//		target.setAddressLine1(source.getAddressLine1());
+//		target.setAddressLine2(source.getAddressLine2());
+//		target.setCity(source.getCity());
+//		target.setState(source.getState());
+//		target.setCountry(source.getCountry());
+//		target.setPincode(source.getPincode());
+//
+//		target.setWebsite(source.getWebsite());
+//		target.setCompanyType(source.getCompanyType());
 //		target.setCompanyEmployeeCount(source.getCompanyEmployeeCount());
 
 		// ===== EXTRA INFO =====
@@ -247,6 +249,11 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public User persistUser(User user) {
 		return userDao.persistUser(user);
+	}
+
+	@Override
+	public List<User> findUsersByOwnerIdAndBranch(SearchCriteria searchCriteria) {
+		return userDao.findUsersByOwnerIdAndBranch(searchCriteria);
 	}
 
 }

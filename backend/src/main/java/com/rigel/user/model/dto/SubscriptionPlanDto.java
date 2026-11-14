@@ -19,10 +19,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+//@ToString
 public class SubscriptionPlanDto{
 
     private String subscriptionName;
+    
+    private int ownerId;
+    private String branchCode;
     
     private String subscriptionCode;   // Travel, Food, Salary etc.
 

@@ -39,8 +39,14 @@ public class JwtTokenAuthenticationFilter extends  OncePerRequestFilter {
 		
 		String header = request.getHeader(jwtConfig.getHeader());
 		
+		if (header == null || 
+			    !header.startsWith("Bearer ") || 
+			    header.substring(7).equals("undefined") ||
+			    header.substring(7).equals("null") ||
+			    header.substring(7).isBlank()) {
+		
 //		System.out.println(jwtConfig.getHeader()+" header "+header);
-		if(header == null || !header.startsWith(jwtConfig.getPrefix())) {
+//		if(header == null || !header.startsWith(jwtConfig.getPrefix())) {
 			chain.doFilter(request, response);  		// If not valid, go to the next filter.
 			return;
 		}

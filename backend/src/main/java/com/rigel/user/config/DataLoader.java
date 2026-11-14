@@ -1,46 +1,46 @@
-package com.rigel.user.config;
-
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
-import com.rigel.user.model.Invoice;
-import com.rigel.user.repo.InvoiceRepository;
-
-import jakarta.transaction.Transactional;
-
-@Component
-public class DataLoader implements CommandLineRunner {
-
-    private final InvoiceRepository invoiceRepo;
-
-    public DataLoader(InvoiceRepository invoiceRepo) {
-        this.invoiceRepo = invoiceRepo;
-    }
-
-    @Transactional
-    @Override
-    public void run(String... args) throws Exception {
-//        long count = invoiceRepo.count();
+//package com.rigel.user.config;
 //
-//        if (count == 0) {
-//            Invoice inv1 = Invoice.builder()
-//                    .formate("INV")
-//                    .formateName("invoiceNumber")
-//                    .fy("2026-2027")
-//                    .lastNumber(0)
-//                    .build();
+//import org.springframework.boot.CommandLineRunner;
+//import org.springframework.stereotype.Component;
 //
-//            Invoice inv2 = Invoice.builder()
-//                    .formate("ITM")
-//                    .formateName("itemCode")
-//                    .fy("2026-2027")
-//                    .lastNumber(0)
-//                    .build();
+//import com.rigel.user.model.Invoice;
+//import com.rigel.user.repo.InvoiceRepository;
 //
-//            invoiceRepo.save(inv1);
-//            invoiceRepo.save(inv2);
+//import jakarta.transaction.Transactional;
 //
-//            System.out.println("Default invoice data inserted.");
-//        }
-    }
-}
+//@Component
+//public class DataLoader implements CommandLineRunner {
+//
+//    private final InvoiceRepository invoiceRepo;
+//
+//    public DataLoader(InvoiceRepository invoiceRepo) {
+//        this.invoiceRepo = invoiceRepo;
+//    }
+//
+//    @Transactional
+//    @Override
+//    public void run(String... args) throws Exception {
+////        long count = invoiceRepo.count();
+////
+////        if (count == 0) {
+////            Invoice inv1 = Invoice.builder()
+////                    .formate("INV")
+////                    .formateName("invoiceNumber")
+////                    .fy("2026-2027")
+////                    .lastNumber(0)
+////                    .build();
+////
+////            Invoice inv2 = Invoice.builder()
+////                    .formate("ITM")
+////                    .formateName("itemCode")
+////                    .fy("2026-2027")
+////                    .lastNumber(0)
+////                    .build();
+////
+////            invoiceRepo.save(inv1);
+////            invoiceRepo.save(inv2);
+////
+////            System.out.println("Default invoice data inserted.");
+////        }
+//    }
+//}

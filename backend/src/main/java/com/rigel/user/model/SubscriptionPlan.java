@@ -31,10 +31,13 @@ public class SubscriptionPlan implements Serializable {
     private String subscriptionName;
     
     @Column(unique = true)
-    private String subscriptionCode;   // Travel, Food, Salary etc.
+    private String subscriptionCode;   // SUB01
 
     private String subscriptionType;   // Monthaly,Qutarily,HelfYerily,Yerily
 
+//    private int perDayPhoneSale; 
+//    private int perDayLaptopSale; 
+    
     private Double amountPerMonth;
     private int month;
     private Double gst;
@@ -46,6 +49,8 @@ public class SubscriptionPlan implements Serializable {
 
     private int perBranchUser;
     
+    private int branchCount;
+    
     private boolean isMultipleUser;
     
     private int userCount; 
@@ -56,6 +61,15 @@ public class SubscriptionPlan implements Serializable {
    
     @Column(name = "permissions")
     private String permissions;
+    
+    private boolean isRepaireAllow;
+    private boolean isSalesAllow;
+    private boolean isEmployeeAllow;
+    
+    private Integer perDayRepaireCount;
+    private Integer perDayMobileSmartDevicesSalesCount; // mobile shop
+    private Integer perDayComputerLaptopSalesCount;// laptop computer shop
+    private Integer perDayNormalTypeSalesCount; // electronic shop
     
     private boolean isReplaceItem;
     private boolean isReturnItem;

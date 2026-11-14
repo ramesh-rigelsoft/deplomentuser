@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.validation.ValidationException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import com.rigel.user.dao.IUserDao;
 import com.rigel.user.model.Roles;
 import com.rigel.user.model.User;
 import com.rigel.user.model.UserOtp;
+import com.rigel.user.model.UserSubscription;
 import com.rigel.user.model.dto.SearchCriteria;
 
 @Repository
@@ -23,20 +25,20 @@ public class UserDaoimpl implements IUserDao {
 
 	@Autowired
 	EntityManager entityManager;
-	
+
 	@Override
 	public User saveUser(User user) {
 		return entityManager.merge(user);
 	}
-	
+
 	@Override
 	public User saveSubUser(User user) {
 		return entityManager.merge(user);
 	}
-	
+
 	@Override
 	public User persistUser(User user) {
-		User user1=entityManager.merge(user);
+		User user1 = entityManager.merge(user);
 		user1.setOwnerId(user1.getId());
 		return entityManager.merge(user1);
 	}
@@ -62,10 +64,10 @@ public class UserDaoimpl implements IUserDao {
 			}
 
 		} catch (NoResultException e) {
-	    	e.printStackTrace();
+//	    	e.printStackTrace();
 			return null;
 		} catch (Exception e) {
-	        e.printStackTrace(); // optional logging
+//	        e.printStackTrace(); // optional logging
 			return null;
 		}
 	}
@@ -98,7 +100,6 @@ public class UserDaoimpl implements IUserDao {
 				SELECT DISTINCT u
 				FROM User u
 				WHERE LOWER(u.role) <> 'admin'
-				AND status=1
 				AND u.ownerId = :ownerId
 				""";
 
@@ -106,5 +107,29 @@ public class UserDaoimpl implements IUserDao {
 				.getResultList();
 	}
 
-	
+	@Override
+	public List<User> findUsersByOwnerIdAndBranch(SearchCriteria searchCriteria) {
+		try {
+			String jpql = """
+					SELECT DISTINCT u
+					FROM User u
+					WHERE LOWER(u.role) <> 'admin'
+					AND status=1
+					AND u.ownerId = :ownerId
+					AND u.branchCode = :branchCode
+					""";
+
+			return entityManager.createQuery(jpql, User.class).setParameter("ownerId", searchCriteria.getUserId())
+					.setParameter("branchCode", searchCriteria.getBranchCode()).getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return List.of();
+		}
+	}
+
+	@Override
+	public UserSubscription saveUserSubscription(UserSubscription userSubscription) {
+		return entityManager.merge(userSubscription);
+	}
+
 }

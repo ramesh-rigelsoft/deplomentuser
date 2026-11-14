@@ -1,7 +1,6 @@
 package com.rigel.user.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.security.SecureRandom;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -46,6 +45,24 @@ public class AppUtill {
 	public static String[] getUrlRole() {
 	       String[] roles= {"/api/user/**","/api/todoTask/**"};
 	        return roles;
+	}
+	
+	public static String generatePassword(int length) {
+
+	    String chars =
+	            "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+	            "abcdefghijklmnopqrstuvwxyz" +
+	            "0123456789" +
+	            "@#$%&*!";
+
+	    SecureRandom random = new SecureRandom();
+	    StringBuilder password = new StringBuilder(length);
+
+	    for (int i = 0; i < length; i++) {
+	        password.append(chars.charAt(random.nextInt(chars.length())));
+	    }
+
+	    return password.toString();
 	}
 	
 }
