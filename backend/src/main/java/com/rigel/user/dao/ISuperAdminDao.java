@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.rigel.user.model.OfficeBranch;
 import com.rigel.user.model.PaymentTransaction;
 import com.rigel.user.model.PaymentWebhookEvent;
 import com.rigel.user.model.SubscriptionPlan;
@@ -37,6 +38,14 @@ public interface ISuperAdminDao {
     List<User> getChildUsersByOwnerId(int ownerId);
 
     long countChildUsers(int ownerId);
+
+    List<OfficeBranch> getBranchesByOwnerId(int ownerId);
+
+    List<OfficeBranch> getAllBranches();
+
+    OfficeBranch getBranchByCode(String branchCode);
+
+    OfficeBranch updateBranchLanguage(String branchCode, String language);
 
     List<UserSubscription> getSubscriptionsByOwnerId(int ownerId);
 

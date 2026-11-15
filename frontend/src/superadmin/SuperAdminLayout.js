@@ -66,6 +66,11 @@ const SuperAdminLayout = ({ children }) => {
       icon: "fa-users",
     },
     {
+      path: "/superadmin/languages",
+      label: "Language Management",
+      icon: "fa-language",
+    },
+    {
       path: "/superadmin/subscriptions",
       label: "All Subscriptions",
       icon: "fa-list-alt",

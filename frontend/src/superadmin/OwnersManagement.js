@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import SuperAdminLayout from "./SuperAdminLayout";
 import superadminApi from "./superadminApi";
 import { toast } from "react-toastify";
+import { SUPPORTED_LANGUAGES } from "../i18n/languages";
 
 const OwnersManagement = () => {
   const [owners, setOwners] = useState([]);
@@ -10,6 +12,14 @@ const OwnersManagement = () => {
   const [selectedOwnerId, setSelectedOwnerId] = useState(null);
   const [ownerDetail, setOwnerDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+
+  // Multilingual states
+  const [ownerLangSelect, setOwnerLangSelect] = useState("en");
+  const [branchLangSelections, setBranchLangSelections] = useState({});
+  const [langUpdating, setLangUpdating] = useState(false);
+  const [showLangModal, setShowLangModal] = useState(false);
+  const [languagesList, setLanguagesList] = useState([]);
+  const [langModalLoading, setLangModalLoading] = useState(false);
 
   useEffect(() => {
     fetchOwners();
@@ -40,12 +50,117 @@ const OwnersManagement = () => {
     setDetailLoading(true);
     try {
       const res = await superadminApi.get(`/owners/${ownerId}`);
-      setOwnerDetail(res?.data?.data || null);
+      const data = res?.data?.data || null;
+      setOwnerDetail(data);
+
+      if (data?.owner?.defaultLanguage) {
+        setOwnerLangSelect(data.owner.defaultLanguage);
+      } else {
+        setOwnerLangSelect("en");
+      }
+
+      if (data?.branches && Array.isArray(data.branches)) {
+        const branchMap = {};
+        data.branches.forEach((b) => {
+          branchMap[b.branchCode] = b.language || "en";
+        });
+        setBranchLangSelections(branchMap);
+      }
     } catch (err) {
       console.error("Error loading owner details:", err);
       toast.error("Failed to load owner details.");
     } finally {
       setDetailLoading(false);
+    }
+  };
+
+  const handleUpdateOwnerDefaultLang = async () => {
+    if (!selectedOwnerId || !ownerLangSelect) return;
+    setLangUpdating(true);
+    try {
+      const res = await superadminApi.put(`/owners/${selectedOwnerId}/language`, {
+        language: ownerLangSelect,
+      });
+      toast.success(res?.data?.message || "Owner default language updated.");
+      setOwnerDetail((prev) => ({
+        ...prev,
+        owner: {
+          ...prev.owner,
+          defaultLanguage: ownerLangSelect,
+          defaultLanguageName: res?.data?.data?.defaultLanguageName || ownerLangSelect,
+        },
+      }));
+      setOwners((prev) =>
+        prev.map((o) =>
+          o.ownerId === selectedOwnerId
+            ? {
+                ...o,
+                defaultLanguage: ownerLangSelect,
+                defaultLanguageName: res?.data?.data?.defaultLanguageName || ownerLangSelect,
+              }
+            : o
+        )
+      );
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update owner language.");
+    } finally {
+      setLangUpdating(false);
+    }
+  };
+
+  const handleUpdateBranchLang = async (branchCode) => {
+    const newLang = branchLangSelections[branchCode];
+    if (!branchCode || !newLang) return;
+    setLangUpdating(true);
+    try {
+      const res = await superadminApi.put(`/branches/${branchCode}/language`, {
+        language: newLang,
+      });
+      toast.success(res?.data?.message || "Branch language updated.");
+      setOwnerDetail((prev) => ({
+        ...prev,
+        branches: prev.branches.map((b) =>
+          b.branchCode === branchCode
+            ? {
+                ...b,
+                language: newLang,
+                languageName: res?.data?.data?.languageName || newLang,
+              }
+            : b
+        ),
+      }));
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update branch language.");
+    } finally {
+      setLangUpdating(false);
+    }
+  };
+
+  const fetchLanguages = async () => {
+    setLangModalLoading(true);
+    try {
+      const res = await superadminApi.get("/languages");
+      if (res?.data?.data && Array.isArray(res.data.data)) {
+        setLanguagesList(res.data.data);
+      } else {
+        setLanguagesList(SUPPORTED_LANGUAGES.map((l) => ({ ...l, languageCode: l.code, languageName: l.name, active: true, rtl: l.isRtl })));
+      }
+    } catch (e) {
+      setLanguagesList(SUPPORTED_LANGUAGES.map((l) => ({ ...l, languageCode: l.code, languageName: l.name, active: true, rtl: l.isRtl })));
+    } finally {
+      setLangModalLoading(false);
+    }
+  };
+
+  const handleToggleLangStatus = async (code, currentActive) => {
+    try {
+      const res = await superadminApi.patch(`/languages/${code}/status`, {
+        active: !currentActive,
+      });
+      toast.success(res?.data?.message || "Language status updated.");
+      fetchLanguages();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update language status.");
     }
   };
 
@@ -64,7 +179,7 @@ const OwnersManagement = () => {
 
   return (
     <SuperAdminLayout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.75rem" }}>
         <div>
           <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#1e293b", margin: 0 }}>
             Owners & Child Users Directory
@@ -72,6 +187,51 @@ const OwnersManagement = () => {
           <p style={{ color: "#64748b", margin: "0.25rem 0 0", fontSize: "0.85rem" }}>
             View all business owners, their staff/child accounts, and active subscription plans
           </p>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <Link
+            to="/superadmin/languages"
+            style={{
+              backgroundColor: "#2563eb",
+              color: "#ffffff",
+              textDecoration: "none",
+              borderRadius: "8px",
+              padding: "0.5rem 1rem",
+              fontSize: "0.85rem",
+              fontWeight: 600,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              boxShadow: "0 2px 4px rgba(37,99,235,0.2)",
+            }}
+          >
+            <i className="fa fa-language" />
+            <span>Manage Branch & Owner Languages</span>
+          </Link>
+
+          <button
+            onClick={() => {
+              fetchLanguages();
+              setShowLangModal(true);
+            }}
+            style={{
+              backgroundColor: "#059669",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "0.5rem 1rem",
+              fontSize: "0.85rem",
+              fontWeight: 600,
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              boxShadow: "0 2px 4px rgba(5,150,105,0.2)",
+            }}
+          >
+            <i className="fa fa-globe" />
+            <span>13 Languages Status</span>
+          </button>
         </div>
       </div>
 
@@ -149,6 +309,8 @@ const OwnersManagement = () => {
                 <th style={{ padding: "0.75rem 1rem" }}>Owner Name</th>
                 <th style={{ padding: "0.75rem 1rem" }}>Email</th>
                 <th style={{ padding: "0.75rem 1rem" }}>Mobile</th>
+                <th style={{ padding: "0.75rem 1rem" }}>Default Language</th>
+                <th style={{ padding: "0.75rem 1rem" }}>Personal Language</th>
                 <th style={{ padding: "0.75rem 1rem" }}>Account Status</th>
                 <th style={{ padding: "0.75rem 1rem" }}>Current Plan</th>
                 <th style={{ padding: "0.75rem 1rem" }}>Subscription Status</th>
@@ -187,6 +349,38 @@ const OwnersManagement = () => {
                     </td>
                     <td style={{ padding: "0.75rem 1rem", color: "#334155" }}>{o.email}</td>
                     <td style={{ padding: "0.75rem 1rem", color: "#334155" }}>{o.mobile}</td>
+                    <td style={{ padding: "0.75rem 1rem" }}>
+                      <span
+                        style={{
+                          backgroundColor: "#e0e7ff",
+                          color: "#3730a3",
+                          padding: "0.2rem 0.55rem",
+                          borderRadius: "12px",
+                          fontSize: "0.75rem",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {o.defaultLanguageName || o.defaultLanguage || "English"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "0.75rem 1rem", color: "#64748b", fontSize: "0.8rem" }}>
+                      {o.personalLanguage ? (
+                        <span
+                          style={{
+                            backgroundColor: "#fef3c7",
+                            color: "#92400e",
+                            padding: "0.2rem 0.55rem",
+                            borderRadius: "12px",
+                            fontSize: "0.75rem",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {o.personalLanguageName || o.personalLanguage}
+                        </span>
+                      ) : (
+                        <span style={{ color: "#94a3b8", fontStyle: "italic" }}>Same as Default</span>
+                      )}
+                    </td>
                     <td style={{ padding: "0.75rem 1rem" }}>
                       <span
                         style={{
@@ -245,7 +439,29 @@ const OwnersManagement = () => {
                       </span>
                     </td>
                     <td style={{ padding: "0.75rem 1rem", color: "#64748b" }}>{formatDate(o.createdAt)}</td>
-                    <td style={{ padding: "0.75rem 1rem", textAlign: "right" }}>
+                    <td style={{ padding: "0.75rem 1rem", textAlign: "right", whiteSpace: "nowrap" }}>
+                      <button
+                        onClick={() => handleViewOwner(o.ownerId)}
+                        style={{
+                          backgroundColor: "#059669",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          padding: "0.35rem 0.65rem",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.3rem",
+                          marginRight: "0.4rem",
+                        }}
+                        title="Change Language & View Branches"
+                      >
+                        <i className="fa fa-language" />
+                        <span>Change Language</span>
+                      </button>
+
                       <button
                         onClick={() => handleViewOwner(o.ownerId)}
                         style={{
@@ -366,6 +582,71 @@ const OwnersManagement = () => {
                       <div><strong>Registered Date:</strong> {formatDate(ownerDetail.owner?.createdAt)}</div>
                       <div><strong>Branch Count:</strong> {ownerDetail.owner?.branchCount || 1}</div>
                       <div><strong>Total Child Users:</strong> {ownerDetail.childUsersCount || 0}</div>
+                      <div>
+                        <strong>Default Language:</strong>{" "}
+                        <span className="badge bg-primary ms-1">
+                          {ownerDetail.owner?.defaultLanguageName || ownerDetail.owner?.defaultLanguage || "English"}
+                        </span>
+                      </div>
+                      <div>
+                        <strong>Personal Language:</strong>{" "}
+                        {ownerDetail.owner?.personalLanguage ? (
+                          <span className="badge bg-warning text-dark ms-1">
+                            {ownerDetail.owner?.personalLanguageName || ownerDetail.owner?.personalLanguage}
+                          </span>
+                        ) : (
+                          <span className="text-muted ms-1" style={{ fontSize: "0.8rem", fontStyle: "italic" }}>
+                            Same as Default
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Change Owner Default Language */}
+                    <div style={{ marginTop: "1rem", paddingTop: "0.85rem", borderTop: "1px dashed #cbd5e1", display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                      <label style={{ fontWeight: 600, color: "#1e293b", fontSize: "0.85rem" }}>
+                        Change Default Language:
+                      </label>
+                      <select
+                        value={ownerLangSelect}
+                        onChange={(e) => setOwnerLangSelect(e.target.value)}
+                        style={{
+                          padding: "0.35rem 0.6rem",
+                          borderRadius: "6px",
+                          border: "1px solid #cbd5e1",
+                          fontSize: "0.85rem",
+                          backgroundColor: "#ffffff",
+                          minWidth: "160px",
+                        }}
+                      >
+                        {SUPPORTED_LANGUAGES.map((l) => (
+                          <option key={l.code} value={l.code}>
+                            {l.name} ({l.nativeName}){l.isRtl ? " [RTL]" : ""}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={handleUpdateOwnerDefaultLang}
+                        disabled={langUpdating || ownerLangSelect === ownerDetail.owner?.defaultLanguage}
+                        style={{
+                          backgroundColor: "#2563eb",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          padding: "0.35rem 0.85rem",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                        }}
+                      >
+                        {langUpdating ? "Saving..." : "Save Default Language"}
+                      </button>
+                      {ownerDetail.owner?.personalLanguage && (
+                        <span style={{ fontSize: "0.8rem", color: "#b45309", backgroundColor: "#fef3c7", padding: "2px 8px", borderRadius: "4px" }}>
+                          Note: Owner has active personal language
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -398,6 +679,111 @@ const OwnersManagement = () => {
                       <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
                         No active subscription at the moment.
                       </p>
+                    )}
+                  </div>
+
+                  {/* Section 2.5: Branches & Language Configuration */}
+                  <div style={{ marginBottom: "1.5rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                      <h4 style={{ margin: 0, fontSize: "1rem", color: "#1e293b", fontWeight: 700 }}>
+                        <i className="fa fa-building text-primary" style={{ marginRight: "0.4rem" }} />
+                        Owner Branches & Language Configuration ({(ownerDetail.branches || []).length})
+                      </h4>
+                    </div>
+
+                    {(ownerDetail.branches || []).length === 0 ? (
+                      <div style={{ padding: "1.25rem", textAlign: "center", backgroundColor: "#f8fafc", borderRadius: "8px", color: "#94a3b8" }}>
+                        No branches configured for this owner yet.
+                      </div>
+                    ) : (
+                      <div className="table-responsive" style={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
+                        <table style={{ width: "100%", minWidth: "700px", borderCollapse: "collapse", fontSize: "0.825rem" }}>
+                          <thead>
+                            <tr style={{ backgroundColor: "#f8fafc", borderBottom: "1px solid #e2e8f0", color: "#475569" }}>
+                              <th style={{ padding: "0.6rem 0.75rem" }}>Branch Name</th>
+                              <th style={{ padding: "0.6rem 0.75rem" }}>Code</th>
+                              <th style={{ padding: "0.6rem 0.75rem" }}>City</th>
+                              <th style={{ padding: "0.6rem 0.75rem" }}>Status</th>
+                              <th style={{ padding: "0.6rem 0.75rem" }}>Current Language</th>
+                              <th style={{ padding: "0.6rem 0.75rem" }}>Change Branch Language</th>
+                              <th style={{ padding: "0.6rem 0.75rem", textAlign: "right" }}>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {ownerDetail.branches.map((b) => (
+                              <tr key={b.branchCode} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                                <td style={{ padding: "0.6rem 0.75rem", fontWeight: 600 }}>{b.branchName}</td>
+                                <td style={{ padding: "0.6rem 0.75rem", color: "#64748b", fontFamily: "monospace" }}>{b.branchCode}</td>
+                                <td style={{ padding: "0.6rem 0.75rem" }}>{b.city || "-"}</td>
+                                <td style={{ padding: "0.6rem 0.75rem" }}>
+                                  <span className={`badge ${b.status ? "bg-success" : "bg-danger"}`}>
+                                    {b.status ? "ACTIVE" : "INACTIVE"}
+                                  </span>
+                                </td>
+                                <td style={{ padding: "0.6rem 0.75rem" }}>
+                                  <span
+                                    style={{
+                                      backgroundColor: "#dbeafe",
+                                      color: "#1d4ed8",
+                                      padding: "0.2rem 0.5rem",
+                                      borderRadius: "12px",
+                                      fontWeight: 600,
+                                    }}
+                                  >
+                                    {b.languageName || b.language} {b.isRtl ? "[RTL]" : ""}
+                                  </span>
+                                </td>
+                                <td style={{ padding: "0.6rem 0.75rem" }}>
+                                  <select
+                                    value={branchLangSelections[b.branchCode] || b.language || "en"}
+                                    onChange={(e) =>
+                                      setBranchLangSelections({
+                                        ...branchLangSelections,
+                                        [b.branchCode]: e.target.value,
+                                      })
+                                    }
+                                    style={{
+                                      padding: "0.25rem 0.5rem",
+                                      borderRadius: "5px",
+                                      border: "1px solid #cbd5e1",
+                                      fontSize: "0.8rem",
+                                      backgroundColor: "#ffffff",
+                                    }}
+                                  >
+                                    {SUPPORTED_LANGUAGES.map((l) => (
+                                      <option key={l.code} value={l.code}>
+                                        {l.name} ({l.nativeName}){l.isRtl ? " [RTL]" : ""}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td>
+                                <td style={{ padding: "0.6rem 0.75rem", textAlign: "right" }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateBranchLang(b.branchCode)}
+                                    disabled={
+                                      langUpdating ||
+                                      (branchLangSelections[b.branchCode] || b.language) === b.language
+                                    }
+                                    style={{
+                                      backgroundColor: "#2563eb",
+                                      color: "#ffffff",
+                                      border: "none",
+                                      borderRadius: "5px",
+                                      padding: "0.25rem 0.65rem",
+                                      fontSize: "0.75rem",
+                                      fontWeight: 600,
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    Save
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     )}
                   </div>
 
@@ -510,6 +896,152 @@ const OwnersManagement = () => {
                     )}
                   </div>
                 </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Languages Master Modal (Section 25) */}
+      {showLangModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.6)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1100,
+            padding: "1rem",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "14px",
+              width: "100%",
+              maxWidth: "720px",
+              maxHeight: "85vh",
+              overflowY: "auto",
+              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+            }}
+          >
+            <div
+              style={{
+                padding: "1.25rem 1.5rem",
+                borderBottom: "1px solid #e2e8f0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                position: "sticky",
+                top: 0,
+                backgroundColor: "#ffffff",
+                zIndex: 10,
+              }}
+            >
+              <div>
+                <h3 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 700, color: "#0f172a" }}>
+                  <i className="fa fa-language text-success" style={{ marginRight: "0.5rem" }} />
+                  Supported 13 Multilingual Languages
+                </h3>
+                <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
+                  Manage and toggle active/inactive status across the application
+                </span>
+              </div>
+              <button
+                onClick={() => setShowLangModal(false)}
+                style={{ background: "none", border: "none", fontSize: "1.25rem", color: "#64748b", cursor: "pointer" }}
+              >
+                &times;
+              </button>
+            </div>
+
+            <div style={{ padding: "1.25rem 1.5rem" }}>
+              {langModalLoading ? (
+                <div style={{ textAlign: "center", padding: "2rem", color: "#64748b" }}>
+                  <i className="fa fa-spinner fa-spin fa-2x" />
+                  <p style={{ margin: "0.5rem 0 0" }}>Loading languages...</p>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+                    <thead>
+                      <tr style={{ backgroundColor: "#f8fafc", borderBottom: "2px solid #e2e8f0", color: "#475569" }}>
+                        <th style={{ padding: "0.6rem 0.75rem" }}>Code</th>
+                        <th style={{ padding: "0.6rem 0.75rem" }}>Language Name</th>
+                        <th style={{ padding: "0.6rem 0.75rem" }}>Native Name</th>
+                        <th style={{ padding: "0.6rem 0.75rem" }}>Direction</th>
+                        <th style={{ padding: "0.6rem 0.75rem" }}>Status</th>
+                        <th style={{ padding: "0.6rem 0.75rem", textAlign: "right" }}>Toggle Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(languagesList.length > 0 ? languagesList : SUPPORTED_LANGUAGES).map((l) => {
+                        const code = l.languageCode || l.code;
+                        const name = l.languageName || l.name;
+                        const native = l.nativeName || name;
+                        const isRtl = l.rtl !== undefined ? l.rtl : l.isRtl;
+                        const isActive = l.active !== undefined ? l.active : true;
+
+                        return (
+                          <tr key={code} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                            <td style={{ padding: "0.6rem 0.75rem", fontFamily: "monospace", fontWeight: 700, color: "#2563eb" }}>
+                              {code}
+                            </td>
+                            <td style={{ padding: "0.6rem 0.75rem", fontWeight: 600, color: "#1e293b" }}>
+                              {name}
+                            </td>
+                            <td style={{ padding: "0.6rem 0.75rem", fontSize: "0.95rem" }}>
+                              {native}
+                            </td>
+                            <td style={{ padding: "0.6rem 0.75rem" }}>
+                              <span style={{ fontSize: "0.75rem", padding: "2px 6px", borderRadius: "4px", backgroundColor: isRtl ? "#fef3c7" : "#f1f5f9", color: isRtl ? "#b45309" : "#64748b", fontWeight: 600 }}>
+                                {isRtl ? "RTL (Right to Left)" : "LTR"}
+                              </span>
+                            </td>
+                            <td style={{ padding: "0.6rem 0.75rem" }}>
+                              <span
+                                style={{
+                                  padding: "0.2rem 0.5rem",
+                                  borderRadius: "12px",
+                                  fontSize: "0.75rem",
+                                  fontWeight: 600,
+                                  backgroundColor: isActive ? "#dcfce7" : "#fee2e2",
+                                  color: isActive ? "#15803d" : "#b91c1c",
+                                }}
+                              >
+                                {isActive ? "ACTIVE" : "INACTIVE"}
+                              </span>
+                            </td>
+                            <td style={{ padding: "0.6rem 0.75rem", textAlign: "right" }}>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleLangStatus(code, isActive)}
+                                style={{
+                                  backgroundColor: isActive ? "#ef4444" : "#10b981",
+                                  color: "#ffffff",
+                                  border: "none",
+                                  borderRadius: "5px",
+                                  padding: "0.25rem 0.65rem",
+                                  fontSize: "0.75rem",
+                                  fontWeight: 600,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                {isActive ? "Deactivate" : "Activate"}
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>

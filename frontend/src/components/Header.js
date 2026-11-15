@@ -4,6 +4,7 @@ import API from "../redux/API";
 import Cookies from "js-cookie";
 import { FaSignOutAlt } from "react-icons/fa";
 import { navigateTo } from "../components/navigationService";
+import { useTranslation } from "../i18n";
 
 
 const Header = ({
@@ -12,6 +13,7 @@ const Header = ({
   dashboard = "4"
 }) => {
   const dispatch = useDispatch();
+  const { currentMeta, t } = useTranslation();
   
   const ownerId= parseInt(Cookies.get("secretCode"));
 
@@ -112,6 +114,7 @@ useEffect(() => {
       Cookies.remove("secret");
       Cookies.remove("fileName");
       Cookies.remove("token");
+      Cookies.remove("language");
       localStorage.clear();
       sessionStorage.clear();
       navigateTo("/login");
@@ -160,18 +163,20 @@ useEffect(() => {
               {companyName}
             </h5>
             <small className="text-muted d-block text-truncate" style={{ fontSize: "clamp(0.75rem, 1vw, 0.85rem)" }}>
-              Business Management System
+              {t("business_management_system", "Business Management System")}
             </small>
             {(dashboard === "4" || dashboard === "2") && (
               <div className="branch-switcher" ref={dropdownRef}>
-                <span className="text-truncate" style={{ maxWidth: "160px" }}>📍 {branchName}</span>
+                <span className="text-truncate" style={{ maxWidth: "160px" }}>
+                  📍 {branchName === "All Location" ? t("all_location", "All Location") : branchName}
+                </span>
 
                 <button
                   type="button"
                   className="branch-change-btn"
                   onClick={() => setShowDropdown(!showDropdown)}
                 >
-                  Change
+                  {t("change", "Change")}
                 </button>
 
                 {showDropdown && (
@@ -202,7 +207,7 @@ useEffect(() => {
                           window.location.reload();
                         }}
                       >
-                        {b.branchName}
+                        {b.id === 0 ? t("all_location", "All Location") : b.branchName}
                       </div>
                     ))}
                   </div>
@@ -215,15 +220,25 @@ useEffect(() => {
         {/* Center Section: Page Title & Subtitle */}
         <div className="text-center flex-grow-1 order-3 order-lg-2 px-2" style={{ minWidth: "180px" }}>
           <h3 className="fw-bold mb-1 text-dark text-truncate" style={{ fontSize: "clamp(1.1rem, 2vw, 1.55rem)" }}>
-            {title}
+            {t(title)}
           </h3>
           <p className="text-muted mb-0 small text-truncate" style={{ fontSize: "clamp(0.75rem, 1vw, 0.9rem)" }}>
-            {subTitle}
+            {t(subTitle)}
           </p>
         </div>
 
-        {/* Right Section: Action Button */}
-        <div className="order-2 order-lg-3 flex-shrink-0 ms-auto ms-md-0">
+        {/* Right Section: Action Button & Language */}
+        <div className="order-2 order-lg-3 flex-shrink-0 ms-auto ms-md-0 d-flex align-items-center gap-2">
+          <div
+            className="d-none d-sm-inline-flex align-items-center px-2 py-1 rounded-pill bg-light border text-dark"
+            style={{ fontSize: "0.8rem", cursor: "pointer" }}
+            title={t("language_settings", "Language Settings")}
+            onClick={() => navigateTo("/profile")}
+          >
+            <span className="me-1">🌐</span>
+            <span className="fw-semibold">{currentMeta.nativeName || currentMeta.name}</span>
+          </div>
+
           <button
             type="button"
             onClick={() => handleLogout(dashboard)}
@@ -231,7 +246,7 @@ useEffect(() => {
             style={{ minHeight: "38px" }}
           >
             <FaSignOutAlt className="me-2" />
-            <span>{dashboard === "3" ? "Logout" : "Back"}</span>
+            <span>{dashboard === "3" ? t("logout", "Logout") : t("back", "Back")}</span>
           </button>
         </div>
       </div>

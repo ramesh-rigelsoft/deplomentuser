@@ -6,11 +6,13 @@ import { success, fail } from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import { navigateTo } from "../components/navigationService";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "../i18n";
 
 
 const HomePage = () => {
 
   const dispatch = useDispatch();
+  const { syncLoginLanguage, t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,6 +38,11 @@ const HomePage = () => {
         Cookies.set("secretCode", data.user.ownerId, { expires: 1 });
         Cookies.set("secret", JSON.stringify(data.secret), { expires: 1 });
         Cookies.set("token", data.access_token, { expires: 1 });
+
+        const userLang = data.language || (data.branch && data.branch.language) || "en";
+        Cookies.set("language", userLang, { expires: 30 });
+        localStorage.setItem("app_language", userLang);
+        syncLoginLanguage(userLang);
         
         success(res.payload.message);
         navigateTo("/dashboard");

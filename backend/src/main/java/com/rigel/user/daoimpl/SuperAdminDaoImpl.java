@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.rigel.user.dao.ISuperAdminDao;
+import com.rigel.user.model.OfficeBranch;
 import com.rigel.user.model.PaymentTransaction;
 import com.rigel.user.model.PaymentWebhookEvent;
 import com.rigel.user.model.SubscriptionPlan;
@@ -425,5 +426,44 @@ public class SuperAdminDaoImpl implements ISuperAdminDao {
                 UserSubscription.class)
                 .setParameter("now", now)
                 .getResultList();
+    }
+
+    @Override
+    public List<OfficeBranch> getBranchesByOwnerId(int ownerId) {
+        return entityManager.createQuery(
+                "SELECT b FROM OfficeBranch b WHERE b.ownerId = :ownerId ORDER BY b.createdAt ASC", OfficeBranch.class)
+                .setParameter("ownerId", ownerId)
+                .getResultList();
+    }
+
+    @Override
+    public List<OfficeBranch> getAllBranches() {
+        return entityManager.createQuery(
+                "SELECT b FROM OfficeBranch b ORDER BY b.ownerId ASC, b.createdAt ASC", OfficeBranch.class)
+                .getResultList();
+    }
+
+    @Override
+    public OfficeBranch getBranchByCode(String branchCode) {
+        try {
+            return entityManager.createQuery(
+                    "SELECT b FROM OfficeBranch b WHERE b.branchCode = :code", OfficeBranch.class)
+                    .setParameter("code", branchCode)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public OfficeBranch updateBranchLanguage(String branchCode, String language) {
+        OfficeBranch branch = getBranchByCode(branchCode);
+        if (branch != null) {
+            branch.setLanguage(language);
+            branch.setUpdatedAt(LocalDateTime.now());
+            return entityManager.merge(branch);
+        }
+        return null;
     }
 }

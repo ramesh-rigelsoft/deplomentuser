@@ -28,6 +28,7 @@ import com.rigel.user.dao.ISuperAdminDao;
 import com.rigel.user.exception.BadGatewayRequest;
 import com.rigel.user.exception.TaskTitleException;
 import com.rigel.user.exception.TaskTitleNotFound;
+import com.rigel.user.model.OfficeBranch;
 import com.rigel.user.model.PaymentTransaction;
 import com.rigel.user.model.PaymentWebhookEvent;
 import com.rigel.user.model.SubscriptionPlan;
@@ -37,6 +38,7 @@ import com.rigel.user.model.User;
 import com.rigel.user.model.UserSubscription;
 import com.rigel.user.security.JwtTokenUtil;
 import com.rigel.user.security.JwtUser;
+import com.rigel.user.service.ILanguageService;
 import com.rigel.user.service.IRazorpayService;
 import com.rigel.user.service.ISuperAdminService;
 
@@ -49,6 +51,9 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
 
     @Autowired
     private ISuperAdminDao superAdminDao;
+
+    @Autowired
+    private ILanguageService languageService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -506,6 +511,11 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
             item.put("softwareType", o.getSoftwareType());
             item.put("createdAt", o.getCreated_at());
             item.put("branchCount", o.getBranchCount());
+            String defLang = (o.getDefaultLanguage() != null && !o.getDefaultLanguage().trim().isEmpty()) ? o.getDefaultLanguage().trim() : "en";
+            item.put("defaultLanguage", defLang);
+            item.put("defaultLanguageName", languageService.getLanguageName(defLang));
+            item.put("personalLanguage", o.getPersonalLanguage());
+            item.put("personalLanguageName", o.getPersonalLanguage() != null ? languageService.getLanguageName(o.getPersonalLanguage()) : null);
 
             // Count child users
             long childCount = superAdminDao.countChildUsers(o.getId());
@@ -564,6 +574,11 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
         ownerInfo.put("createdAt", owner.getCreated_at());
         ownerInfo.put("branchCount", owner.getBranchCount());
         ownerInfo.put("profileLogo", owner.getProfileLogo());
+        String defLang = (owner.getDefaultLanguage() != null && !owner.getDefaultLanguage().trim().isEmpty()) ? owner.getDefaultLanguage().trim() : "en";
+        ownerInfo.put("defaultLanguage", defLang);
+        ownerInfo.put("defaultLanguageName", languageService.getLanguageName(defLang));
+        ownerInfo.put("personalLanguage", owner.getPersonalLanguage());
+        ownerInfo.put("personalLanguageName", owner.getPersonalLanguage() != null ? languageService.getLanguageName(owner.getPersonalLanguage()) : null);
         details.put("owner", ownerInfo);
 
         // 2. Child Users
@@ -620,6 +635,30 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
             details.put("currentSubscription", null);
         }
         details.put("subscriptionHistory", subHistory);
+
+        // 4. Branches & Language Configuration
+        List<OfficeBranch> branches = superAdminDao.getBranchesByOwnerId(ownerId);
+        List<Map<String, Object>> branchList = new ArrayList<>();
+        for (OfficeBranch b : branches) {
+            Map<String, Object> bm = new HashMap<>();
+            bm.put("id", b.getId());
+            bm.put("branchCode", b.getBranchCode());
+            bm.put("branchName", b.getBranchName());
+            bm.put("address", b.getAddress());
+            bm.put("city", b.getCity());
+            bm.put("state", b.getState());
+            bm.put("pincode", b.getPincode());
+            bm.put("status", b.isStatus());
+            String bLang = (b.getLanguage() != null && !b.getLanguage().trim().isEmpty()) ? b.getLanguage().trim() : "en";
+            bm.put("language", bLang);
+            bm.put("languageName", languageService.getLanguageName(bLang));
+            bm.put("isRtl", languageService.isRtl(bLang));
+            bm.put("shopType", b.getShopType());
+            bm.put("createdAt", b.getCreatedAt());
+            branchList.add(bm);
+        }
+        details.put("branches", branchList);
+        details.put("branchesCount", branchList.size());
 
         return details;
     }

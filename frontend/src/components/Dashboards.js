@@ -4,8 +4,10 @@ import { success, fail } from "../redux/WebTostar";
 import { navigateTo } from "../components/navigationService";
 import { Link } from "react-router-dom";
 import Header from "./Header";
+import { useTranslation } from "../i18n";
 
 export default function Dashboards() {
+  const { t } = useTranslation();
 
   const clickedCards =(name)=> {
     localStorage.setItem("tab",name);
@@ -35,10 +37,10 @@ export default function Dashboards() {
         <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("viewProfile")}>
           <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
             <FaUser size={30} className="text-warning mb-2 mx-auto" />
-            <h5 className="fw-bold mb-2">My Profile</h5>
+            <h5 className="fw-bold mb-2">{t("my_profile", "My Profile")}</h5>
             <div className="mt-auto">
               <Link to="/editProfile" className="btn btn-info btn-sm text-white px-3 py-1">
-                View
+                {t("view", "View")}
               </Link>
             </div>
           </div>
@@ -47,10 +49,10 @@ export default function Dashboards() {
         <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("officeLocation")}>
           <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
             <FaCogs size={30} className="text-info mb-2 mx-auto" />
-            <h5 className="fw-bold mb-2">Office Location</h5>
+            <h5 className="fw-bold mb-2">{t("office_location", "Office Location")}</h5>
             <div className="mt-auto">
               <Link to="/officeLocation" className="btn btn-info btn-sm text-white px-3 py-1">
-                View
+                {t("view", "View")}
               </Link>
             </div>
           </div>
@@ -59,10 +61,10 @@ export default function Dashboards() {
         <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("branchManagement")}>
           <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
             <FaCogs size={30} className="text-info mb-2 mx-auto" />
-            <h5 className="fw-bold mb-2">Branch Management</h5>
+            <h5 className="fw-bold mb-2">{t("branch_management", "Branch Management")}</h5>
             <div className="mt-auto">
               <Link to="/branchs" className="btn btn-info btn-sm text-white px-3 py-1">
-                View
+                {t("view", "View")}
               </Link>
             </div>
           </div>
@@ -71,10 +73,10 @@ export default function Dashboards() {
         <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("rolePermission")}>
           <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
             <FaCogs size={30} className="text-info mb-2 mx-auto" />
-            <h5 className="fw-bold mb-2">Role Permission</h5>
+            <h5 className="fw-bold mb-2">{t("role_permission", "Role Permission")}</h5>
             <div className="mt-auto">
               <Link to="/rolesPermission" className="btn btn-info btn-sm text-white px-3 py-1">
-                Roles
+                {t("roles", "Roles")}
               </Link>
             </div>
           </div>
@@ -83,10 +85,10 @@ export default function Dashboards() {
         <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("userManagement")}>
           <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
             <FaUserFriends size={30} className="text-info mb-2 mx-auto" />
-            <h5 className="fw-bold mb-2">User Management</h5>
+            <h5 className="fw-bold mb-2">{t("user_management", "User Management")}</h5>
             <div className="mt-auto">
               <Link to="/addSubUser" className="btn btn-info btn-sm text-white px-3 py-1">
-                Users
+                {t("users", "Users")}
               </Link>
             </div>
           </div>
@@ -95,10 +97,10 @@ export default function Dashboards() {
         <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("officeLocation")}>
           <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
             <FaCreditCard size={30} className="text-info mb-2 mx-auto" />
-            <h5 className="fw-bold mb-2">Subscription Plan</h5>
+            <h5 className="fw-bold mb-2">{t("subscription_plan", "Subscription Plan")}</h5>
             <div className="mt-auto">
               <Link to="/subscriptionPlanList" className="btn btn-info btn-sm text-white px-3 py-1">
-                View
+                {t("view", "View")}
               </Link>
             </div>
           </div>

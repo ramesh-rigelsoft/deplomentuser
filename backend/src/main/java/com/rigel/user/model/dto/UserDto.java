@@ -61,6 +61,13 @@ public class UserDto {
     private String branchCode;
     private String branchName;
     
+    private String language;
+    private String languageName;
+    private String defaultLanguage;
+    private String defaultLanguageName;
+    private String personalLanguage;
+    private String personalLanguageName;
+    private Boolean isRtl;
 
     private MultipartFile profilePhoto;
 }

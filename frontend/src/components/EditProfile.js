@@ -4,10 +4,51 @@ import API from "../redux/API";
 import { success, fail } from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
+import { useTranslation, SUPPORTED_LANGUAGES } from "../i18n";
 
 export default function ViewProfile() {
   const ownerId = parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
+
+  const {
+    currentLanguage,
+    currentMeta,
+    updatePersonalLanguage,
+    resetPersonalLanguage,
+    availableLanguages,
+    t,
+  } = useTranslation();
+
+  const [selectedLang, setSelectedLang] = useState(currentLanguage);
+  const [langLoading, setLangLoading] = useState(false);
+  const userRole = (Cookies.get("role") || "").toLowerCase();
+  const isOwner = userRole === "admin";
+
+  useEffect(() => {
+    setSelectedLang(currentLanguage);
+  }, [currentLanguage]);
+
+  const handleSaveLanguage = async () => {
+    setLangLoading(true);
+    const res = await updatePersonalLanguage(selectedLang);
+    setLangLoading(false);
+    if (res.success) {
+      success(t("language_updated_success", "Language updated successfully"));
+    } else {
+      fail(res.message || "Failed to update language");
+    }
+  };
+
+  const handleResetLanguage = async () => {
+    setLangLoading(true);
+    const res = await resetPersonalLanguage();
+    setLangLoading(false);
+    if (res.success) {
+      success(t("language_reset_success", "Language reset to account default"));
+    } else {
+      fail(res.message || "Failed to reset language");
+    }
+  };
 
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -492,6 +533,87 @@ export default function ViewProfile() {
 
               </form>
 
+            </div>
+          </div>
+
+          {/* LANGUAGE SETTINGS CARD */}
+          <div className="card shadow border-0 mt-4">
+            <div className="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <h5 className="mb-0 fw-bold text-dark">
+                <i className="fa fa-language text-primary me-2"></i>
+                {t("language_settings", "Language Settings")}
+              </h5>
+              <span className="badge bg-primary px-3 py-2">
+                {currentMeta.name} ({currentMeta.nativeName})
+              </span>
+            </div>
+            <div className="card-body p-4">
+              {isOwner ? (
+                <>
+                  <div className="row g-3 align-items-center">
+                    <div className="col-12 col-md-4">
+                      <label className="form-label fw-semibold text-secondary mb-1">
+                        {t("current_language", "Current Language")}
+                      </label>
+                      <div className="p-2 bg-light rounded border fw-bold text-dark">
+                        {currentMeta.name} — {currentMeta.nativeName}
+                      </div>
+                    </div>
+                    <div className="col-12 col-md-5">
+                      <label className="form-label fw-semibold text-secondary mb-1">
+                        {t("select_language", "Select Language")}
+                      </label>
+                      <select
+                        className="form-select"
+                        value={selectedLang}
+                        onChange={(e) => setSelectedLang(e.target.value)}
+                        disabled={langLoading}
+                      >
+                        {availableLanguages.map((lang) => (
+                          <option key={lang.code} value={lang.code}>
+                            {lang.name} ({lang.nativeName}){lang.isRtl ? " — RTL" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-12 col-md-3 d-flex align-items-end">
+                      <button
+                        type="button"
+                        className="btn btn-primary w-100 py-2"
+                        onClick={handleSaveLanguage}
+                        disabled={langLoading || selectedLang === currentLanguage}
+                      >
+                        {langLoading ? (
+                          <i className="fa fa-spinner fa-spin me-1"></i>
+                        ) : (
+                          <i className="fa fa-check me-1"></i>
+                        )}
+                        {t("save", "Save")}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-3 border-top d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <small className="text-muted">
+                      {t("account_default", "Account Default")}: Change your personal display language without affecting your branches or child accounts.
+                    </small>
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary btn-sm"
+                      onClick={handleResetLanguage}
+                      disabled={langLoading}
+                    >
+                      <i className="fa fa-undo me-1"></i>
+                      {t("reset_to_default", "Reset to Account Default")}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="p-3 bg-light rounded text-muted">
+                  <i className="fa fa-info-circle me-2 text-primary"></i>
+                  {t("child_user_lang_info", "Your language is automatically managed by your assigned branch.")}
+                  <span className="fw-bold ms-1 text-dark">({currentMeta.name})</span>
+                </div>
+              )}
             </div>
           </div>
 

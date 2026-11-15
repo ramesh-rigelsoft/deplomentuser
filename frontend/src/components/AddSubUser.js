@@ -5,8 +5,10 @@ import { success, fail } from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import Header from "./Header";
+import { useTranslation } from "../i18n";
 
 const AddSubUser = () => {
+  const { t } = useTranslation();
   const ownerId = parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -203,7 +205,7 @@ const AddSubUser = () => {
           <div className="card shadow-sm border-0 p-3 p-md-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h5 className="mb-0 fw-bold">
-                {editIndex !== null ? "Update Sub User" : "Add Sub User"}
+                {editIndex !== null ? t("update_sub_user", "Update Sub User") : t("add_sub_user", "Add Sub User")}
               </h5>
               {editIndex !== null && (
                 <button
@@ -211,7 +213,7 @@ const AddSubUser = () => {
                   className="btn btn-sm btn-outline-secondary"
                   onClick={resetForm}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
               )}
             </div>
@@ -221,13 +223,13 @@ const AddSubUser = () => {
               {/* NAME */}
               <div className="mb-2">
                 <label className="form-label small fw-bold mb-1">
-                  Full Name <span className="text-danger fw-bold ms-1">*</span>
+                  {t("full_name", "Full Name")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
                 <input
                   type="text"
                   name="name"
                   className="form-control form-control-sm"
-                  placeholder="Full Name"
+                  placeholder={t("full_name", "Full Name")}
                   value={formData.name}
                   onChange={handleChange}
                 />
@@ -239,13 +241,13 @@ const AddSubUser = () => {
               {/* email_id */}
               <div className="mb-2">
                 <label className="form-label small fw-bold mb-1">
-                  Email ID <span className="text-danger fw-bold ms-1">*</span>
+                  {t("email_id", "Email ID")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
                 <input
                   type="text"
                   name="email_id"
                   className="form-control form-control-sm"
-                  placeholder="Email ID"
+                  placeholder={t("email_id", "Email ID")}
                   value={formData.email_id}
                   onChange={handleChange}
                 />
@@ -257,13 +259,13 @@ const AddSubUser = () => {
               {/* mobile_no */}
               <div className="mb-2">
                 <label className="form-label small fw-bold mb-1">
-                  Mobile Number <span className="text-danger fw-bold ms-1">*</span>
+                  {t("mobile_number", "Mobile Number")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
                 <input
                   type="text"
                   name="mobile_no"
                   className="form-control form-control-sm"
-                  placeholder="Mobile Number (10 digits)"
+                  placeholder={t("mobile_number", "Mobile Number")}
                   value={formData.mobile_no}
                   onChange={handleChange}
                 />
@@ -275,7 +277,7 @@ const AddSubUser = () => {
               {/* PASSWORD */}
               <div className="mb-2">
                 <label className="form-label small fw-bold mb-1">
-                  Password {editIndex === null && <span className="text-danger fw-bold ms-1">*</span>}
+                  {t("password", "Password")} {editIndex === null && <span className="text-danger fw-bold ms-1">*</span>}
                 </label>
                 <div className="input-group input-group-sm">
                   <input
@@ -285,7 +287,7 @@ const AddSubUser = () => {
                     placeholder={
                       editIndex !== null
                         ? "Leave blank to keep existing password"
-                        : "Password (min 6 characters)"
+                        : `${t("password", "Password")} (min 6 characters)`
                     }
                     value={formData.password}
                     onChange={handleChange}
@@ -308,7 +310,7 @@ const AddSubUser = () => {
               {/* BRANCH */}
               <div className="mb-2">
                 <label className="form-label small fw-bold mb-1">
-                  Select Office <span className="text-danger fw-bold ms-1">*</span>
+                  {t("select_office", "Select Office")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
                 <select
                   name="branchCode"
@@ -320,7 +322,7 @@ const AddSubUser = () => {
                     <option value="">No Branch Found</option>
                   ) : (
                     <>
-                      <option value="">Select Office</option>
+                      <option value="">{t("select_office", "Select Office")}</option>
                       {branches.map((b) => (
                         <option key={b.id} value={b.branchCode}>
                           {b.branchName} ({b.branchCode})
@@ -337,7 +339,7 @@ const AddSubUser = () => {
               {/* ROLE */}
               <div className="mb-2">
                 <label className="form-label small fw-bold mb-1">
-                  Select Role <span className="text-danger fw-bold ms-1">*</span>
+                  {t("select_role", "Select Role")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
                 <select
                   name="role"
@@ -345,7 +347,7 @@ const AddSubUser = () => {
                   value={formData.role}
                   onChange={handleChange}
                 >
-                  <option value="">Select Role</option>
+                  <option value="">{t("select_role", "Select Role")}</option>
                   <option value="user">User</option>
                   <option value="employee">Employee</option>
                   <option value="manager">Manager</option>
@@ -357,15 +359,15 @@ const AddSubUser = () => {
 
               {/* STATUS */}
               <div className="mb-2">
-                <label className="form-label small fw-bold mb-1">Status</label>
+                <label className="form-label small fw-bold mb-1">{t("status", "Status")}</label>
                 <select
                   name="status"
                   className="form-select form-select-sm"
                   value={formData.status}
                   onChange={handleChange}
                 >
-                  <option value="1">Active</option>
-                  <option value="0">InActive</option>
+                  <option value="1">{t("active", "Active")}</option>
+                  <option value="0">{t("inactive", "InActive")}</option>
                 </select>
               </div>
 
@@ -376,7 +378,7 @@ const AddSubUser = () => {
                     editIndex !== null ? "btn-primary" : "btn-success"
                   }`}
                 >
-                  {editIndex !== null ? "Update User" : "Create User"}
+                  {editIndex !== null ? t("update_user", "Update User") : t("create_user", "Create User")}
                 </button>
                 {editIndex !== null && (
                   <button
@@ -384,7 +386,7 @@ const AddSubUser = () => {
                     className="btn btn-secondary btn-sm"
                     onClick={resetForm}
                   >
-                    Cancel
+                    {t("cancel", "Cancel")}
                   </button>
                 )}
               </div>
@@ -395,19 +397,19 @@ const AddSubUser = () => {
         {/* TABLE */}
         <div className="col-12 col-lg-7 col-xl-8">
           <div className="card shadow-sm border-0 p-3 p-md-4">
-            <h5 className="mb-3 fw-bold">Sub Users List</h5>
+            <h5 className="mb-3 fw-bold">{t("sub_users_list", "Sub Users List")}</h5>
 
             <div className="table-responsive">
               <table className="table table-bordered table-sm table-hover align-middle mb-0">
                 <thead className="table-light">
                   <tr>
-                    <th style={{ whiteSpace: "nowrap" }}>Office Code</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Name</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Email Id</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Mobile</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Role</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Status</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Action</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("office_code", "Office Code")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("name", "Name")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("email_id", "Email Id")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("mobile", "Mobile")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("role", "Role")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("status", "Status")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("action", "Action")}</th>
                   </tr>
                 </thead>
 
@@ -415,7 +417,7 @@ const AddSubUser = () => {
                   {users.length === 0 ? (
                     <tr>
                       <td colSpan="7" className="text-center">
-                        No Users Found
+                        {t("no_users_found", "No Users Found")}
                       </td>
                     </tr>
                   ) : (
@@ -432,7 +434,7 @@ const AddSubUser = () => {
                               user.status === 1 ? "bg-success" : "bg-danger"
                             }`}
                           >
-                            {user.status === 1 ? "Active" : "InActive"}
+                            {user.status === 1 ? t("active", "Active") : t("inactive", "InActive")}
                           </span>
                         </td>
 
@@ -441,7 +443,7 @@ const AddSubUser = () => {
                             className="btn btn-warning btn-sm me-1"
                             onClick={() => handleEdit(index)}
                           >
-                            Edit
+                            {t("edit", "Edit")}
                           </span>
                         </td>
                       </tr>

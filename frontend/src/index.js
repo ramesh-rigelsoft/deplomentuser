@@ -11,12 +11,15 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { LanguageProvider } from './i18n';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <Router>
-      <App />
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>
     </Router>
   </Provider>
 );

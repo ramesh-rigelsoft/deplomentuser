@@ -34,6 +34,7 @@ import SubscriptionSalesReport from '../superadmin/SubscriptionSalesReport';
 import OwnersManagement from '../superadmin/OwnersManagement';
 import SuperAdminSubscriptions from '../superadmin/SuperAdminSubscriptions';
 import SuperAdminPayments from '../superadmin/SuperAdminPayments';
+import SuperAdminLanguages from '../superadmin/SuperAdminLanguages';
 
 export default function Main() {
   const navigate = useNavigate();
@@ -79,6 +80,7 @@ export default function Main() {
         <Route path="/superadmin/subscription-plans" element={<SuperAdminProtectedRoute><SubscriptionPlans /></SuperAdminProtectedRoute>} />
         <Route path="/superadmin/reports" element={<SuperAdminProtectedRoute><SubscriptionSalesReport /></SuperAdminProtectedRoute>} />
         <Route path="/superadmin/owners" element={<SuperAdminProtectedRoute><OwnersManagement /></SuperAdminProtectedRoute>} />
+        <Route path="/superadmin/languages" element={<SuperAdminProtectedRoute><SuperAdminLanguages /></SuperAdminProtectedRoute>} />
         <Route path="/superadmin/subscriptions" element={<SuperAdminProtectedRoute><SuperAdminSubscriptions /></SuperAdminProtectedRoute>} />
         <Route path="/superadmin/payments" element={<SuperAdminProtectedRoute><SuperAdminPayments /></SuperAdminProtectedRoute>} />
         {/* </Route> */}

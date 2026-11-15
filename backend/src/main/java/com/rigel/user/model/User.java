@@ -85,6 +85,15 @@ public class User implements Serializable{
     private String softwareType;
         
     private int ownerId;
+
+    @Column(name = "language", length = 20)
+    private String language = "en";
+
+    @Column(name = "default_language", length = 20)
+    private String defaultLanguage = "en";
+
+    @Column(name = "personal_language", length = 20)
+    private String personalLanguage;
     
 	public static PasswordEncoder getPasswordEncoder() {
 		return PASSWORD_ENCODER;

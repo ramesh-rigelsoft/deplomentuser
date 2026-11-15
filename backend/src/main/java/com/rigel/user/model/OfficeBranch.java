@@ -66,4 +66,14 @@ public class OfficeBranch implements Serializable {
 	private String state;
 	private String pincode;
 
+	@Column(name = "language", length = 20)
+	@Builder.Default
+	private String language = "en";
+
+	@Transient
+	private String languageName;
+
+	@Transient
+	private Boolean isRtl;
+
 }

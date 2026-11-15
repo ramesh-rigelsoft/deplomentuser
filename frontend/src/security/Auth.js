@@ -30,5 +30,7 @@ export const logout = () => {
   Cookies.remove("username");
   Cookies.remove("companyName");
   Cookies.remove("token");   
+  Cookies.remove("language");
+  try { localStorage.removeItem("app_language"); } catch (e) {}   
   
 };

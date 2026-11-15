@@ -21,12 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rigel.user.dao.ISuperAdminDao;
 import com.rigel.user.exception.BadGatewayRequest;
+import com.rigel.user.model.LanguageMaster;
+import com.rigel.user.model.OfficeBranch;
 import com.rigel.user.model.PaymentTransaction;
 import com.rigel.user.model.SubscriptionPlan;
 import com.rigel.user.model.SuperAdmin;
 import com.rigel.user.model.SuperAdminAuditLog;
+import com.rigel.user.model.User;
 import com.rigel.user.security.JwtConfig;
 import com.rigel.user.security.JwtTokenUtil;
+import com.rigel.user.service.ILanguageService;
 import com.rigel.user.service.ISuperAdminService;
 
 import io.jsonwebtoken.Claims;
@@ -49,6 +53,9 @@ public class SuperAdminController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private ILanguageService languageService;
 
     /**
      * Helper to validate super admin authentication from Bearer token
@@ -349,6 +356,130 @@ public class SuperAdminController {
         response.put("status", "OK");
         response.put("code", 200);
         response.put("data", logs);
+        return ResponseEntity.ok(response);
+    }
+
+    // ========================================================
+    // 9. MULTILINGUAL & LANGUAGE MANAGEMENT
+    // ========================================================
+
+    @GetMapping("/languages")
+    public ResponseEntity<Map<String, Object>> getAllLanguages(HttpServletRequest request) {
+        authenticateSuperAdmin(request);
+        List<LanguageMaster> languages = languageService.getAllLanguages();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("code", 200);
+        response.put("data", languages);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/languages/{code}/status")
+    public ResponseEntity<Map<String, Object>> toggleLanguageStatus(
+            @PathVariable String code,
+            @RequestBody Map<String, Boolean> body,
+            HttpServletRequest request) {
+
+        authenticateSuperAdmin(request);
+        boolean active = body.getOrDefault("active", true);
+        LanguageMaster updated = languageService.toggleLanguageStatus(code, active);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("code", 200);
+        response.put("message", "Language " + updated.getLanguageName() + " status changed to " + (active ? "ACTIVE" : "INACTIVE"));
+        response.put("data", updated);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/owners/{id}/language")
+    public ResponseEntity<Map<String, Object>> updateOwnerDefaultLanguage(
+            @PathVariable int id,
+            @RequestBody Map<String, String> body,
+            HttpServletRequest request) {
+
+        authenticateSuperAdmin(request);
+        String language = body.get("language");
+        if (language == null || language.trim().isEmpty()) {
+            throw new BadGatewayRequest("Language is required.");
+        }
+
+        User owner = languageService.updateOwnerDefaultLanguage(id, language.trim());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("code", 200);
+        response.put("message", "Owner default language updated to " + languageService.getLanguageName(owner.getDefaultLanguage()));
+        Map<String, Object> data = new HashMap<>();
+        data.put("ownerId", owner.getId());
+        data.put("defaultLanguage", owner.getDefaultLanguage());
+        data.put("defaultLanguageName", languageService.getLanguageName(owner.getDefaultLanguage()));
+        response.put("data", data);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/branches/{branchCode}/language")
+    public ResponseEntity<Map<String, Object>> updateBranchLanguage(
+            @PathVariable String branchCode,
+            @RequestBody Map<String, String> body,
+            HttpServletRequest request) {
+
+        authenticateSuperAdmin(request);
+        String language = body.get("language");
+        if (language == null || language.trim().isEmpty()) {
+            throw new BadGatewayRequest("Language is required.");
+        }
+
+        OfficeBranch branch = languageService.updateBranchLanguage(branchCode, language.trim());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("code", 200);
+        response.put("message", "Branch language updated to " + languageService.getLanguageName(branch.getLanguage()));
+        Map<String, Object> data = new HashMap<>();
+        data.put("branchCode", branch.getBranchCode());
+        data.put("branchName", branch.getBranchName());
+        data.put("language", branch.getLanguage());
+        data.put("languageName", languageService.getLanguageName(branch.getLanguage()));
+        data.put("isRtl", languageService.isRtl(branch.getLanguage()));
+        response.put("data", data);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/branches")
+    public ResponseEntity<Map<String, Object>> getAllBranches(HttpServletRequest request) {
+        authenticateSuperAdmin(request);
+        List<OfficeBranch> branches = superAdminDao.getAllBranches();
+        List<Map<String, Object>> list = new java.util.ArrayList<>();
+        Map<Integer, String> ownerNames = new HashMap<>();
+
+        for (OfficeBranch b : branches) {
+            Map<String, Object> bm = new HashMap<>();
+            bm.put("id", b.getId());
+            bm.put("branchCode", b.getBranchCode());
+            bm.put("branchName", b.getBranchName());
+            bm.put("ownerId", b.getOwnerId());
+            if (!ownerNames.containsKey(b.getOwnerId())) {
+                User o = superAdminDao.getOwnerById(b.getOwnerId());
+                ownerNames.put(b.getOwnerId(), o != null ? o.getName() : "Unknown");
+            }
+            bm.put("ownerName", ownerNames.get(b.getOwnerId()));
+            bm.put("city", b.getCity());
+            bm.put("state", b.getState());
+            bm.put("status", b.isStatus());
+            String bLang = (b.getLanguage() != null && !b.getLanguage().trim().isEmpty()) ? b.getLanguage().trim() : "en";
+            bm.put("language", bLang);
+            bm.put("languageName", languageService.getLanguageName(bLang));
+            bm.put("isRtl", languageService.isRtl(bLang));
+            bm.put("createdAt", b.getCreatedAt());
+            list.add(bm);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("code", 200);
+        response.put("data", list);
         return ResponseEntity.ok(response);
     }
 }

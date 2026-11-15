@@ -2,9 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import PageHeader from "./PageHeader";
+import { useTranslation } from "../i18n";
 
 export default function BranchDashboard() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const modules = [
     {
@@ -86,16 +88,16 @@ export default function BranchDashboard() {
                     ></i>
                   </div>
 
-                  <h5 className="fw-bold">{module.title}</h5>
+                  <h5 className="fw-bold">{t(module.title)}</h5>
 
                   <p className="text-muted mb-3">
-                    {module.description}
+                    {t(module.description)}
                   </p>
 
                   <button
                     className={`btn btn-${module.color}`}
                   >
-                    Open
+                    {t("open", "Open")}
                   </button>
                 </div>
               </div>

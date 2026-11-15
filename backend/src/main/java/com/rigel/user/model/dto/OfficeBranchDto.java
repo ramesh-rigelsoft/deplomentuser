@@ -62,6 +62,10 @@ public class OfficeBranchDto  {
     
     @NotNull(message = "Pincode is required")
 	private String pincode;
+
+	private String language;
+	private String languageName;
+	private Boolean isRtl;
 	
     @JsonProperty(access = Access.WRITE_ONLY)
 	private MultipartFile logo;

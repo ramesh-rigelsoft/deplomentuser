@@ -7,8 +7,10 @@ import { useDispatch } from "react-redux";
 import Header from "./Header";
 import GoogleMapLocationSelector from "./MapLocationSelector";
 import ConfirmModal from "./ConfirmModal";
+import { useTranslation } from "../i18n";
 
 const OfficeBranch = () => {
+  const { t } = useTranslation();
   const ownerId= parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
   const [logoPreview, setLogoPreview] = useState(null);
@@ -339,19 +341,19 @@ const handleEdit = (branchId) => {
         <div className="col-12 col-lg-5 col-xl-4">
           <div className="card shadow-sm border-0 p-3 p-md-4">
             <h5 className="text-center fw-bold mb-3">
-              {editBranchId !== null ? "Update Office" : "Add Office"}
+              {editBranchId !== null ? t("Update Office", "Update Office") : t("Add Office", "Add Office")}
             </h5>
             <form onSubmit={handleSubmit}>
               <div className="mb-2">
                 <label className="form-label small fw-bold mb-1">
-                  Branch Name <span className="text-danger fw-bold ms-1">*</span>
+                  {t("branch_name", "Branch Name")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
                 <input
                   type="text"
                   name="branchName"
                   maxLength={200}
                   className="form-control form-control-sm"
-                  placeholder="Branch Name"
+                  placeholder={t("branch_name", "Branch Name")}
                   value={formData.branchName}
                   onChange={handleChange}
                 />
@@ -360,12 +362,12 @@ const handleEdit = (branchId) => {
                 )}
               </div>
               <hr />
-              <h6 className="mt-3 mb-2">Company Information</h6>
+              <h6 className="mt-3 mb-2">{t("Company Information", "Company Information")}</h6>
 
               <div className="row g-2">
                 <div className="col-12 col-sm-6 mb-2">
                   <label className="form-label small fw-bold mb-1">
-                    Shop Type <span className="text-danger fw-bold ms-1">*</span>
+                    {t("Shop Type", "Shop Type")} <span className="text-danger fw-bold ms-1">*</span>
                   </label>
                   <select
                     className="form-select form-select-sm"
@@ -373,7 +375,7 @@ const handleEdit = (branchId) => {
                     value={formData.shopType}
                     onChange={handleChange}
                   >
-                    <option value="">Select Shop Type</option>
+                    <option value="">{t("Select Shop Type", "Select Shop Type")}</option>
                     <option value="1">Mobile Shop</option>
                     <option value="2">Laptop Shop</option>
                     <option value="3">Electronics & Home Appliances Shop</option>
@@ -383,7 +385,7 @@ const handleEdit = (branchId) => {
                   )}
                 </div>
                 <div className="col-12 col-sm-6 mb-2">
-                  <label className="form-label small fw-bold mb-1">Status</label>
+                  <label className="form-label small fw-bold mb-1">{t("status", "Status")}</label>
                   <select
                     name="status"
                     className="form-select form-select-sm"
@@ -395,8 +397,8 @@ const handleEdit = (branchId) => {
                       })
                     }
                   >
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
+                    <option value="true">{t("active", "Active")}</option>
+                    <option value="false">{t("inactive", "Inactive")}</option>
                   </select>
                 </div>
 
@@ -457,13 +459,13 @@ const handleEdit = (branchId) => {
               <div className="row g-2">
                 <div className="col-12 col-sm-4 mb-2">
                   <label className="form-label small fw-bold mb-1">
-                    State <span className="text-danger fw-bold ms-1">*</span>
+                    {t("state", "State")} <span className="text-danger fw-bold ms-1">*</span>
                   </label>
                   <input
                     type="text"
                     className="form-control form-control-sm"
                     name="state"
-                    placeholder="State"
+                    placeholder={t("state", "State")}
                     value={formData.state}
                     onChange={handleChange}
                   />
@@ -474,13 +476,13 @@ const handleEdit = (branchId) => {
 
                 <div className="col-12 col-sm-4 mb-2">
                   <label className="form-label small fw-bold mb-1">
-                    City <span className="text-danger fw-bold ms-1">*</span>
+                    {t("city", "City")} <span className="text-danger fw-bold ms-1">*</span>
                   </label>
                   <input
                     type="text"
                     className="form-control form-control-sm"
                     name="city"
-                    placeholder="City"
+                    placeholder={t("city", "City")}
                     value={formData.city}
                     onChange={handleChange}
                   />
@@ -491,13 +493,13 @@ const handleEdit = (branchId) => {
 
                 <div className="col-12 col-sm-4 mb-2">
                   <label className="form-label small fw-bold mb-1">
-                    Pincode <span className="text-danger fw-bold ms-1">*</span>
+                    {t("pincode", "Pincode")} <span className="text-danger fw-bold ms-1">*</span>
                   </label>
                   <input
                     type="text"
                     className="form-control form-control-sm"
                     name="pincode"
-                    placeholder="Pincode"
+                    placeholder={t("pincode", "Pincode")}
                     maxLength={6}
                     inputMode="numeric"
                     value={formData.pincode}
@@ -511,13 +513,13 @@ const handleEdit = (branchId) => {
 
               <div className="mb-2">
                 <label className="form-label small fw-bold mb-1">
-                  Company Address <span className="text-danger fw-bold ms-1">*</span>
+                  {t("address", "Company Address")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
                 <textarea
                   className="form-control form-control-sm"
                   rows="3"
                   name="address"
-                  placeholder="Company Address"
+                  placeholder={t("address", "Company Address")}
                   value={formData.address}
                   onChange={handleChange}
                 />

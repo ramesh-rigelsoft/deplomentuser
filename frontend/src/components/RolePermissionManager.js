@@ -5,8 +5,10 @@ import API from "../redux/API";
 import { success, fail } from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import Header from "./Header";
+import { useTranslation } from "../i18n";
 
 export default function RBACPermissionPanel() {
+  const { t } = useTranslation();
   const ownerId = parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
 
@@ -380,12 +382,11 @@ export default function RBACPermissionPanel() {
               <div className="col-lg-5">
 
                 <h5 className="mb-1 fw-bold">
-                  Access Management
+                  {t("access_management", "Access Management")}
                 </h5>
 
                 <small className="text-muted">
-                  Manage page access for selected
-                  branch and role
+                  {t("manage_role_based_access", "Manage page access for selected branch and role")}
                 </small>
 
               </div>
@@ -394,7 +395,7 @@ export default function RBACPermissionPanel() {
               <div className="col-lg-3">
 
                 <label className="form-label fw-semibold mb-1">
-                  Branch <span className="text-danger fw-bold ms-1">*</span>
+                  {t("branch", "Branch")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
 
                 <select
@@ -434,7 +435,7 @@ export default function RBACPermissionPanel() {
               <div className="col-lg-3">
 
                 <label className="form-label fw-semibold mb-1">
-                  Role <span className="text-danger fw-bold ms-1">*</span>
+                  {t("role", "Role")} <span className="text-danger fw-bold ms-1">*</span>
                 </label>
 
                 <select
@@ -483,7 +484,7 @@ export default function RBACPermissionPanel() {
               <div className="card-header bg-dark text-white">
 
                 <h6 className="mb-0 fw-bold">
-                  Page Permission
+                  {t("Page Permission", "Page Permission")}
                 </h6>
 
               </div>
@@ -494,7 +495,7 @@ export default function RBACPermissionPanel() {
                 <div className="mb-4">
 
                   <label className="form-label fw-bold">
-                    Select Page <span className="text-danger fw-bold ms-1">*</span>
+                    {t("select_page", "Select Page")} <span className="text-danger fw-bold ms-1">*</span>
                   </label>
 
                   <select
@@ -653,7 +654,7 @@ export default function RBACPermissionPanel() {
                       handleAddPermission
                     }
                   >
-                    {unassignedPages.length === 0 ? "All Pages Assigned" : "Add Permission"}
+                    {unassignedPages.length === 0 ? t("All Pages Assigned", "All Pages Assigned") : t("assign_permission", "Add Permission")}
                   </button>
               </div>
 
@@ -676,7 +677,7 @@ export default function RBACPermissionPanel() {
                   <div>
 
                     <h6 className="mb-0 fw-bold">
-                      Assigned Pages
+                      {t("assigned_pages", "Assigned Pages")}
                     </h6>
 
                     <small>

@@ -30,6 +30,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,7 @@ import com.rigel.user.exception.TaskTitleException;
 import com.rigel.user.exception.TaskTitleNotFound;
 import com.rigel.user.model.LoginDetails;
 import com.rigel.user.model.LoginRequest;
+import com.rigel.user.model.LanguageMaster;
 import com.rigel.user.model.Mail;
 import com.rigel.user.model.OfficeBranch;
 import com.rigel.user.model.Roles;
@@ -65,6 +67,7 @@ import com.rigel.user.model.dto.UserDto;
 import com.rigel.user.model.dto.UserSubscriptionDto;
 import com.rigel.user.security.JwtTokenUtil;
 import com.rigel.user.security.JwtUser;
+import com.rigel.user.service.ILanguageService;
 import com.rigel.user.service.IRolesManagementService;
 import com.rigel.user.service.ISubscriptionPlanService;
 import com.rigel.user.service.IRazorpayService;
@@ -108,6 +111,9 @@ public class UserController {
 	
 	@Autowired
 	ISubscriptionPlanService subscriptionPlanService;
+
+	@Autowired
+	private ILanguageService languageService;
 
 	@Autowired
 	private IRazorpayService razorpayService;
@@ -361,6 +367,13 @@ public class UserController {
 			}
 
 			OfficeBranchDto officeBranchDto = (branch != null) ? objectMapper.convertValue(branch, OfficeBranchDto.class) : null;
+			Map<String, Object> langInfo = languageService.resolveLanguage(user, branch);
+			if (officeBranchDto != null && branch != null) {
+				String bLang = (branch.getLanguage() != null && !branch.getLanguage().trim().isEmpty()) ? branch.getLanguage().trim() : "en";
+				officeBranchDto.setLanguage(bLang);
+				officeBranchDto.setLanguageName(languageService.getLanguageName(bLang));
+				officeBranchDto.setIsRtl(languageService.isRtl(bLang));
+			}
 			Long roleId = rolesManagementService.getRoleIdByRole(user.getRole());
 			List<MenuDto> menuDto = rolesManagementService.getMenus(roleId, effectiveOwnerId, branchCode);
 			UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(
@@ -372,6 +385,13 @@ public class UserController {
 			data.put("branch", officeBranchDto);
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
+			data.put("language", langInfo.get("language"));
+			data.put("languageName", langInfo.get("languageName"));
+			data.put("isRtl", langInfo.get("isRtl"));
+			data.put("defaultLanguage", langInfo.get("defaultLanguage"));
+			data.put("defaultLanguageName", langInfo.get("defaultLanguageName"));
+			data.put("personalLanguage", langInfo.get("personalLanguage"));
+			data.put("personalLanguageName", langInfo.get("personalLanguageName"));
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -424,6 +444,13 @@ public class UserController {
 			}
 
 			OfficeBranchDto officeBranchDto = (branch != null) ? objectMapper.convertValue(branch, OfficeBranchDto.class) : null;
+			Map<String, Object> langInfo = languageService.resolveLanguage(user, branch);
+			if (officeBranchDto != null && branch != null) {
+				String bLang = (branch.getLanguage() != null && !branch.getLanguage().trim().isEmpty()) ? branch.getLanguage().trim() : "en";
+				officeBranchDto.setLanguage(bLang);
+				officeBranchDto.setLanguageName(languageService.getLanguageName(bLang));
+				officeBranchDto.setIsRtl(languageService.isRtl(bLang));
+			}
 			Long roleId = rolesManagementService.getRoleIdByRole(user.getRole());
 			List<MenuDto> menuDto = rolesManagementService.getMenus(roleId, effectiveOwnerId, branchCode);
 			UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(
@@ -435,6 +462,13 @@ public class UserController {
 			data.put("branch", officeBranchDto);
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
+			data.put("language", langInfo.get("language"));
+			data.put("languageName", langInfo.get("languageName"));
+			data.put("isRtl", langInfo.get("isRtl"));
+			data.put("defaultLanguage", langInfo.get("defaultLanguage"));
+			data.put("defaultLanguageName", langInfo.get("defaultLanguageName"));
+			data.put("personalLanguage", langInfo.get("personalLanguage"));
+			data.put("personalLanguageName", langInfo.get("personalLanguageName"));
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -481,6 +515,13 @@ public class UserController {
 			}
 
 			OfficeBranchDto officeBranchDto = (branch != null) ? objectMapper.convertValue(branch, OfficeBranchDto.class) : null;
+			Map<String, Object> langInfo = languageService.resolveLanguage(user, branch);
+			if (officeBranchDto != null && branch != null) {
+				String bLang = (branch.getLanguage() != null && !branch.getLanguage().trim().isEmpty()) ? branch.getLanguage().trim() : "en";
+				officeBranchDto.setLanguage(bLang);
+				officeBranchDto.setLanguageName(languageService.getLanguageName(bLang));
+				officeBranchDto.setIsRtl(languageService.isRtl(bLang));
+			}
 			Long roleId = rolesManagementService.getRoleIdByRole(user.getRole());
 			List<MenuDto> menuDto = rolesManagementService.getMenus(roleId, effectiveOwnerId, branchCode);
 			UserSubscriptionDto userSubscriptionDto = Optional.ofNullable(
@@ -492,6 +533,13 @@ public class UserController {
 			data.put("branch", officeBranchDto);
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
+			data.put("language", langInfo.get("language"));
+			data.put("languageName", langInfo.get("languageName"));
+			data.put("isRtl", langInfo.get("isRtl"));
+			data.put("defaultLanguage", langInfo.get("defaultLanguage"));
+			data.put("defaultLanguageName", langInfo.get("defaultLanguageName"));
+			data.put("personalLanguage", langInfo.get("personalLanguage"));
+			data.put("personalLanguageName", langInfo.get("personalLanguageName"));
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -988,6 +1036,86 @@ public class UserController {
 		response.put("status", "OK");
 		response.put("code", "200");
 		response.put("message", "Webhook received and verified successfully.");
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	private User authenticateUser(HttpServletRequest request) {
+		String authHeader = request.getHeader("Authorization");
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			throw new BadGatewayRequest("Missing or invalid Authorization header.");
+		}
+		String token = authHeader.substring(7);
+		try {
+			String username = jwtTokenUtil.getUsernameFromToken(token);
+			if (username == null) {
+				throw new BadGatewayRequest("Invalid token.");
+			}
+			User user = userService.findUserByEmailId(username, 0);
+			if (user == null && !username.endsWith("|admin")) {
+				user = userService.findUserByEmailId(username + "|admin", 0);
+			}
+			if (user == null) {
+				throw new BadGatewayRequest("User not found.");
+			}
+			return user;
+		} catch (Exception e) {
+			throw new BadGatewayRequest("Invalid or expired session.");
+		}
+	}
+
+	@PutMapping(value = "language")
+	public ResponseEntity<Map<String, Object>> updatePersonalLanguage(
+			@RequestBody Map<String, String> body, HttpServletRequest request) {
+		User user = authenticateUser(request);
+		String role = (user.getRole() != null) ? user.getRole().trim().toLowerCase() : "";
+		boolean isOwner = "admin".equals(role) || user.getOwnerId() <= 0 || user.getOwnerId() == user.getId();
+		if (!isOwner) {
+			throw new BadGatewayRequest("Child users cannot change language. Language is managed by assigned branch.");
+		}
+
+		String langCode = body.get("language");
+		if (langCode == null || langCode.trim().isEmpty()) {
+			throw new BadGatewayRequest("Language code is required.");
+		}
+
+		User updated = languageService.updateOwnerPersonalLanguage(user.getId(), langCode.trim());
+		Map<String, Object> langInfo = languageService.resolveLanguage(updated, null);
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("status", "OK");
+		response.put("code", "200");
+		response.put("message", "Personal language updated successfully to " + langInfo.get("languageName") + ".");
+		response.put("data", langInfo);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "language/reset")
+	public ResponseEntity<Map<String, Object>> resetPersonalLanguage(HttpServletRequest request) {
+		User user = authenticateUser(request);
+		String role = (user.getRole() != null) ? user.getRole().trim().toLowerCase() : "";
+		boolean isOwner = "admin".equals(role) || user.getOwnerId() <= 0 || user.getOwnerId() == user.getId();
+		if (!isOwner) {
+			throw new BadGatewayRequest("Child users cannot change language. Language is managed by assigned branch.");
+		}
+
+		User updated = languageService.resetOwnerPersonalLanguage(user.getId());
+		Map<String, Object> langInfo = languageService.resolveLanguage(updated, null);
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("status", "OK");
+		response.put("code", "200");
+		response.put("message", "Language reset to account default (" + langInfo.get("languageName") + ").");
+		response.put("data", langInfo);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "languages")
+	public ResponseEntity<Map<String, Object>> getLanguages() {
+		List<LanguageMaster> languages = languageService.getActiveLanguages();
+		Map<String, Object> response = new HashMap<>();
+		response.put("status", "OK");
+		response.put("code", "200");
+		response.put("data", languages);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }
