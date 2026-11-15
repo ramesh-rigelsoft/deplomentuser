@@ -106,23 +106,18 @@ const BranchExpense = () => {
   }
 
   return (
-    <div>
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-2 page-scroll">
        <Header
-        title="Branch Mangement"
+        title="Branch Management"
         subTitle="Manage everything in one place"
-        dashboard = "2"
+        dashboard="2"
       />
-    <div className="card p-3 ">
+    <div className="card shadow-sm border-0 p-3 p-md-4">
       <PageHeader pageName="Expense" />
-      {/* Header with Total Top Right */}
-      {/* <div className="d-flex justify-content-between align-items-center">
-        <h5>📄 Expense </h5>
-        <h6><b>Total: ₹ {totalAmount}</b></h6>
-      </div> */}
 
       {/* Filters */}
-      <div className="row mb-3">
-        <div className="col-md-2">
+      <div className="row g-2 mb-3 align-items-center">
+        <div className="col-12 col-sm-6 col-md-3 col-lg-2">
           <input
             className="form-control"
             placeholder="Year"
@@ -133,7 +128,7 @@ const BranchExpense = () => {
           />
         </div>
 
-        <div className="col-md-2">
+        <div className="col-12 col-sm-6 col-md-3 col-lg-2">
           <select
             className="form-control"
             onChange={(e) =>
@@ -152,16 +147,8 @@ const BranchExpense = () => {
             ))}
           </select>
         </div>
-{/* 
-        <div className="col-md-2">
-          <input
-            className="form-control"
-            placeholder="Scope"
-            onChange={(e) => handleChange("scope", e.target.value)}
-          />
-        </div> */}
 
-        <div className="col-md-2">
+        <div className="col-12 col-sm-6 col-md-3 col-lg-2">
            <select
               className="form-control"
               defaultValue=""
@@ -197,7 +184,7 @@ const BranchExpense = () => {
               </optgroup>
             </select>
         </div>
-        <div className="col-md-2">
+        <div className="col-12 col-sm-6 col-md-3 col-lg-2">
           <div className="w-auto">
             <select
               value={office}
@@ -209,38 +196,30 @@ const BranchExpense = () => {
             </select>
           </div>
         </div>
-        <div className="col-md-2">
-          <span className="btn btn-primary">
+        <div className="col-6 col-sm-6 col-md-3 col-lg-2">
+          <span className="btn btn-primary w-100">
               Excel Download
           </span>
         </div>
-        <div className="col-md-2">
-          <input type="Button" className="modern-clear-btn" onClick={clearFilter} value="Clear" />
+        <div className="col-6 col-sm-6 col-md-3 col-lg-2">
+          <input type="Button" className="modern-clear-btn w-100" onClick={clearFilter} value="Clear" />
         </div>
-        {/* <div className="col-md-2">
-          <input
-            className="form-control"
-            placeholder="Owner Id"
-            onChange={(e) =>
-              handleChange("ownerid", e.target.value ? Number(e.target.value) : 0)
-            }
-          />
-        </div> */}
       </div>
 
       {/* Table */}
-      <table className="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Type</th>
-            <th>Scope</th>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Bill</th>
-          </tr>
-        </thead>
+      <div className="table-responsive">
+        <table className="table table-bordered table-hover align-middle mb-0">
+          <thead className="table-light text-nowrap">
+            <tr>
+              <th>#</th>
+              <th>Type</th>
+              <th>Scope</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Bill</th>
+            </tr>
+          </thead>
         <tbody>
           {expenses.length === 0 ? (
             <tr>
@@ -282,6 +261,7 @@ const BranchExpense = () => {
           )}
         </tbody>
       </table>
+      </div>
 
        {/* Pagination */}
     <nav aria-label="Page navigation" className="mt-3 pagination-position">

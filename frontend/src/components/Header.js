@@ -16,7 +16,7 @@ const Header = ({
   const ownerId= parseInt(Cookies.get("secretCode"));
 
   const [logo, setLogo] = useState("");
-  const companyName = Cookies.get("name");
+  const companyName = Cookies.get("name") || "My Business";
   const [showDropdown, setShowDropdown] = useState(false);
   const branchDetails=JSON.parse(localStorage.getItem("branchDetails"));
   const [branchName, setBranchName] = useState(
@@ -120,24 +120,24 @@ useEffect(() => {
 
   return (
     <div
-      className="bg-white rounded-4 shadow-sm px-4 py-3 mb-4 border"
+      className="bg-white rounded-4 shadow-sm px-3 px-sm-4 py-2 py-sm-3 mb-3 mb-md-4 border header-responsive-wrapper"
       style={{
         borderColor: "#eef2f7",
       }}
     >
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 gap-sm-3">
         
-        {/* Left Section */}
-        <div className="d-flex align-items-center">
-          <div className="me-3">
+        {/* Left Section: Logo, Company Name & Location */}
+        <div className="d-flex align-items-center flex-grow-1 flex-md-grow-0" style={{ minWidth: 0, maxWidth: "100%" }}>
+          <div className="me-2 me-sm-3 flex-shrink-0">
             {logo ? (
               <img
                 src={logo}
                 alt="logo"
                 className="rounded-circle border"
                 style={{
-                  width: "60px",
-                  height: "60px",
+                  width: "clamp(42px, 5vw, 56px)",
+                  height: "clamp(42px, 5vw, 56px)",
                   objectFit: "cover",
                 }}
               />
@@ -145,85 +145,94 @@ useEffect(() => {
               <div
                 className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
                 style={{
-                  width: "60px",
-                  height: "60px",
-                  fontSize: "22px",
+                  width: "clamp(42px, 5vw, 56px)",
+                  height: "clamp(42px, 5vw, 56px)",
+                  fontSize: "clamp(16px, 2vw, 22px)",
                 }}
               >
-                {companyName.charAt(0).toUpperCase()}
+                {companyName ? companyName.charAt(0).toUpperCase() : "M"}
               </div>
             )}
           </div>
 
-          <div>
-            <h5 className="mb-0 fw-bold text-dark">
+          <div style={{ minWidth: 0, overflow: "hidden" }}>
+            <h5 className="mb-0 fw-bold text-dark text-truncate" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.15rem)" }}>
               {companyName}
             </h5>
-            <small className="text-muted">
+            <small className="text-muted d-block text-truncate" style={{ fontSize: "clamp(0.75rem, 1vw, 0.85rem)" }}>
               Business Management System
             </small>
-            {
-                        
-            (dashboard==="4"||dashboard==="2")&&(
+            {(dashboard === "4" || dashboard === "2") && (
               <div className="branch-switcher" ref={dropdownRef}>
-                  <span>📍 {branchName}</span>
+                <span className="text-truncate" style={{ maxWidth: "160px" }}>📍 {branchName}</span>
 
-                  <button
-                    className="branch-change-btn"
-                    onClick={() => setShowDropdown(!showDropdown)}
+                <button
+                  type="button"
+                  className="branch-change-btn"
+                  onClick={() => setShowDropdown(!showDropdown)}
+                >
+                  Change
+                </button>
+
+                {showDropdown && (
+                  <div
+                    className="branch-dropdown"
+                    style={{
+                      maxWidth: "min(280px, calc(100vw - 32px))",
+                      maxHeight: "260px",
+                      overflowY: "auto",
+                    }}
                   >
-                    Change
-                  </button>
-
-                  {showDropdown && (
-                    <div className="branch-dropdown">
-                      {branches.map((b, i) => (
-                        <div
-                          key={i}
-                          className="branch-item"
-                          onClick={() => {
-                            setShowDropdown(false);
-                            if (b.id === 0) {
-                              setBranchName("All Location");
-                              Cookies.set("multipleBranch",false);
-                              localStorage.setItem("branchDetails", JSON.stringify({ id: 0, branchName: "All Location" }));
-                              Cookies.remove("branchCode");
-                            }else{
-                              localStorage.setItem("branchDetails", JSON.stringify(b));
-                              Cookies.set("multipleBranch",true);
-                              Cookies.set("branchCode",JSON.stringify(b.branchCode));
-                            }
-                            window.location.reload();
-                          }}
-                        >
-                           {b.branchName}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>)}
+                    {branches.map((b, i) => (
+                      <div
+                        key={i}
+                        className="branch-item"
+                        onClick={() => {
+                          setShowDropdown(false);
+                          if (b.id === 0) {
+                            setBranchName("All Location");
+                            Cookies.set("multipleBranch", false);
+                            localStorage.setItem("branchDetails", JSON.stringify({ id: 0, branchName: "All Location" }));
+                            Cookies.remove("branchCode");
+                          } else {
+                            localStorage.setItem("branchDetails", JSON.stringify(b));
+                            Cookies.set("multipleBranch", true);
+                            Cookies.set("branchCode", JSON.stringify(b.branchCode));
+                          }
+                          window.location.reload();
+                        }}
+                      >
+                        {b.branchName}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Center Section */}
-        <div className="text-center flex-grow-1">
-          <h3 className="fw-bold mb-1 text-dark">
+        {/* Center Section: Page Title & Subtitle */}
+        <div className="text-center flex-grow-1 order-3 order-lg-2 px-2" style={{ minWidth: "180px" }}>
+          <h3 className="fw-bold mb-1 text-dark text-truncate" style={{ fontSize: "clamp(1.1rem, 2vw, 1.55rem)" }}>
             {title}
           </h3>
-          <p className="text-muted mb-0">
+          <p className="text-muted mb-0 small text-truncate" style={{ fontSize: "clamp(0.75rem, 1vw, 0.9rem)" }}>
             {subTitle}
           </p>
         </div>
 
-        {/* Right Section */}
-        <div>
-          <span
+        {/* Right Section: Action Button */}
+        <div className="order-2 order-lg-3 flex-shrink-0 ms-auto ms-md-0">
+          <button
+            type="button"
             onClick={() => handleLogout(dashboard)}
-            className={`btn ${dashboard==="3"?"btn-danger":"btn-secondary"} px-4 rounded-pill`}
+            className={`btn ${dashboard === "3" ? "btn-danger" : "btn-secondary"} px-3 px-sm-4 rounded-pill d-inline-flex align-items-center`}
+            style={{ minHeight: "38px" }}
           >
             <FaSignOutAlt className="me-2" />
-            {dashboard==="3"?("Logout"):"Back"}
-          </span>
+            <span>{dashboard === "3" ? "Logout" : "Back"}</span>
+          </button>
         </div>
       </div>
     </div>

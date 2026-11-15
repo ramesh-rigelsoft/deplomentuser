@@ -58,14 +58,14 @@ const HomePage = () => {
   return (
     <>
       {/* NAVBAR */}
-      <nav className="navbar navbar-dark bg-dark px-4 shadow-sm">
-        <span className="navbar-brand fw-bold">BillingPro</span>
+      <nav className="navbar navbar-dark bg-dark px-3 px-sm-4 shadow-sm">
+        <span className="navbar-brand fw-bold mb-0">BillingPro</span>
 
-        <div>
-          <Link to="/login" className="btn btn-outline-light me-2">
+        <div className="d-flex gap-2">
+          <Link to="/login" className="btn btn-outline-light btn-sm px-3">
             Login
           </Link>
-          <Link to="/signup" className="btn btn-primary">
+          <Link to="/signup" className="btn btn-primary btn-sm px-3">
             Get Started
           </Link>
         </div>
@@ -77,44 +77,45 @@ const HomePage = () => {
           backgroundImage: `url(${bg})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          height: "90vh",
+          minHeight: "calc(100vh - 110px)",
           position: "relative",
           display: "flex",
           alignItems: "center",
+          padding: "clamp(1.5rem, 4vw, 3.5rem) 0",
         }}
       >
         <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.65)" }} />
 
-        <div className="container position-relative">
-          <div className="row align-items-center">
+        <div className="container position-relative px-3 px-sm-4">
+          <div className="row align-items-center g-4">
 
             {/* LEFT */}
-            <div className="col-md-7 text-white">
-              <h1 className="display-4 fw-bold">
+            <div className="col-12 col-md-7 text-white text-center text-md-start">
+              <h1 className="fw-bold" style={{ fontSize: "clamp(1.75rem, 3.5vw, 3rem)" }}>
                 Smart Billing & Invoice System
               </h1>
 
-              <p className="lead mt-3">
+              <p className="lead mt-3" style={{ fontSize: "clamp(0.95rem, 1.5vw, 1.25rem)" }}>
                 Manage invoices, GST reports, payments and analytics in one dashboard.
               </p>
 
-              <button className="btn btn-primary btn-lg mt-3">
+              <button className="btn btn-primary px-4 py-2 mt-2">
                 Start Free Trial
               </button>
             </div>
 
             {/* RIGHT LOGIN */}
-            <div className="col-md-5 d-flex justify-content-center">
+            <div className="col-12 col-md-5 d-flex justify-content-center">
               <form
                 onSubmit={handleSubmit}
                 style={{
                   width: "100%",
-                  maxWidth: "350px",
+                  maxWidth: "380px",
                   backdropFilter: "blur(15px)",
                   background: "rgba(255,255,255,0.12)",
                   border: "1px solid rgba(255,255,255,0.2)",
                   borderRadius: "12px",
-                  padding: "25px",
+                  padding: "clamp(20px, 4vw, 30px)",
                   color: "white",
                   boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
                 }}
@@ -127,6 +128,7 @@ const HomePage = () => {
                   placeholder="Email"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  style={{ minHeight: "42px" }}
                 />
 
                 <input
@@ -135,18 +137,20 @@ const HomePage = () => {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  style={{ minHeight: "42px" }}
                 />
 
                 <button
-                  className="btn btn-primary w-100"
+                  className="btn btn-primary w-100 py-2 fw-semibold"
                   disabled={loading}
+                  style={{ minHeight: "42px" }}
                 >
                   {loading ? "Signing in..." : "Sign In"}
                 </button>
 
                 <p className="text-center mt-3 mb-0">
                   New here?{" "}
-                  <Link to="/signup" style={{ color: "#fff" }}>
+                  <Link to="/signup" style={{ color: "#fff", textDecoration: "underline" }}>
                     Create Account
                   </Link>
                 </p>

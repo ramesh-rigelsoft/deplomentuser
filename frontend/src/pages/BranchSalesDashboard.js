@@ -235,11 +235,11 @@ const BranchSalesDashboard = () => {
   };
 
   return (
-    <div className="mt-10px">
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-2 page-scroll">
        <Header
-        title="Branch Mangement"
+        title="Branch Management"
         subTitle="Manage everything in one place"
-        dashboard = "2"
+        dashboard="2"
       />
       
     <div ref={divRef} className="page scrollable-div-d">
@@ -330,11 +330,11 @@ const BranchSalesDashboard = () => {
 </div> */}
 
       {/* SEARCH + DATE */}
-   <Row className="align-items-end g-2 py-1">
+   <Row className="align-items-end g-2 py-2">
   {/* Search */}
-  <Col md={3}>
+  <Col xs={12} sm={6} md={3}>
     <Form.Control
-      placeholder="🔍 Search category, product, service..."
+      placeholder="🔍 Search category, product..."
       value={search}
       onChange={(e) => setSearch(e.target.value)}
       className="shadow-sm"
@@ -342,9 +342,9 @@ const BranchSalesDashboard = () => {
   </Col>
 
   {/* Start Date */}
-  <Col md={3}>
+  <Col xs={12} sm={6} md={3}>
     <DatePicker
-      className="form-control shadow-sm"
+      className="form-control shadow-sm w-100"
       locale={enUS}
       popperPlacement="bottom-start"
       dateFormat="yyyy-MM-dd"
@@ -355,9 +355,9 @@ const BranchSalesDashboard = () => {
   </Col>
 
   {/* End Date */}
-  <Col md={3}>
+  <Col xs={12} sm={6} md={3}>
     <DatePicker
-      className="form-control shadow-sm"
+      className="form-control shadow-sm w-100"
       locale={enUS}
       popperPlacement="bottom-start"
       dateFormat="yyyy-MM-dd"
@@ -368,8 +368,8 @@ const BranchSalesDashboard = () => {
   </Col>
 
   {/* Buttons */}
-  <Col md={3}>
-    <div className="d-flex gap-1">
+  <Col xs={12} sm={6} md={3}>
+    <div className="d-flex gap-2">
       <Button
         onClick={searchFilter}
         className="w-50"
@@ -397,19 +397,19 @@ const BranchSalesDashboard = () => {
 
 </Row>
 
-      {/* SUMMARY */console.log("pppppppp-----"+dashboard)}
-      <Row className="g-3 mb-4">
-        <Col md={2}><Card style={cardStyle}><h6>Total Stock</h6><span>{dashboard?.totalStock}</span></Card></Col>
-        <Col md={2}><Card style={cardStyle}><h6>Total Value</h6><span>{formatINR(dashboard?.totalValue)}</span></Card></Col>
-        <Col md={2}><Card style={cardStyle}><h6>Expense</h6><span>{formatINR(dashboard?.totalExpense)}</span></Card></Col>
-        <Col md={2}><Card style={cardStyle}><h6>Sold</h6><span>{formatINR(dashboard?.totalSalesAmount)}</span></Card></Col>
-        <Col md={2}><Card style={cardStyle}><h6>Profit</h6><span style={{color: dashboard?.profit >=0 ? "green" : "red"}}>{formatINR(dashboard?.profit)}</span></Card></Col>
-        <Col md={2}><Card style={cardStyle}><h6>Low Stock</h6><span><Badge bg="danger">{dashboard?.lowStock}</Badge></span></Card></Col>
+      {/* SUMMARY */}
+      <Row className="g-2 g-md-3 mb-4">
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Total Stock</h6><span>{dashboard?.totalStock}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Total Value</h6><span>{formatINR(dashboard?.totalValue)}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Expense</h6><span>{formatINR(dashboard?.totalExpense)}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Sold</h6><span>{formatINR(dashboard?.totalSalesAmount)}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Profit</h6><span style={{color: dashboard?.profit >=0 ? "green" : "red"}}>{formatINR(dashboard?.profit)}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Low Stock</h6><span><Badge bg="danger">{dashboard?.lowStock}</Badge></span></Card></Col>
       </Row>
 
       {/* CHARTS */}
-      <Row className="g-4">
-        <Col md={8}>
+      <Row className="g-3 g-md-4">
+        <Col xs={12} lg={8}>
           <Card style={{ ...cardStyle, height: 360 }}>
             <div style={{ width: "100%", height: "100%" }}>
               {graphType === "bar" ? (
@@ -420,7 +420,7 @@ const BranchSalesDashboard = () => {
             </div>
           </Card>
         </Col>
-        <Col md={4}>
+        <Col xs={12} lg={4}>
           <Card style={{ ...cardStyle, height: 360 }}>
             <Doughnut options={{
               responsive: true,

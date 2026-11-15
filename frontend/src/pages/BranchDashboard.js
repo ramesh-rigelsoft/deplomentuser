@@ -52,18 +52,17 @@ export default function BranchDashboard() {
   ];
 
   return (
-    <div>
+    <div className="page-scroll container-fluid px-2 px-sm-3 px-md-4 py-3">
       <Header
         title="Branch Management"
         subTitle="Manage all branch operations from one place"
-        dashboard = "4"
+        dashboard="4"
       />
- {/* <PageHeader pageName="Garbage Collection"/> */}
     
-      <div className="container py-4">
-        <div className="row g-4">
+      <div className="container-fluid px-0">
+        <div className="row g-3 g-md-4">
           {modules.map((module, index) => (
-            <div key={index} className="col-lg-4 col-md-6">
+            <div key={index} className="col-12 col-sm-6 col-lg-4">
               <div
                 className={`card border-0 shadow-sm h-100`}
                 style={{

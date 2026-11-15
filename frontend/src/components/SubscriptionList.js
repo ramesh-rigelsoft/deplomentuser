@@ -431,7 +431,7 @@ const completeVerification = (verifyData) => {
   };
 
   return (
-    <div className="container py-3 page-scroll">
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-3 page-scroll">
 
       <Header
         title="Subscription Plans"
@@ -557,13 +557,10 @@ const completeVerification = (verifyData) => {
           <div className="row g-3 align-items-end">
 
             {/* PLAN NAME */}
-
-            <div className="col-12 col-md-3">
-
+            <div className="col-12 col-sm-6 col-lg-3">
               <label className="form-label">
                 Subscription Plan
               </label>
-
               <input
                 type="text"
                 className="form-control"
@@ -573,34 +570,26 @@ const completeVerification = (verifyData) => {
                 }
                 readOnly
               />
-
             </div>
 
             {/* SUBSCRIPTION CODE */}
-
-            <div className="col-12 col-md-3">
-
+            <div className="col-12 col-sm-6 col-lg-3">
               <label className="form-label">
                 Subscription Code
               </label>
-
               <input
                 type="text"
                 className="form-control"
                 value={subscriptionCode}
                 readOnly
               />
-
             </div>
 
             {/* BRANCH CODE */}
-
-            <div className="col-12 col-md-3">
-
+            <div className="col-12 col-sm-6 col-lg-3">
               <label className="form-label">
                 Branch Code
               </label>
-
               <select
                 className="form-select"
                 value={branchCode}
@@ -610,11 +599,9 @@ const completeVerification = (verifyData) => {
                   )
                 }
               >
-
                 <option value="">
                   Select Branch
                 </option>
-
                 {branchLoading ? (
                   <option disabled>
                     Loading branches...
@@ -639,19 +626,14 @@ const completeVerification = (verifyData) => {
                     )
                   )
                 )}
-
               </select>
-
             </div>
 
             {/* AMOUNT */}
-
-            <div className="col-12 col-md-2">
-
+            <div className="col-12 col-sm-6 col-lg-2">
               <label className="form-label">
                 Payable Amount
               </label>
-
               <input
                 type="text"
                 className="form-control"
@@ -661,21 +643,17 @@ const completeVerification = (verifyData) => {
                 }`}
                 readOnly
               />
-
             </div>
 
             {/* PAY */}
-
-            <div className="col-12 col-md-1">
-
+            <div className="col-12 col-sm-12 col-lg-1">
               <button
                 type="button"
-                className="btn btn-success w-100"
+                className="btn btn-success w-100 py-2 fw-bold"
                 onClick={handlePay}
               >
                 Pay
               </button>
-
             </div>
 
             {/* AUTOMATED RENEWAL NOTE */}
@@ -727,7 +705,7 @@ const completeVerification = (verifyData) => {
 
             {/* PLAN NAME */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Plan Name
@@ -746,7 +724,7 @@ const completeVerification = (verifyData) => {
 
             {/* CODE */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Subscription Code
@@ -765,7 +743,7 @@ const completeVerification = (verifyData) => {
 
             {/* TYPE */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Subscription Type
@@ -784,7 +762,7 @@ const completeVerification = (verifyData) => {
 
             {/* BRANCH */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Branch Code
@@ -803,7 +781,7 @@ const completeVerification = (verifyData) => {
 
             {/* AMOUNT */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Amount / Month
@@ -822,7 +800,7 @@ const completeVerification = (verifyData) => {
 
             {/* GST */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 GST
@@ -841,7 +819,7 @@ const completeVerification = (verifyData) => {
 
             {/* TOTAL */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Total Amount
@@ -860,7 +838,7 @@ const completeVerification = (verifyData) => {
 
             {/* DURATION */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Duration
@@ -880,7 +858,7 @@ const completeVerification = (verifyData) => {
 
             {/* START DATE */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Subscription Start
@@ -898,7 +876,7 @@ const completeVerification = (verifyData) => {
 
             {/* STATUS */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Status
@@ -968,7 +946,7 @@ const completeVerification = (verifyData) => {
 
             {/* PER BRANCH USER */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Per Branch User
@@ -987,7 +965,7 @@ const completeVerification = (verifyData) => {
 
             {/* MULTIPLE USER */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 Multiple User
@@ -1013,7 +991,7 @@ const completeVerification = (verifyData) => {
 
             {/* USER COUNT */}
 
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-lg-3">
 
               <label className="form-label">
                 User Count
@@ -1109,7 +1087,7 @@ const completeVerification = (verifyData) => {
 
             <thead>
 
-              <tr className="table-light">
+              <tr className="table-light text-nowrap">
 
                 <th>#</th>
 
@@ -1353,7 +1331,7 @@ const completeVerification = (verifyData) => {
 
             <thead>
 
-              <tr className="table-light">
+              <tr className="table-light text-nowrap">
 
                 <th>#</th>
 

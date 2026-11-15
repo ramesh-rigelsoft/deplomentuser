@@ -212,7 +212,7 @@ export default function ViewProfile() {
   });
 
   return (
-    <div className="container py-3  page-scroll">
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-3 page-scroll">
 
       <Header
         title="User Management"
@@ -221,7 +221,7 @@ export default function ViewProfile() {
       />
 
       <div className="row justify-content-center">
-        <div className="col-12 col-md-12 col-lg-12">
+        <div className="col-12 col-md-10 col-lg-8">
 
           <div className="card shadow border-0">
 

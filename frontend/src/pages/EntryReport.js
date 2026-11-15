@@ -408,13 +408,13 @@ useEffect(() => {
       );
 
   return (
-    <div>
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-2 page-scroll">
         <Header
-          title="Branch Mangement"
+          title="Branch Management"
           subTitle="Manage everything in one place"
-          dashboard = "2"
+          dashboard="2"
         />
-    <div className="container mt-3 scrollable-div">
+    <div className="mt-2">
        <PageHeader pageName="Entry Items" />
        {/* <div className="d-flex justify-content-between align-items-center mb-2">
         <h2 className="fw-bold mb-0">Item Summary Report</h2>

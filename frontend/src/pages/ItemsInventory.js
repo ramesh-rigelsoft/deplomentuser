@@ -168,13 +168,13 @@ useEffect(() => {
   };
 
   return (
-    <div>
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-2 page-scroll">
     <Header
-      title="Branch Mangement"
+      title="Branch Management"
       subTitle="Manage everything in one place"
-      dashboard = "2"
+      dashboard="2"
     />
-    <div className="page mt-3 scrollable-div-summary">
+    <div className="page mt-2">
        <PageHeader pageName="Live Stock" />
       {/* Header */}
       {/* <div className="d-flex justify-content-between align-items-center mb-2">
@@ -228,7 +228,7 @@ useEffect(() => {
           <div className="card-body">
             <div className="row g-3">
               {/* Category */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <Select
                   styles={customStyles}
                   options={categories.map((c) => ({ value: c, label: c }))}
@@ -247,7 +247,7 @@ useEffect(() => {
               </div>
 
               {/* Item Type */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <Select
                   styles={customStyles}
                   options={selectedCategory?.items?.map((i) => ({ value: i.name, label: i.name })) || []}
@@ -266,7 +266,7 @@ useEffect(() => {
               </div>
 
               {/* Brand */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <Select
                   styles={customStyles}
                   options={brandOptions}
@@ -285,7 +285,7 @@ useEffect(() => {
               </div>
 
               {/* Processor */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <Select
                   styles={customStyles}
                   options={processorOptions}
@@ -304,7 +304,7 @@ useEffect(() => {
               </div>
 
               {/* Condition */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <Select
                   styles={customStyles}
                   options={itemConditionOptions}
@@ -322,7 +322,7 @@ useEffect(() => {
               </div>
 
               {/* Storage Type */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <Select
                   styles={customStyles}
                   options={storageTypeOptions}
@@ -340,7 +340,7 @@ useEffect(() => {
               </div>
 
               {/* Model Name */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <input
                   className="form-control"
                   style={{ height: 30, borderRadius: 8, borderColor: "#d9d9d9" }}
@@ -354,7 +354,7 @@ useEffect(() => {
               </div>
 
               {/* RAM */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <input
                   className="form-control"
                   style={{ height: 30, borderRadius: 8, borderColor: "#d9d9d9" }}
@@ -368,7 +368,7 @@ useEffect(() => {
               </div>
 
               {/* Storage */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <input
                   className="form-control"
                   style={{ height: 30, borderRadius: 8, borderColor: "#d9d9d9" }}
@@ -382,7 +382,7 @@ useEffect(() => {
               </div>
 
               {/* Operating System */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <input
                   className="form-control"
                   style={{ height: 30, borderRadius: 8, borderColor: "#d9d9d9" }}
@@ -396,7 +396,7 @@ useEffect(() => {
               </div>
 
               {/* Screen Size */}
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <input
                   className="form-control"
                   style={{ height: 30, borderRadius: 8, borderColor: "#d9d9d9" }}
@@ -409,7 +409,7 @@ useEffect(() => {
                 />
               </div>
 
-              <div className="col-md-3">
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <select
                   className="form-control"
                   style={{ height: 30, borderRadius: 8, borderColor: "#d9d9d9" }}

@@ -146,15 +146,15 @@ export default function Signup() {
   });
 
   return (
-    <div className="container py-5 page-scroll">
+    <div className="container px-3 px-sm-4 py-3 py-sm-5 page-scroll">
       <div className="row justify-content-center">
-        <div className="col-lg-6 col-md-8">
+        <div className="col-12 col-sm-10 col-md-8 col-lg-6">
           <form
-            className="card shadow p-4"
+            className="card shadow-sm border-0 p-3 p-sm-4 rounded-4"
             onSubmit={handleSubmit}
             noValidate
           >
-            <h2 className="text-center mb-4">
+            <h2 className="text-center mb-4 fw-bold">
               Create Account
             </h2>
 

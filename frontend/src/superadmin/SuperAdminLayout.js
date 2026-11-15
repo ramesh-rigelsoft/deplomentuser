@@ -7,11 +7,21 @@ import { toast } from "react-toastify";
 const SuperAdminLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 992 : false);
+  const [sidebarOpen, setSidebarOpen] = useState(typeof window !== "undefined" ? window.innerWidth >= 992 : true);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
   const storedUserStr = localStorage.getItem("superadmin_user");
   const adminUser = storedUserStr ? JSON.parse(storedUserStr) : { name: "Super Admin", role: "SUPERADMIN" };
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 992;
+      setIsMobile(mobile);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -68,23 +78,23 @@ const SuperAdminLayout = ({ children }) => {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", flexDirection: "column", width: "100%", maxWidth: "100vw", overflowX: "hidden" }}>
       {/* Top Navigation Bar */}
       <nav
         style={{
           backgroundColor: "#0f172a",
           color: "#ffffff",
-          padding: "0.75rem 1.5rem",
+          padding: isMobile ? "0.6rem 0.85rem" : "0.75rem 1.5rem",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
           position: "sticky",
           top: 0,
-          zIndex: 1000,
+          zIndex: 1020,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             style={{
@@ -93,6 +103,8 @@ const SuperAdminLayout = ({ children }) => {
               color: "#94a3b8",
               fontSize: "1.25rem",
               cursor: "pointer",
+              padding: "0.25rem 0.5rem",
+              borderRadius: "4px",
             }}
             title="Toggle Sidebar"
           >
@@ -103,34 +115,39 @@ const SuperAdminLayout = ({ children }) => {
               style={{
                 background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
                 color: "#ffffff",
-                padding: "0.25rem 0.6rem",
+                padding: "0.2rem 0.5rem",
                 borderRadius: "6px",
                 fontWeight: "bold",
-                fontSize: "0.85rem",
+                fontSize: "0.75rem",
                 letterSpacing: "0.5px",
+                whiteSpace: "nowrap",
               }}
             >
               SUPER ADMIN
             </span>
-            <span style={{ fontWeight: 600, fontSize: "1.1rem", color: "#f8fafc" }}>
-              RigelSoft Portal
-            </span>
+            {!isMobile && (
+              <span style={{ fontWeight: 600, fontSize: "1.05rem", color: "#f8fafc", whiteSpace: "nowrap" }}>
+                RigelSoft Portal
+              </span>
+            )}
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#94a3b8", fontSize: "0.85rem" }}>
-            <i className="fa fa-clock-o" />
-            <span>{currentTime}</span>
-          </div>
+        <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "0.6rem" : "1.25rem" }}>
+          {!isMobile && (
+            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#94a3b8", fontSize: "0.85rem" }}>
+              <i className="fa fa-clock-o" />
+              <span>{currentTime}</span>
+            </div>
+          )}
 
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "0.6rem",
+              gap: "0.5rem",
               backgroundColor: "rgba(255,255,255,0.08)",
-              padding: "0.35rem 0.8rem",
+              padding: "0.3rem 0.65rem",
               borderRadius: "20px",
             }}
           >
@@ -144,15 +161,18 @@ const SuperAdminLayout = ({ children }) => {
                 alignItems: "center",
                 justifyContent: "center",
                 fontWeight: "bold",
-                fontSize: "0.85rem",
+                fontSize: "0.8rem",
+                flexShrink: 0,
               }}
             >
               {(adminUser.username || "SA").substring(0, 2).toUpperCase()}
             </div>
-            <div style={{ lineHeight: 1.2 }}>
-              <div style={{ fontSize: "0.85rem", fontWeight: 600 }}>{adminUser.name || "Super Admin"}</div>
-              <div style={{ fontSize: "0.7rem", color: "#38bdf8" }}>{adminUser.role}</div>
-            </div>
+            {!isMobile && (
+              <div style={{ lineHeight: 1.2 }}>
+                <div style={{ fontSize: "0.85rem", fontWeight: 600 }}>{adminUser.name || "Super Admin"}</div>
+                <div style={{ fontSize: "0.7rem", color: "#38bdf8" }}>{adminUser.role}</div>
+              </div>
+            )}
           </div>
 
           <button
@@ -161,13 +181,13 @@ const SuperAdminLayout = ({ children }) => {
               backgroundColor: "#ef4444",
               color: "#ffffff",
               border: "none",
-              padding: "0.4rem 0.85rem",
+              padding: isMobile ? "0.35rem 0.65rem" : "0.4rem 0.85rem",
               borderRadius: "6px",
               fontWeight: 500,
-              fontSize: "0.85rem",
+              fontSize: "0.82rem",
               display: "flex",
               alignItems: "center",
-              gap: "0.4rem",
+              gap: "0.35rem",
               cursor: "pointer",
               transition: "background 0.2s",
             }}
@@ -175,33 +195,68 @@ const SuperAdminLayout = ({ children }) => {
             onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ef4444")}
           >
             <i className="fa fa-sign-out" />
-            <span>Logout</span>
+            {!isMobile && <span>Logout</span>}
           </button>
         </div>
       </nav>
 
       {/* Main Container with Sidebar + Content */}
-      <div style={{ display: "flex", flex: 1 }}>
+      <div style={{ display: "flex", flex: 1, position: "relative" }}>
+        {/* Mobile Backdrop */}
+        {isMobile && sidebarOpen && (
+          <div
+            onClick={() => setSidebarOpen(false)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              backgroundColor: "rgba(15, 23, 42, 0.6)",
+              backdropFilter: "blur(2px)",
+              zIndex: 1040,
+            }}
+          />
+        )}
+
         {/* Sidebar */}
         <aside
           style={{
-            width: sidebarOpen ? "250px" : "70px",
+            position: isMobile ? "fixed" : "static",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            zIndex: isMobile ? 1050 : 1,
+            width: isMobile ? "260px" : (sidebarOpen ? "250px" : "70px"),
             backgroundColor: "#1e293b",
             color: "#cbd5e1",
-            transition: "width 0.25s ease",
+            transition: "all 0.25s ease",
             overflowX: "hidden",
-            boxShadow: "2px 0 8px rgba(0,0,0,0.06)",
-            display: "flex",
+            boxShadow: isMobile ? "4px 0 25px rgba(0,0,0,0.3)" : "2px 0 8px rgba(0,0,0,0.06)",
+            display: isMobile && !sidebarOpen ? "none" : "flex",
             flexDirection: "column",
+            minHeight: isMobile ? "100vh" : "auto",
           }}
         >
-          <div style={{ padding: "1rem 0", flex: 1 }}>
+          {isMobile && (
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <span style={{ fontWeight: "bold", color: "#f8fafc", fontSize: "0.95rem" }}>Navigation Menu</span>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "1.2rem", cursor: "pointer" }}
+              >
+                &times;
+              </button>
+            </div>
+          )}
+
+          <div style={{ padding: "0.75rem 0", flex: 1 }}>
             {navLinks.map((item) => {
               const isActive = location.pathname === item.path;
               return (
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={() => {
+                    if (isMobile) setSidebarOpen(false);
+                  }}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -230,13 +285,13 @@ const SuperAdminLayout = ({ children }) => {
                   }}
                 >
                   <i className={`fa ${item.icon}`} style={{ fontSize: "1.1rem", width: "20px", textAlign: "center" }} />
-                  {sidebarOpen && <span>{item.label}</span>}
+                  {(sidebarOpen || isMobile) && <span>{item.label}</span>}
                 </Link>
               );
             })}
           </div>
 
-          {sidebarOpen && (
+          {(sidebarOpen || isMobile) && (
             <div
               style={{
                 padding: "1rem",
@@ -252,7 +307,7 @@ const SuperAdminLayout = ({ children }) => {
         </aside>
 
         {/* Content Area */}
-        <main style={{ flex: 1, padding: "1.5rem", overflowX: "auto" }}>
+        <main style={{ flex: 1, padding: isMobile ? "1rem 0.75rem" : "1.5rem", width: "100%", maxWidth: "100%", overflowX: "hidden" }}>
           {children}
         </main>
       </div>

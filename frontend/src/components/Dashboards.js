@@ -21,12 +21,7 @@ export default function Dashboards() {
   // };
 
   return (
-    <div className="bg-light page-scroll">
-
-{/* Coming Soon Overlay */}
-{/* <div className="coming-soon-overlay">
-  Coming Soon
-</div> */}
+    <div className="bg-light page-scroll container-fluid px-2 px-sm-3 px-md-4 py-3">
 
       {/* Header */}
       <Header
@@ -35,71 +30,77 @@ export default function Dashboards() {
         dashboard="3"
       />
 
-      {/* Top Cards */}
-      <div className="row g-4">
-        <div className="col-md-3" onClick={() => clickedCards("viewProfile")}>
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaUser size={28} className="text-warning mb-2" />
-            <h5>My Profile</h5>
-             <Link to="/editProfile" className="btn btn-info btn-sm text-white">
+      {/* Responsive Feature Cards */}
+      <div className="row g-3 g-md-4">
+        <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("viewProfile")}>
+          <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
+            <FaUser size={30} className="text-warning mb-2 mx-auto" />
+            <h5 className="fw-bold mb-2">My Profile</h5>
+            <div className="mt-auto">
+              <Link to="/editProfile" className="btn btn-info btn-sm text-white px-3 py-1">
                 View
-            </Link>
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* 🆕 Our Services (FIXED COLOR) */}
-        <div className="col-md-3" onClick={() => clickedCards("officeLocation")}>
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaCogs size={28} className="text-info mb-2" />
-
-            <h5>Office Location</h5>
-           {/* ✔ FIXED BUTTON COLOR */}
-             <Link to="/officeLocation" className="btn btn-info btn-sm text-white">
+        <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("officeLocation")}>
+          <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
+            <FaCogs size={30} className="text-info mb-2 mx-auto" />
+            <h5 className="fw-bold mb-2">Office Location</h5>
+            <div className="mt-auto">
+              <Link to="/officeLocation" className="btn btn-info btn-sm text-white px-3 py-1">
                 View
-            </Link>
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="col-md-3" onClick={() => clickedCards("branchManagement")}>
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaCogs size={28} className="text-info mb-2" />
 
-            <h5>Branch Management</h5>
-           {/* ✔ FIXED BUTTON COLOR */}
-             <Link to="/branchs" className="btn btn-info btn-sm text-white">
+        <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("branchManagement")}>
+          <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
+            <FaCogs size={30} className="text-info mb-2 mx-auto" />
+            <h5 className="fw-bold mb-2">Branch Management</h5>
+            <div className="mt-auto">
+              <Link to="/branchs" className="btn btn-info btn-sm text-white px-3 py-1">
                 View
-            </Link>
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="col-md-3" onClick={() => clickedCards("rolePermission")}>
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaCogs size={28} className="text-info mb-2" />
 
-            <h5>Role Permission</h5>
-           {/* ✔ FIXED BUTTON COLOR */}
-            <Link to="/rolesPermission" className="btn btn-info btn-sm text-white">
-                    Roles
-            </Link>
+        <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("rolePermission")}>
+          <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
+            <FaCogs size={30} className="text-info mb-2 mx-auto" />
+            <h5 className="fw-bold mb-2">Role Permission</h5>
+            <div className="mt-auto">
+              <Link to="/rolesPermission" className="btn btn-info btn-sm text-white px-3 py-1">
+                Roles
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="col-md-3" onClick={() => clickedCards("userManagement")}>
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaUserFriends size={28} className="text-info mb-2" />
-            <h5>User Management</h5>
-           {/* ✔ FIXED BUTTON COLOR */}
-            <Link to="/addSubUser" className="btn btn-info btn-sm text-white">
-                    Users
-            </Link>
-          </div>
-        </div>
-         <div className="col-md-3" onClick={() => clickedCards("officeLocation")}>
-          <div className="card shadow-sm border-0 text-center p-4 hover-card">
-            <FaCogs size={28} className="text-info mb-2" />
 
-            <h5>Subscription Plan</h5>
-           {/* ✔ FIXED BUTTON COLOR */}
-             <Link to="/subscriptionPlanList" className="btn btn-info btn-sm text-white">
+        <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("userManagement")}>
+          <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
+            <FaUserFriends size={30} className="text-info mb-2 mx-auto" />
+            <h5 className="fw-bold mb-2">User Management</h5>
+            <div className="mt-auto">
+              <Link to="/addSubUser" className="btn btn-info btn-sm text-white px-3 py-1">
+                Users
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("officeLocation")}>
+          <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
+            <FaCreditCard size={30} className="text-info mb-2 mx-auto" />
+            <h5 className="fw-bold mb-2">Subscription Plan</h5>
+            <div className="mt-auto">
+              <Link to="/subscriptionPlanList" className="btn btn-info btn-sm text-white px-3 py-1">
                 View
-            </Link>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

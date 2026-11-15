@@ -327,18 +327,18 @@ const handleEdit = (branchId) => {
   };
 
   return (
-    <div  className="container py-3 page-scroll">
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-3 page-scroll">
     <Header
-        title="Office Mangement"
+        title="Office Management"
         subTitle="Manage everything in one place"
         dashboard="1"
       />
       <div className="row g-3">
 
         {/* FORM */}
-        <div className="col-12 col-md-4">
-          <div className="card shadow p-2 p-md-3">
-            <h5 className="text-center mb-3">
+        <div className="col-12 col-lg-5 col-xl-4">
+          <div className="card shadow-sm border-0 p-3 p-md-4">
+            <h5 className="text-center fw-bold mb-3">
               {editBranchId !== null ? "Update Office" : "Add Office"}
             </h5>
             <form onSubmit={handleSubmit}>
@@ -357,8 +357,8 @@ const handleEdit = (branchId) => {
               <hr />
               <h6 className="mt-3 mb-2">Company Information</h6>
 
-              <div className="row">
-                <div className="col-md-6 mb-2">
+              <div className="row g-2">
+                <div className="col-12 col-sm-6 mb-2">
                   <select
                     className="form-select form-select-sm"
                     name="shopType"
@@ -374,7 +374,7 @@ const handleEdit = (branchId) => {
                     <small className="text-danger">{errors.shopType}</small>
                   )}
                 </div>
-                <div className="col-md-6 mb-2">
+                <div className="col-12 col-sm-6 mb-2">
                   <select
                     name="status"
                     className="form-select form-select-sm mb-2"
@@ -435,8 +435,8 @@ const handleEdit = (branchId) => {
               </div>
             )}
 
-              <div className="row">
-                <div className="col-md-4 mb-2">
+              <div className="row g-2">
+                <div className="col-12 col-sm-4 mb-2">
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -450,7 +450,7 @@ const handleEdit = (branchId) => {
                   )}
                 </div>
 
-                <div className="col-md-4 mb-2">
+                <div className="col-12 col-sm-4 mb-2">
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -464,7 +464,7 @@ const handleEdit = (branchId) => {
                   )}
                 </div>
 
-                <div className="col-md-4 mb-2">
+                <div className="col-12 col-sm-4 mb-2">
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -507,10 +507,10 @@ const handleEdit = (branchId) => {
                     borderColor: "#adb5bd",
                   }}
                 >
-                  <div className="row align-items-center">
+                  <div className="row align-items-center g-2">
 
                     {/* Upload Section */}
-                    <div className="col-md-8">
+                    <div className="col-12 col-sm-8">
 
                       <label
                         htmlFor="logoUpload"
@@ -574,7 +574,7 @@ const handleEdit = (branchId) => {
                     </div>
 
                     {/* Preview Section */}
-                    <div className="col-md-4 text-center">
+                    <div className="col-12 col-sm-4 text-center">
 
                       <div
                         className="mx-auto border rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center"
@@ -622,19 +622,19 @@ const handleEdit = (branchId) => {
         </div>
 
         {/* TABLE */}
-        <div className="col-12 col-md-8">
-          <div className="card shadow p-2 p-md-3">
-            <h5 className="mb-3">Office List</h5>
+        <div className="col-12 col-lg-7 col-xl-8">
+          <div className="card shadow-sm border-0 p-3 p-md-4">
+            <h5 className="mb-3 fw-bold">Office List</h5>
 
             <div className="table-responsive">
-              <table className="table table-bordered table-sm">
-                <thead>
+              <table className="table table-bordered table-sm table-hover align-middle mb-0">
+                <thead className="table-light">
                   <tr>
-                    <th>Branch Code</th>
-                    <th>Branch Name</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Branch Code</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Branch Name</th>
                     <th>Address</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Status</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Action</th>
                   </tr>
                 </thead>
 

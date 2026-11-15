@@ -461,15 +461,14 @@ export default function ConfirmModal({
             translate(-50%, -50%)
             scale(.95);
 
-          width: 80vw;
-          height: 80vh;
-
-          max-width: none;
-          max-height: none;
+          width: min(92vw, 850px);
+          height: auto;
+          min-height: 250px;
+          max-height: 88vh;
 
           background: #fff;
 
-          padding: 20px;
+          padding: clamp(14px, 3vw, 24px);
 
           border-radius: 16px;
 
@@ -482,10 +481,20 @@ export default function ConfirmModal({
           display: flex;
           flex-direction: column;
 
-          overflow: hidden;
+          overflow-y: auto;
+          overflow-x: hidden;
 
           animation:
             cmPop .25s ease forwards;
+        }
+
+        @media (max-width: 768px) {
+          .cm-modal {
+            width: 96vw;
+            max-height: 92vh;
+            padding: 12px;
+            border-radius: 12px;
+          }
         }
 
 

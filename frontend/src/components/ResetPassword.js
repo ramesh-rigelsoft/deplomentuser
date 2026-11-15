@@ -123,9 +123,9 @@ const MobileResetPassword = () => {
 };
 
   return (
-    <div className="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light px-3 py-4">
       
-      <div className="card shadow-lg border-0" style={{ width: "400px", borderRadius: "15px" }}>
+      <div className="card shadow-lg border-0" style={{ width: "100%", maxWidth: "420px", borderRadius: "15px" }}>
         
         <div className="card-body p-4">
 

@@ -91,13 +91,13 @@ export default function GarbageItem() {
   };
 
   return (
-    <div>
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-2 page-scroll">
     <Header
-      title="Branch Mangement"
+      title="Branch Management"
       subTitle="Manage everything in one place"
-      dashboard = "2"
+      dashboard="2"
     />
-    <div className="container py-4">
+    <div>
 
      <PageHeader pageName="Garbage Collection"/>
       
@@ -115,7 +115,7 @@ export default function GarbageItem() {
       <div className="row mb-3 g-2">
 
   {/* Keyword Search */}
-  <div className="col-md-4">
+  <div className="col-12 col-md-4">
     <input
       type="text"
       className="form-control"
@@ -126,9 +126,9 @@ export default function GarbageItem() {
   </div>
 
   {/* Start Date */}
-  <div className="col-md-3">
+  <div className="col-12 col-sm-6 col-md-3">
     <DatePicker
-      className="form-control shadow-sm"
+      className="form-control shadow-sm w-100"
       locale={enUS}
       popperPlacement="bottom-start"
       dateFormat="yyyy-MM-dd"
@@ -145,9 +145,9 @@ export default function GarbageItem() {
   </div>
 
   {/* End Date */}
-  <div className="col-md-3">
+  <div className="col-12 col-sm-6 col-md-3">
      <DatePicker
-        className="form-control shadow-sm"
+        className="form-control shadow-sm w-100"
         locale={enUS}
         popperPlacement="bottom-start"
         dateFormat="yyyy-MM-dd"
@@ -164,7 +164,7 @@ export default function GarbageItem() {
   </div>
 
   {/* Apply Button */}
-  <div className="col-md-2">
+  <div className="col-12 col-sm-12 col-md-2">
     <button className="btn btn-primary w-100" onClick={handleFilter}>
       Filter
     </button>

@@ -175,15 +175,15 @@ const AddSubUser = () => {
 
 
   return (
-    <div className="container py-3 page-scroll">
+    <div className="container-fluid px-2 px-sm-3 px-md-4 py-3 page-scroll">
       <Header
-        title="User Mangement"
+        title="User Management"
         subTitle="Manage everything in one place"
         dashboard="1"
       />
 
       {branches.length === 0 && (
-        <div className="alert alert-warning border-0 shadow-sm d-flex justify-content-between align-items-center mb-3 rounded-3">
+        <div className="alert alert-warning border-0 shadow-sm d-flex justify-content-between align-items-center mb-3 rounded-3 flex-wrap gap-2">
           <div className="d-flex align-items-center">
             <span className="me-2 fs-5">⚠</span>
             <div>
@@ -199,10 +199,10 @@ const AddSubUser = () => {
       <div className="row g-3">
 
         {/* FORM */}
-        <div className="col-12 col-md-4">
-          <div className="card shadow p-2 p-md-3">
+        <div className="col-12 col-lg-5 col-xl-4">
+          <div className="card shadow-sm border-0 p-3 p-md-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="mb-0">
+              <h5 className="mb-0 fw-bold">
                 {editIndex !== null ? "Update Sub User" : "Add Sub User"}
               </h5>
               {editIndex !== null && (
@@ -360,21 +360,21 @@ const AddSubUser = () => {
         </div>
 
         {/* TABLE */}
-        <div className="col-12 col-md-8">
-          <div className="card shadow p-2 p-md-3">
-            <h5 className="mb-3">Sub Users List</h5>
+        <div className="col-12 col-lg-7 col-xl-8">
+          <div className="card shadow-sm border-0 p-3 p-md-4">
+            <h5 className="mb-3 fw-bold">Sub Users List</h5>
 
             <div className="table-responsive">
-              <table className="table table-bordered table-sm">
-                <thead>
+              <table className="table table-bordered table-sm table-hover align-middle mb-0">
+                <thead className="table-light">
                   <tr>
-                    <th>Office Code</th>
-                    <th>Name</th>
-                    <th>Email Id</th>
-                    <th>Mobile</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Office Code</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Name</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Email Id</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Mobile</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Role</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Status</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Action</th>
                   </tr>
                 </thead>
 
