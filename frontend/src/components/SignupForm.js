@@ -6,7 +6,7 @@ import { success, fail } from "../redux/WebTostar";
 
 
 export default function Signup() {
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
     mobile_no: "",
@@ -14,7 +14,7 @@ export default function Signup() {
     password: "",
     confirmPassword: "",
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [isHuman, setIsHuman] = useState(false);
@@ -94,49 +94,49 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      if (!validate()) {
-        return;
+    if (!validate()) {
+      return;
+    }
+
+    setLoading(true);
+
+    const data = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      data.append(key, formData[key]);
+    });
+
+    try {
+      const res = await API.signupAccount(dispatch, data);
+
+      console.log("Signup Response:", res);
+
+      // Success
+      if (res?.code === 200 || res?.code === "200") {
+        success(res?.message || "Your account has been created successfully.");
+      }
+      // Backend error response
+      else {
+        fail(res?.message || "Signup failed.");
       }
 
-      setLoading(true);
+    } catch (err) {
+      console.log("Signup Error:", err);
 
-      const data = new FormData();
+      // Backend se exact message
+      const message =
+        err?.message ||
+        err?.response?.data?.message ||
+        err?.data?.message ||
+        "Server Down";
 
-      Object.keys(formData).forEach((key) => {
-        data.append(key, formData[key]);
-      });
+      fail(message);
 
-      try {
-        const res = await API.signupAccount(dispatch, data);
-
-        console.log("Signup Response:", res);
-
-        // Success
-        if (res?.code === 200 || res?.code === "200") {
-          success(res?.message || "Your account has been created successfully.");
-        } 
-        // Backend error response
-        else {
-          fail(res?.message || "Signup failed.");
-        }
-
-      } catch (err) {
-        console.log("Signup Error:", err);
-
-        // Backend se exact message
-        const message =
-          err?.message ||
-          err?.response?.data?.message ||
-          err?.data?.message ||
-          "Server Down";
-
-        fail(message);
-
-      } finally {
-        setLoading(false);
-      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputStyle = (field) => ({
@@ -285,7 +285,7 @@ export default function Signup() {
               {!errors.confirmPassword &&
                 formData.confirmPassword &&
                 formData.password ===
-                  formData.confirmPassword && (
+                formData.confirmPassword && (
                   <small className="text-success">
                     Passwords match ✓
                   </small>
@@ -295,9 +295,8 @@ export default function Signup() {
             {/* Human Verification */}
             <div className="mb-3">
               <div
-                className={`border rounded p-3 d-flex align-items-center ${
-                  errors.human ? "border-danger" : ""
-                }`}
+                className={`border rounded p-3 d-flex align-items-center ${errors.human ? "border-danger" : ""
+                  }`}
                 style={{
                   backgroundColor: "#f8f9fa",
                 }}

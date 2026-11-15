@@ -36,13 +36,13 @@ export default function ViewProfile() {
         if (!data) return;
 
         setFormData({
-          id: data.id ,
+          id: data.id,
           name: data.name,
           mobile_no: data.mobile_no,
           email_id: data.email_id,
           password: "",
           confirmPassword: "",
-          ownerId:ownerId
+          ownerId: ownerId
         });
       })
       .catch((err) => {
@@ -175,11 +175,11 @@ export default function ViewProfile() {
         dispatch,
         updateData
       );
-      
+
       if (res.code === "200") {
         success(
           res?.payload?.message ||
-            "Account updated successfully"
+          "Account updated successfully"
         );
 
         setEditMode(false);
@@ -194,7 +194,7 @@ export default function ViewProfile() {
       } else {
         fail(
           res?.payload?.message ||
-            "Failed to update account"
+          "Failed to update account"
         );
       }
     } catch (error) {
@@ -260,8 +260,8 @@ export default function ViewProfile() {
                   >
                     {formData.name
                       ? formData.name
-                          .charAt(0)
-                          .toUpperCase()
+                        .charAt(0)
+                        .toUpperCase()
                       : "U"}
                   </div>
 
@@ -456,7 +456,7 @@ export default function ViewProfile() {
                       {!errors.confirmPassword &&
                         formData.confirmPassword &&
                         formData.password ===
-                          formData.confirmPassword && (
+                        formData.confirmPassword && (
                           <small className="text-success">
                             Passwords match ✓
                           </small>
