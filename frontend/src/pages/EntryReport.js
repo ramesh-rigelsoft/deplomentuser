@@ -16,11 +16,12 @@ import RefreshBadge from "./RefreshBadge";
 import Loader from "./Loader";
 import Header from "../components/Header";
 import PageHeader from "./PageHeader";
+import { useTranslation } from "../i18n";
 // import DownloadProgressModal from "./DownloadProgressModal";
 
 
 export default function ItemSummaryReport() {
-  
+  const { t } = useTranslation();
   // const progressModalRef = useRef();
   const location = useLocation();
   const ownerId = Cookies.get("secretCode");       
@@ -470,15 +471,15 @@ useEffect(() => {
       </div>
       <div className="sr-actions">
         <button className="modern-clear-btn" onClick={exportExcel}>
-         Excel Download
+         {t("Excel Download", "Excel Download")}
         </button>
        
         <button className="modern-clear-btn" onClick={() => filterRecords(searchKeywords)}>  
-           Apply Filter
+           {t("Apply Filter", "Apply Filter")}
        </button>
 
        <button className="modern-clear-btn" onClick={clearFilter}>
-          Clear
+          {t("Clear", "Clear")}
         </button>
 
     </div>
@@ -491,18 +492,18 @@ useEffect(() => {
           <thead className="border-bottom">
             <tr>
               <th>#</th>
-              {activeTab==="sales"&&(<th>Item Code</th>)}
-              <th> {activeTab==="sales"?"Invoice No":("Item Code")}</th>
-              <th>Items Name</th>
-              <th>Brand</th>
-              <th>Model</th>
+              {activeTab==="sales"&&(<th>{t("Item Code", "Item Code")}</th>)}
+              <th> {activeTab==="sales"? t("Invoice No", "Invoice No") : t("Item Code", "Item Code")}</th>
+              <th>{t("Items Name", "Items Name")}</th>
+              <th>{t("Brand", "Brand")}</th>
+              <th>{t("Model", "Model")}</th>
               {/* <th>Vendor</th> */}
-              <th>Qty</th>
-              <th>Purchage Price</th>
-              {activeTab === "sales"&&(<th>Selling Price</th>)}
-              <th>{activeTab==="sales"?"Sold Price":("Selling Price")}</th>
-              <th>Created At</th>
-              <th>Action</th>
+              <th>{t("Qty", "Qty")}</th>
+              <th>{t("Purchase Price", "Purchage Price")}</th>
+              {activeTab === "sales"&&(<th>{t("Selling Price", "Selling Price")}</th>)}
+              <th>{activeTab==="sales"? t("Sold Price", "Sold Price") : t("Selling Price", "Selling Price")}</th>
+              <th>{t("Created At", "Created At")}</th>
+              <th>{t("Action", "Action")}</th>
             </tr>
           </thead>
           <tbody>
@@ -633,7 +634,7 @@ useEffect(() => {
             ) : (
               <tr>
                 <td colSpan={12} style={{ textAlign: "center" }} className="text-center py-4 text-muted">
-                 Record Not Found
+                 {t("Record Not Found", "Record Not Found")}
                 </td>
               </tr>
             )}
@@ -895,7 +896,7 @@ useEffect(() => {
   <thead className="border-bottom">
     <tr>
       {columnsBuyer.map((col) => (
-        <th key={col.key}>{col.label}</th>
+        <th key={col.key}>{t(col.label, col.label)}</th>
       ))}
     </tr>
   </thead>
@@ -915,7 +916,7 @@ useEffect(() => {
           colSpan={columnsBuyer.length}
           className="text-center py-4 text-muted"
         >
-          Record Not Found
+          {t("Record Not Found", "Record Not Found")}
         </td>
       </tr>
     )}
@@ -929,7 +930,7 @@ useEffect(() => {
         <ul className="pagination justify-content-center">
           <li className={`page-item ${previousIndex === 0 ? "disabled" : ""}`}>
             <button className="page-link" onClick={() => handlePagination(previousIndex - 1)}>
-              Previous
+              {t("Previous", "Previous")}
             </button>
           </li>
           {
@@ -959,7 +960,7 @@ useEffect(() => {
           }
           <li className={`page-item ${items.length === 0 ? "disabled" : ""}`}>
             <button disabled={items.length === 0} className="page-link" onClick={() => handlePagination(previousIndex + 1)}>
-              Next
+              {t("Next", "Next")}
             </button>
           </li>
 

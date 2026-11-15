@@ -13,7 +13,7 @@ const Header = ({
   dashboard = "4"
 }) => {
   const dispatch = useDispatch();
-  const { currentMeta, t } = useTranslation();
+  const { currentLanguage, currentMeta, availableLanguages, changeLanguage, updatePersonalLanguage, t } = useTranslation();
   
   const ownerId= parseInt(Cookies.get("secretCode"));
 
@@ -229,14 +229,26 @@ useEffect(() => {
 
         {/* Right Section: Action Button & Language */}
         <div className="order-2 order-lg-3 flex-shrink-0 ms-auto ms-md-0 d-flex align-items-center gap-2">
-          <div
-            className="d-none d-sm-inline-flex align-items-center px-2 py-1 rounded-pill bg-light border text-dark"
-            style={{ fontSize: "0.8rem", cursor: "pointer" }}
-            title={t("language_settings", "Language Settings")}
-            onClick={() => navigateTo("/profile")}
-          >
-            <span className="me-1">🌐</span>
-            <span className="fw-semibold">{currentMeta.nativeName || currentMeta.name}</span>
+          <div className="d-flex align-items-center">
+            <select
+              className="form-select form-select-sm rounded-pill border bg-light text-dark fw-semibold"
+              style={{ minWidth: "135px", fontSize: "0.82rem", cursor: "pointer", height: "36px" }}
+              value={currentLanguage}
+              title={t("language_settings", "Language Settings")}
+              onChange={(e) => {
+                const selected = e.target.value;
+                changeLanguage(selected);
+                if (ownerId) {
+                  updatePersonalLanguage(selected);
+                }
+              }}
+            >
+              {availableLanguages.map((l) => (
+                <option key={l.code} value={l.code}>
+                  🌐 {l.nativeName || l.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <button

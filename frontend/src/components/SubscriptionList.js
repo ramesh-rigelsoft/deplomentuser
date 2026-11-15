@@ -456,15 +456,15 @@ const completeVerification = (verifyData) => {
               <div className="d-flex flex-wrap justify-content-between align-items-center">
                 <div>
                   <h6 className="mb-1 fw-bold text-success">
-                    ✅ Subscription Renewal Queued: {queuedSub.subscriptionName}
+                    ✅ {t("Subscription Renewal Queued", "Subscription Renewal Queued")}: {queuedSub.subscriptionName}
                   </h6>
                   <div className="small text-muted">
-                    Your renewal is already confirmed. It will automatically activate on{" "}
-                    <strong>{formatDate(queuedSub.subscriptionStartAt)}</strong>. Multiple renewals or duplicate subscriptions are not allowed.
+                    {t("Your renewal is already confirmed. It will automatically activate on", "Your renewal is already confirmed. It will automatically activate on")}{" "}
+                    <strong>{formatDate(queuedSub.subscriptionStartAt)}</strong>. {t("Multiple renewals or duplicate subscriptions are not allowed.", "Multiple renewals or duplicate subscriptions are not allowed.")}
                   </div>
                 </div>
                 <div className="mt-2 mt-md-0">
-                  <span className="badge bg-success fs-6">Renewal Confirmed (1 Max)</span>
+                  <span className="badge bg-success fs-6">{t("Renewal Confirmed (1 Max)", "Renewal Confirmed (1 Max)")}</span>
                 </div>
               </div>
             </div>
@@ -1064,11 +1064,11 @@ const completeVerification = (verifyData) => {
 
           <div>
             <h5 className="mb-0 text-success">
-              My Active Subscriptions
+              {t("My Active Subscriptions", "My Active Subscriptions")}
             </h5>
 
             <small className="text-muted">
-              Active & queued subscription details
+              {t("Active & queued subscription details", "Active & queued subscription details")}
             </small>
           </div>
 
@@ -1310,10 +1310,10 @@ const completeVerification = (verifyData) => {
 
           <div>
             <h5 className="mb-0">
-              Subscription Plan List
+              {t("Subscription Plan List", "Subscription Plan List")}
             </h5>
             <small className="text-muted">
-              Active plans available to purchase
+              {t("Active plans available to purchase", "Active plans available to purchase")}
             </small>
           </div>
 

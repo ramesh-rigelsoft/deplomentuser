@@ -34,6 +34,15 @@ const TRANSLATIONS = {
   ur,
 };
 
+// Helper to strip leading emojis/symbols and trailing punctuation (: * ?)
+const cleanStr = (str) => {
+  if (!str || typeof str !== "string") return "";
+  return str
+    .replace(/^[\s\u2000-\u3300\uD800-\uDFFF\u2700-\u27BF\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~📍🌟✅⚠✦📦🔍📅📊📈✏👁🧹🚀\d]+/gu, '')
+    .replace(/[\s\u2000-\u3300\uD800-\uDFFF\u2700-\u27BF\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~*:]+$/gu, '')
+    .trim();
+};
+
 // Helper to normalize keys (e.g., "Office Location" -> "office_location")
 const normalizeKey = (str) => {
   if (!str || typeof str !== "string") return "";
@@ -59,6 +68,13 @@ const KEY_ALIASES = {
   inactive: "status_inactive",
   status_active: "active",
   status_inactive: "inactive",
+  claer: "clear",
+  purchage_price: "purchase_price",
+  items_name: "item_name",
+  item_name: "items_name",
+  show_advance_search: "show_advanced_search",
+  hide_advance_search: "hide_advanced_search",
+  good_stock: "good_stock",
 };
 
 const resolveDictValue = (dict, key) => {
@@ -74,7 +90,16 @@ const resolveDictValue = (dict, key) => {
   const alias = KEY_ALIASES[norm];
   if (alias && dict[alias] !== undefined) return dict[alias];
 
-  // 4. Special phrase matches
+  // 4. Try cleaned key without leading emojis or trailing punctuation
+  const cleaned = cleanStr(key);
+  if (cleaned && cleaned !== key) {
+    const cleanNorm = normalizeKey(cleaned);
+    if (dict[cleanNorm] !== undefined) return dict[cleanNorm];
+    const cleanAlias = KEY_ALIASES[cleanNorm];
+    if (cleanAlias && dict[cleanAlias] !== undefined) return dict[cleanAlias];
+  }
+
+  // 5. Special phrase matches
   if (norm.includes("manage_everything")) return dict["manage_everything"];
   if (norm.includes("welcome_back")) return dict["welcome_back"];
   if (norm.includes("manage_all_branch")) return dict["manage_all_branch_operations"];
@@ -173,7 +198,7 @@ export const LanguageProvider = ({ children }) => {
           if (val) {
             const trimmed = val.trim();
             // Translate if non-empty, reasonable length, not pure numbers or currency
-            if (trimmed.length > 0 && trimmed.length <= 120 && isNaN(trimmed) && !trimmed.startsWith("₹")) {
+            if (trimmed.length > 0 && trimmed.length <= 500 && isNaN(trimmed) && !trimmed.startsWith("₹")) {
               if (node.__origText === undefined) {
                 node.__origText = val;
               }
@@ -186,10 +211,22 @@ export const LanguageProvider = ({ children }) => {
                 const baseTrim = node.__origText.trim();
                 const trans = resolveDictValue(currentDict, baseTrim);
                 if (trans && trans !== baseTrim) {
+                  const hasTrailingColon = /:\s*$/.test(baseTrim);
+                  const hasTrailingAsterisk = /\*\s*$/.test(baseTrim);
+                  let finalTrans = trans;
+                  if (hasTrailingColon && !finalTrans.endsWith(":")) finalTrans += ":";
+                  if (hasTrailingAsterisk && !finalTrans.endsWith("*")) finalTrans += " *";
+
+                  // Re-attach leading emoji/symbol if original had one and translation doesn't
+                  const leadingEmojiMatch = baseTrim.match(/^([\u2000-\u3300\uD800-\uDFFF\u2700-\u27BF📍🌟✅⚠✦📦🔍📅📊📈✏👁🧹🚀]+\s*)/u);
+                  if (leadingEmojiMatch && !finalTrans.startsWith(leadingEmojiMatch[1].trim())) {
+                    finalTrans = leadingEmojiMatch[1] + finalTrans;
+                  }
+
                   const startIdx = node.__origText.indexOf(baseTrim);
                   const prefix = node.__origText.slice(0, startIdx);
                   const suffix = node.__origText.slice(startIdx + baseTrim.length);
-                  const newVal = prefix + trans + suffix;
+                  const newVal = prefix + finalTrans + suffix;
                   if (node.nodeValue !== newVal) {
                     node.nodeValue = newVal;
                   }
@@ -263,9 +300,30 @@ export const LanguageProvider = ({ children }) => {
     }
   }, []);
 
+  // Sync resolved user/branch language from backend on page reload/navigation
+  const fetchCurrentLanguage = useCallback(async () => {
+    try {
+      const token = Cookies.get("token");
+      if (!token) return;
+      const res = await axios.get(`${BASE_URL}/user/language/current`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const resolved = res?.data?.data?.language;
+      if (resolved) {
+        const clean = resolved.trim().toLowerCase();
+        setCurrentLanguage(clean);
+        localStorage.setItem("app_language", clean);
+        Cookies.set("language", clean, { expires: 30 });
+      }
+    } catch (e) {
+      // Ignore if unauthenticated
+    }
+  }, []);
+
   useEffect(() => {
     fetchAvailableLanguages();
-  }, [fetchAvailableLanguages]);
+    fetchCurrentLanguage();
+  }, [fetchAvailableLanguages, fetchCurrentLanguage]);
 
   // Translation function t(key, fallback)
   const t = useCallback(

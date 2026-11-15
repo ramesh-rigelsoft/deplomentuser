@@ -8,10 +8,12 @@ import {success,fail} from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import Header from "../components/Header";
 import PageHeader from "./PageHeader";
+import { useTranslation } from "../i18n";
 // import BorderHeader from "./BorderHeader";
   /* ---------------- EXPENSE LIST ---------------- */
 
 const BranchExpense = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const secret2 = Cookies.get("secretCode");
   const [expenses, setExpenses] = useState([]);
@@ -198,11 +200,11 @@ const BranchExpense = () => {
         </div>
         <div className="col-6 col-sm-6 col-md-3 col-lg-2">
           <span className="btn btn-primary w-100">
-              Excel Download
+              {t("Excel Download", "Excel Download")}
           </span>
         </div>
         <div className="col-6 col-sm-6 col-md-3 col-lg-2">
-          <input type="Button" className="modern-clear-btn w-100" onClick={clearFilter} value="Clear" />
+          <input type="Button" className="modern-clear-btn w-100" onClick={clearFilter} value={t("Clear", "Clear")} />
         </div>
       </div>
 
@@ -212,19 +214,19 @@ const BranchExpense = () => {
           <thead className="table-light text-nowrap">
             <tr>
               <th>#</th>
-              <th>Type</th>
-              <th>Scope</th>
-              <th>Description</th>
-              <th>Amount</th>
-              <th>Date</th>
-              <th>Bill</th>
+              <th>{t("Type", "Type")}</th>
+              <th>{t("Scope", "Scope")}</th>
+              <th>{t("Description", "Description")}</th>
+              <th>{t("Amount", "Amount")}</th>
+              <th>{t("Date", "Date")}</th>
+              <th>{t("Bill", "Bill")}</th>
             </tr>
           </thead>
         <tbody>
           {expenses.length === 0 ? (
             <tr>
               <td colSpan="6" className="text-center">
-                No Data Found
+                {t("No Data Found", "No Data Found")}
               </td>
             </tr>
           ) : (
@@ -250,10 +252,10 @@ const BranchExpense = () => {
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => viewBill(e.proof)}
                     >
-                      👁 View Bill
+                      👁 {t("View Bill", "View Bill")}
                     </button>
                   ) : (
-                    <span className="text-muted">No Bill</span>
+                    <span className="text-muted">{t("No Bill", "No Bill")}</span>
                   )}
                 </td>
               </tr>
@@ -268,7 +270,7 @@ const BranchExpense = () => {
       <ul className="pagination justify-content-center">
         <li className={`page-item ${previousIndex === 0 ? "disabled" : ""}`}>
           <button className="page-link" onClick={() => handlePagination(previousIndex - 1)}>
-            Previous
+            {t("Previous", "Previous")}
           </button>
         </li>
         {
@@ -298,7 +300,7 @@ const BranchExpense = () => {
         }
         <li className={`page-item ${expenses.length === 0 ? "disabled" : ""}`}>
           <button className="page-link" onClick={() => handlePagination(previousIndex + 1)}>
-            Next
+            {t("Next", "Next")}
           </button>
         </li>
 

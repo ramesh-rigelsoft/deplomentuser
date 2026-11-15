@@ -405,12 +405,12 @@ const handleEdit = (branchId) => {
               </div>
 
               <div className="mb-2">
-                <label className="form-label small fw-bold mb-1">GST Number</label>
+                <label className="form-label small fw-bold mb-1">{t("GST Number", "GST Number")}</label>
                 <input
                   type="text"
                   className="form-control form-control-sm"
                   name="gstNumber"
-                  placeholder="GST Number (Optional)"
+                  placeholder={t("GST Number (Optional)", "GST Number (Optional)")}
                   value={formData.gstNumber}
                   onChange={handleChange}
                 />
@@ -418,12 +418,12 @@ const handleEdit = (branchId) => {
 
             {!editBranchId ? (
               <div className="mb-2">
-                <label className="form-label small fw-bold mb-1">PAN Number</label>
+                <label className="form-label small fw-bold mb-1">{t("PAN Number", "PAN Number")}</label>
                 <input
                   type="text"
                   className="form-control form-control-sm"
                   name="panNumber"
-                  placeholder="PAN Number (Optional)"
+                  placeholder={t("PAN Number (Optional)", "PAN Number (Optional)")}
                   value={formData.panNumber}
                   onChange={handleChange}
                 />
@@ -432,12 +432,12 @@ const handleEdit = (branchId) => {
               <div className="row g-2 mb-2">
                 {/* PAN Number */}
                 <div className="col-6">
-                  <label className="form-label small fw-bold mb-1">PAN Number</label>
+                  <label className="form-label small fw-bold mb-1">{t("PAN Number", "PAN Number")}</label>
                   <input
                     type="text"
                     className="form-control form-control-sm"
                     name="panNumber"
-                    placeholder="PAN Number (Optional)"
+                    placeholder={t("PAN Number (Optional)", "PAN Number (Optional)")}
                     value={formData.panNumber}
                     onChange={handleChange}
                   />
@@ -531,7 +531,7 @@ const handleEdit = (branchId) => {
             <section>
               <div className="mb-2">
                 <label className="form-label fw-semibold mb-1">
-                  Company Logo
+                  {t("Company Logo", "Company Logo")}
                 </label>
 
                 <div
@@ -572,7 +572,7 @@ const handleEdit = (branchId) => {
                               className="fw-semibold"
                               style={{ fontSize: "13px" }}
                             >
-                              Click to upload logo
+                              {t("Click to upload logo", "Click to upload logo")}
                             </div>
 
                             <small

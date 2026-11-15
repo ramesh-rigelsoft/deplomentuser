@@ -8,9 +8,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { enUS } from "date-fns/locale";
 import Header from "../components/Header";
 import PageHeader from "./PageHeader";
+import { useTranslation } from "../i18n";
 
 export default function GarbageItem() {
-
+  const { t } = useTranslation();
   const ownerId = Cookies.get("secretCode");
   const dispatch = useDispatch();
 
@@ -108,8 +109,8 @@ export default function GarbageItem() {
           value={statusFilter}
           onChange={(e) => {filterStatusReq(e.target.value);}}
         >
-          <option value="collected">Collected</option>
-          <option value="returned">Returned</option>
+          <option value="collected">{t("Collected", "Collected")}</option>
+          <option value="returned">{t("Returned", "Returned")}</option>
         </select>
       </div>
       <div className="row mb-3 g-2">
@@ -119,7 +120,7 @@ export default function GarbageItem() {
     <input
       type="text"
       className="form-control"
-      placeholder="Search item, vendor, code..."
+      placeholder={t("Search item, vendor, code...", "Search item, vendor, code...")}
       value={searchKeyword}
       onChange={(e) => handleKeywordSearch(e.target.value)}
     />
@@ -132,7 +133,7 @@ export default function GarbageItem() {
       locale={enUS}
       popperPlacement="bottom-start"
       dateFormat="yyyy-MM-dd"
-      placeholderText="📅 Start date (from)"
+      placeholderText={t("Start date (from)", "📅 Start date (from)")}
       selected={filterRequest.startDate}
       maxDate={filterRequest.endDate} 
       onChange={(date) => {
@@ -151,7 +152,7 @@ export default function GarbageItem() {
         locale={enUS}
         popperPlacement="bottom-start"
         dateFormat="yyyy-MM-dd"
-        placeholderText="📅 End date (to)"
+        placeholderText={t("End date (to)", "📅 End date (to)")}
         selected={filterRequest.endDate}
         minDate={filterRequest.startDate} 
         onChange={(date) => {
@@ -166,7 +167,7 @@ export default function GarbageItem() {
   {/* Apply Button */}
   <div className="col-12 col-sm-12 col-md-2">
     <button className="btn btn-primary w-100" onClick={handleFilter}>
-      Filter
+      {t("Filter", "Filter")}
     </button>
   </div>
 
@@ -181,17 +182,17 @@ export default function GarbageItem() {
 
             <thead className="table-light text-nowrap">
               <tr className="">
-                <th>Vendor</th>
-                <th>Item Code</th>
-                <th>Garbage Reason</th>
-                <th>Status</th>
-                <th>Product</th>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Initial</th>
-                <th>Sold</th>
-                <th>Return Date</th>
-                <th>Collected Date</th>  
+                <th>{t("Vendor", "Vendor")}</th>
+                <th>{t("Item Code", "Item Code")}</th>
+                <th>{t("Garbage Reason", "Garbage Reason")}</th>
+                <th>{t("Status", "Status")}</th>
+                <th>{t("Product", "Product")}</th>
+                <th>{t("Description", "Description")}</th>
+                <th>{t("Qty", "Qty")}</th>
+                <th>{t("Initial", "Initial")}</th>
+                <th>{t("Sold", "Sold")}</th>
+                <th>{t("Return Date", "Return Date")}</th>
+                <th>{t("Collected Date", "Collected Date")}</th>  
               </tr>
             </thead>
 
@@ -199,7 +200,7 @@ export default function GarbageItem() {
               {allItems.length === 0 ? (
                 <tr>
                   <td colSpan="11" className="text-center text-muted py-4">
-                    No Data Found
+                    {t("No Data Found", "No Data Found")}
                   </td>
                 </tr>
               ) : (

@@ -279,7 +279,7 @@ export default function ViewProfile() {
                   className="btn btn-light btn-sm"
                   onClick={handleEdit}
                 >
-                  ✏ Edit Profile
+                  ✏ {t("Edit Profile", "Edit Profile")}
                 </button>
               )}
 

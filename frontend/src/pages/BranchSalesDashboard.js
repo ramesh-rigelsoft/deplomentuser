@@ -6,6 +6,7 @@ import API from "../redux/API";
 import {success,fail} from "../redux/WebTostar"
 import Header from "../components/Header";
 import PageHeader from "./PageHeader";
+import { useTranslation } from "../i18n";
 
 import {
   Chart as ChartJS,
@@ -49,7 +50,7 @@ const formatINR = (amount) =>
   }).format(amount);
 
 const BranchSalesDashboard = () => {
-
+  const { t } = useTranslation();
   const divRef = useRef();
   
   const secret = Cookies.get("secretCode"); 
@@ -213,10 +214,10 @@ const BranchSalesDashboard = () => {
 
   /* ---------------- DONUT ---------------- */
   const donutData = {
-    labels: ["Low Stock", "Good Stock"],
+    labels: [t("Low Stock", "Low Stock"), t("Good Stock", "Good Stock")],
     datasets: [
       {
-        label: "Product Stock Status",
+        label: t("Product Stock Status", "Product Stock Status"),
         data: [dashboard?.lowStock, filteredInventory?.length - dashboard?.lowStock],
         backgroundColor: ["#ef4444", "#22c55e"],
         borderColor: "#fff",
@@ -348,7 +349,7 @@ const BranchSalesDashboard = () => {
       locale={enUS}
       popperPlacement="bottom-start"
       dateFormat="yyyy-MM-dd"
-      placeholderText="📅 Start date (from)"
+      placeholderText={t("Start date (from)", "📅 Start date (from)")}
       selected={startDate}
       onChange={(date) => setStartDate(date)}
     />
@@ -361,7 +362,7 @@ const BranchSalesDashboard = () => {
       locale={enUS}
       popperPlacement="bottom-start"
       dateFormat="yyyy-MM-dd"
-      placeholderText="📅 End date (to)"
+      placeholderText={t("End date (to)", "📅 End date (to)")}
       selected={endDate}
       onChange={(date) => setEndDate(date)}
     />
@@ -378,7 +379,7 @@ const BranchSalesDashboard = () => {
           border: "none"
         }}
       >
-        🚀 Search
+        🚀 {t("Search", "Search")}
       </Button>
 
       <Button
@@ -390,7 +391,7 @@ const BranchSalesDashboard = () => {
           color: "#fff"
         }}
       >
-        🧹 Clear
+        🧹 {t("Clear", "Clear")}
       </Button>
     </div>
   </Col>
@@ -399,12 +400,12 @@ const BranchSalesDashboard = () => {
 
       {/* SUMMARY */}
       <Row className="g-2 g-md-3 mb-4">
-        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Total Stock</h6><span>{dashboard?.totalStock}</span></Card></Col>
-        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Total Value</h6><span>{formatINR(dashboard?.totalValue)}</span></Card></Col>
-        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Expense</h6><span>{formatINR(dashboard?.totalExpense)}</span></Card></Col>
-        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Sold</h6><span>{formatINR(dashboard?.totalSalesAmount)}</span></Card></Col>
-        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Profit</h6><span style={{color: dashboard?.profit >=0 ? "green" : "red"}}>{formatINR(dashboard?.profit)}</span></Card></Col>
-        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>Low Stock</h6><span><Badge bg="danger">{dashboard?.lowStock}</Badge></span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>{t("Total Stock", "Total Stock")}</h6><span>{dashboard?.totalStock}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>{t("Total Value", "Total Value")}</h6><span>{formatINR(dashboard?.totalValue)}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>{t("Expense", "Expense")}</h6><span>{formatINR(dashboard?.totalExpense)}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>{t("Sold", "Sold")}</h6><span>{formatINR(dashboard?.totalSalesAmount)}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>{t("Profit", "Profit")}</h6><span style={{color: dashboard?.profit >=0 ? "green" : "red"}}>{formatINR(dashboard?.profit)}</span></Card></Col>
+        <Col xs={6} sm={4} md={4} lg={2}><Card style={cardStyle}><h6>{t("Low Stock", "Low Stock")}</h6><span><Badge bg="danger">{dashboard?.lowStock}</Badge></span></Card></Col>
       </Row>
 
       {/* CHARTS */}

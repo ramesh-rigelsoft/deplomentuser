@@ -1109,6 +1109,35 @@ public class UserController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	@GetMapping(value = "language/current")
+	public ResponseEntity<Map<String, Object>> getCurrentLanguage(HttpServletRequest request) {
+		try {
+			User user = authenticateUser(request);
+			OfficeBranch branch = null;
+			if (user.getBranchCode() != null && !user.getBranchCode().trim().isEmpty()) {
+				try {
+					branch = superAdminDao.getBranchByCode(user.getBranchCode().trim());
+				} catch (Exception ignored) {}
+			}
+			Map<String, Object> langInfo = languageService.resolveLanguage(user, branch);
+			Map<String, Object> response = new HashMap<>();
+			response.put("status", "OK");
+			response.put("code", "200");
+			response.put("data", langInfo);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			Map<String, Object> response = new HashMap<>();
+			response.put("status", "OK");
+			response.put("code", "200");
+			Map<String, Object> fallback = new HashMap<>();
+			fallback.put("language", "en");
+			fallback.put("languageName", "English");
+			fallback.put("isRtl", false);
+			response.put("data", fallback);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+
 	@GetMapping(value = "languages")
 	public ResponseEntity<Map<String, Object>> getLanguages() {
 		List<LanguageMaster> languages = languageService.getActiveLanguages();

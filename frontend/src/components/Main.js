@@ -54,6 +54,7 @@ export default function Main() {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboards/></ProtectedRoute>} />
         
         <Route path="/editProfile" element={<EditProfile/>}/>
+        <Route path="/profile" element={<EditProfile/>}/>
         <Route path="/resetPassword" element={<ResetPassword/>}/>
 
         <Route path="/rolesPermission" element={<RolePermissionManager/>}/>

@@ -10,6 +10,7 @@ import Tooltip from "./Tooltip"
 import Cookies from "js-cookie";
 import Header from "../components/Header";
 import PageHeader from "./PageHeader";
+import { useTranslation } from "../i18n";
 // import BorderHeader from "./BorderHeader";
 
 /* ---------- Custom Styles (height 30px) ---------- */
@@ -43,7 +44,7 @@ const customStyles = {
 };
 
 const ItemsInventory = () => {
-  
+  const { t } = useTranslation();
   const secret = Cookies.get("secretCode"); 
   const dispatch = useDispatch();
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -208,13 +209,13 @@ useEffect(() => {
           className="modern-clear-btn"
           onClick={() => setShowAdvanced(!showAdvanced)}
         >
-          {showAdvanced ? "Hide Advanced Search" : "Show Advanced Search"}
+          {showAdvanced ? t("Hide Advanced Search", "Hide Advanced Search") : t("Show Advanced Search", "Show Advanced Search")}
         </button>
         <button className="modern-clear-btn" onClick={clearFilters}>
-          Clear Filters
+          {t("Clear Filters", "Clear Filters")}
         </button>
         <button className="modern-clear-btn" onClick={searchFilters}>
-          Search
+          {t("Search", "Search")}
         </button>
       </div>
       {/* <div className="mb-3 text-end">

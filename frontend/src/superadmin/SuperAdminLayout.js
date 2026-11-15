@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "../i18n";
 
 const SuperAdminLayout = ({ children }) => {
-  const { t } = useTranslation();
+  const { t, currentLanguage, availableLanguages, changeLanguage } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 992 : false);
@@ -181,6 +181,28 @@ const SuperAdminLayout = ({ children }) => {
               </div>
             )}
           </div>
+
+          <select
+            value={currentLanguage}
+            onChange={(e) => changeLanguage(e.target.value)}
+            style={{
+              backgroundColor: "rgba(255,255,255,0.12)",
+              color: "#ffffff",
+              border: "1px solid rgba(255,255,255,0.25)",
+              borderRadius: "6px",
+              padding: isMobile ? "0.3rem 0.4rem" : "0.35rem 0.65rem",
+              fontSize: "0.82rem",
+              fontWeight: 500,
+              cursor: "pointer",
+              outline: "none",
+            }}
+          >
+            {availableLanguages.map((l) => (
+              <option key={l.code} value={l.code} style={{ backgroundColor: "#1e293b", color: "#ffffff" }}>
+                🌐 {l.nativeName || l.name}
+              </option>
+            ))}
+          </select>
 
           <button
             onClick={handleLogout}
