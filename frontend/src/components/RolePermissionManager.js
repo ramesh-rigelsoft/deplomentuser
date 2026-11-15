@@ -52,14 +52,6 @@ export default function RBACPermissionPanel() {
 
       if (list.length > 0 || String(res?.payload?.code || res?.code) === "200") {
         setPages(list);
-
-        // First page automatically select
-        if (list.length > 0) {
-          setPermissions((prev) => ({
-            ...prev,
-            pageId: Number(list[0].id)
-          }));
-        }
       } else {
         fail(
           res?.payload?.message ||
@@ -195,36 +187,43 @@ export default function RBACPermissionPanel() {
   };
 
   // ==========================================
-  // SELECTED PAGE
+  // UNASSIGNED PAGES FILTER
+  // Only show pages in "Select Page" that have NOT been assigned yet
   // ==========================================
-  const selectedPage = pages.find(
+  const assignedPageIds = new Set(
+    permittedPages
+      .map((item) => Number(item.pageId || item.id))
+      .filter((id) => !isNaN(id) && id > 0)
+  );
+
+  const unassignedPages = pages.filter(
+    (page) => !assignedPageIds.has(Number(page.id))
+  );
+
+  // Auto-sync permissions.pageId to an available unassigned page
+  useEffect(() => {
+    if (pages.length > 0) {
+      const isCurrentAvailable = unassignedPages.some(
+        (page) => Number(page.id) === Number(permissions.pageId)
+      );
+
+      if (!isCurrentAvailable) {
+        setPermissions((prev) => ({
+          ...prev,
+          pageId: unassignedPages.length > 0 ? Number(unassignedPages[0].id) : ""
+        }));
+      }
+    }
+  }, [pages, permittedPages]);
+
+  // ==========================================
+  // SELECTED PAGE (From unassigned pages)
+  // ==========================================
+  const selectedPage = unassignedPages.find(
     (page) =>
       Number(page.id) ===
       Number(permissions.pageId)
   );
-
-  // ==========================================
-  // CHECK PAGE PERMISSION
-  //
-  // API response:
-  // {
-  //   id: 5,
-  //   canAll: true,
-  //   ...
-  // }
-  //
-  // Here "id" is being used as pageId
-  // according to your current API response.
-  // ==========================================
-  const selectedPermission =
-    permittedPages.find(
-      (item) =>
-        Number(item.pageId || item.id) ===
-        Number(permissions.pageId)
-    );
-
-  const isPermissionAssigned =
-    !!selectedPermission;
 
   // ==========================================
   // ADD PERMISSION
@@ -336,10 +335,7 @@ export default function RBACPermissionPanel() {
   // SELECT PAGE FROM LEFT LIST
   // ==========================================
   const handleSelectAssignedPage = (item) => {
-    setPermissions((prev) => ({
-      ...prev,
-      pageId: Number(item.pageId || item.id)
-    }));
+    // Assigned pages are managed via the Assigned Pages list and removed via the Remove button
   };
 
   return (
@@ -510,13 +506,16 @@ export default function RBACPermissionPanel() {
                     onChange={
                       handlePageChange
                     }
+                    disabled={unassignedPages.length === 0}
                   >
 
                     <option value="">
-                      Select Page
+                      {unassignedPages.length === 0
+                        ? "-- All pages already assigned --"
+                        : "-- Select Page --"}
                     </option>
 
-                    {pages.map(
+                    {unassignedPages.map(
                       (page) => (
 
                         <option
@@ -535,8 +534,15 @@ export default function RBACPermissionPanel() {
 
                 </div>
 
-                {/* SELECTED PAGE */}
-                {selectedPage && (
+                {/* SELECTED PAGE OR ALL ASSIGNED MESSAGE */}
+                {unassignedPages.length === 0 ? (
+                  <div className="alert alert-success d-flex align-items-center gap-2 mb-4 py-2 px-3">
+                    <i className="fa fa-check-circle fs-5" />
+                    <div>
+                      <strong>All Pages Assigned!</strong> All available pages are currently assigned to this role and branch.
+                    </div>
+                  </div>
+                ) : selectedPage ? (
 
                   <div className="border rounded p-3 mb-4 bg-light">
 
@@ -569,7 +575,7 @@ export default function RBACPermissionPanel() {
 
                   </div>
 
-                )}
+                ) : null}
 
                 {/* BRANCH + ROLE INFO */}
                 <div className="row g-3 mb-4">
@@ -631,11 +637,12 @@ export default function RBACPermissionPanel() {
                   <button
                     type="button"
                     className="btn btn-primary w-100 py-2 fw-bold"
+                    disabled={!permissions.pageId || unassignedPages.length === 0}
                     onClick={
                       handleAddPermission
                     }
                   >
-                    Add Permission
+                    {unassignedPages.length === 0 ? "All Pages Assigned" : "Add Permission"}
                   </button>
               </div>
 
