@@ -304,8 +304,8 @@ const SubscriptionPlans = () => {
           overflow: "hidden",
         }}
       >
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.875rem" }}>
+        <div className="table-responsive" style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", minWidth: "850px", borderCollapse: "collapse", textAlign: "left", fontSize: "0.875rem" }}>
             <thead>
               <tr style={{ backgroundColor: "#f8fafc", borderBottom: "2px solid #e2e8f0", color: "#475569" }}>
                 <th style={{ padding: "0.85rem 1rem" }}>#</th>
@@ -500,7 +500,7 @@ const SubscriptionPlans = () => {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem", marginBottom: "1rem" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#334155", marginBottom: "0.3rem" }}>
-                    Plan Name *
+                    Plan Name <span style={{ color: "#dc2626", fontWeight: "bold" }}>*</span>
                   </label>
                   <input
                     type="text"
@@ -520,7 +520,7 @@ const SubscriptionPlans = () => {
                 </div>
                 <div>
                   <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#334155", marginBottom: "0.3rem" }}>
-                    Plan Code * (Unique identifier)
+                    Plan Code <span style={{ color: "#dc2626", fontWeight: "bold" }}>*</span> (Unique identifier)
                   </label>
                   <input
                     type="text"

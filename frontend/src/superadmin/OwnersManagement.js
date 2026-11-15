@@ -141,8 +141,8 @@ const OwnersManagement = () => {
           overflow: "hidden",
         }}
       >
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+        <div className="table-responsive" style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", minWidth: "1050px", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
             <thead>
               <tr style={{ backgroundColor: "#f8fafc", borderBottom: "2px solid #e2e8f0", color: "#475569" }}>
                 <th style={{ padding: "0.75rem 1rem" }}>Owner ID</th>
@@ -415,8 +415,8 @@ const OwnersManagement = () => {
                         No child users added under this owner yet.
                       </div>
                     ) : (
-                      <div style={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
-                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.825rem" }}>
+                      <div className="table-responsive" style={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
+                        <table style={{ width: "100%", minWidth: "750px", borderCollapse: "collapse", fontSize: "0.825rem" }}>
                           <thead>
                             <tr style={{ backgroundColor: "#f8fafc", borderBottom: "1px solid #e2e8f0", color: "#475569" }}>
                               <th style={{ padding: "0.5rem 0.75rem" }}>User ID</th>
@@ -465,8 +465,8 @@ const OwnersManagement = () => {
                     {(ownerDetail.subscriptionHistory || []).length === 0 ? (
                       <p style={{ color: "#94a3b8", fontSize: "0.85rem" }}>No subscription history.</p>
                     ) : (
-                      <div style={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
-                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.825rem" }}>
+                      <div className="table-responsive" style={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
+                        <table style={{ width: "100%", minWidth: "750px", borderCollapse: "collapse", fontSize: "0.825rem" }}>
                           <thead>
                             <tr style={{ backgroundColor: "#f8fafc", borderBottom: "1px solid #e2e8f0", color: "#475569" }}>
                               <th style={{ padding: "0.5rem 0.75rem" }}>Sub ID</th>

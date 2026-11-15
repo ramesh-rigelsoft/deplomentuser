@@ -130,8 +130,8 @@ const SuperAdminSubscriptions = () => {
 
       {/* Table */}
       <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflow: "hidden" }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+        <div className="table-responsive" style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", minWidth: "1050px", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
             <thead>
               <tr style={{ backgroundColor: "#f8fafc", borderBottom: "2px solid #e2e8f0", color: "#475569" }}>
                 <th style={{ padding: "0.75rem 1rem" }}>ID</th>

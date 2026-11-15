@@ -122,19 +122,27 @@ const HomePage = () => {
               >
                 <h4 className="text-center mb-4 fw-bold">Login</h4>
 
+                <label className="form-label small fw-semibold text-white mb-1">
+                  Email <span style={{ color: "#ff4d4f", fontWeight: "bold" }}>*</span>
+                </label>
                 <input
                   type="text"
+                  required
                   className="form-control mb-3"
-                  placeholder="Email"
+                  placeholder="Enter your email"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   style={{ minHeight: "42px" }}
                 />
 
+                <label className="form-label small fw-semibold text-white mb-1">
+                  Password <span style={{ color: "#ff4d4f", fontWeight: "bold" }}>*</span>
+                </label>
                 <input
                   type="password"
+                  required
                   className="form-control mb-3"
-                  placeholder="Password"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   style={{ minHeight: "42px" }}

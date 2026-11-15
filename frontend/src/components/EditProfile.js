@@ -281,7 +281,7 @@ export default function ViewProfile() {
                 <div className="mb-3">
 
                   <label className="form-label">
-                    Name
+                    Name {editMode && <span className="text-danger fw-bold ms-1">*</span>}
                   </label>
 
                   {editMode ? (
@@ -314,7 +314,7 @@ export default function ViewProfile() {
                 <div className="mb-3">
 
                   <label className="form-label">
-                    Mobile Number
+                    Mobile Number {editMode && <span className="text-danger fw-bold ms-1">*</span>}
                   </label>
 
                   {editMode ? (
@@ -355,7 +355,7 @@ export default function ViewProfile() {
                 <div className="mb-3">
 
                   <label className="form-label">
-                    Email
+                    Email {editMode && <span className="text-danger fw-bold ms-1">*</span>}
                   </label>
 
                   {editMode ? (

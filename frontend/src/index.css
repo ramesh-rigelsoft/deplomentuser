@@ -1083,8 +1083,86 @@ margin-top:4px;
 
 
 
-.table-responsive {
-  overflow: visible !important;
+/* ==========================================================
+   RESPONSIVE DATA TABLES & HORIZONTAL SCROLLBAR
+   ========================================================== */
+.table-responsive,
+.table-responsive-container,
+div[style*="overflowX: auto"],
+div[style*="overflow-x: auto"] {
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+/* Clear, tactile horizontal scrollbar for tables on all browsers */
+.table-responsive::-webkit-scrollbar,
+div[style*="overflowX: auto"]::-webkit-scrollbar,
+div[style*="overflow-x: auto"]::-webkit-scrollbar {
+  height: 9px !important;
+  width: 9px !important;
+  display: block !important;
+}
+
+.table-responsive::-webkit-scrollbar-track,
+div[style*="overflowX: auto"]::-webkit-scrollbar-track,
+div[style*="overflow-x: auto"]::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb,
+div[style*="overflowX: auto"]::-webkit-scrollbar-thumb,
+div[style*="overflow-x: auto"]::-webkit-scrollbar-thumb {
+  background-color: #94a3b8 !important;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover,
+div[style*="overflowX: auto"]::-webkit-scrollbar-thumb:hover,
+div[style*="overflow-x: auto"]::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b !important;
+}
+
+/* Ensure data tables maintain legible column widths and scroll left-right */
+.table-responsive > .table,
+.table-responsive > table,
+div[style*="overflowX: auto"] > table,
+div[style*="overflow-x: auto"] > table {
+  width: 100%;
+  min-width: max-content;
+}
+
+@media (max-width: 768px) {
+  .table-responsive > .table,
+  .table-responsive > table,
+  div[style*="overflowX: auto"] > table,
+  div[style*="overflow-x: auto"] > table {
+    min-width: 620px;
+  }
+}
+
+.table-responsive > .table th,
+.table-responsive > table th,
+div[style*="overflowX: auto"] > table th,
+div[style*="overflow-x: auto"] > table th {
+  white-space: nowrap;
+}
+
+/* Mandatory Field Red Asterisk Helper Classes */
+.required-star,
+.req-star,
+.mandatory-star {
+  color: #dc2626 !important;
+  font-weight: 700 !important;
+  margin-left: 2px;
 }
 
 
@@ -1390,20 +1468,6 @@ margin-top:4px;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Smooth responsive scrollbars for data tables */
-.table-responsive::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-
-.table-responsive::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 4px;
-}
-
-.table-responsive::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8;
-}
 
 /* Touch device button and control friendliness */
 @media (max-width: 768px) {

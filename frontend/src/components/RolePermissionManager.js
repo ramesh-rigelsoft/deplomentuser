@@ -398,7 +398,7 @@ export default function RBACPermissionPanel() {
               <div className="col-lg-3">
 
                 <label className="form-label fw-semibold mb-1">
-                  Branch
+                  Branch <span className="text-danger fw-bold ms-1">*</span>
                 </label>
 
                 <select
@@ -438,7 +438,7 @@ export default function RBACPermissionPanel() {
               <div className="col-lg-3">
 
                 <label className="form-label fw-semibold mb-1">
-                  Role
+                  Role <span className="text-danger fw-bold ms-1">*</span>
                 </label>
 
                 <select

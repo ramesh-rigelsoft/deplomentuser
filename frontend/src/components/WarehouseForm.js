@@ -37,7 +37,7 @@ const WarehouseForm = () => {
                 {/* Warehouse Location Code */}
                 <div className="mb-3">
                   <label className="form-label fw-semibold">
-                    Warehouse Location Code
+                    Warehouse Location Code <span className="text-danger fw-bold ms-1">*</span>
                   </label>
                   <input
                     type="text"
@@ -52,7 +52,9 @@ const WarehouseForm = () => {
 
                 {/* Company Name */}
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Company Name</label>
+                  <label className="form-label fw-semibold">
+                    Company Name <span className="text-danger fw-bold ms-1">*</span>
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -67,7 +69,7 @@ const WarehouseForm = () => {
                 {/* Delivery Address */}
                 <div className="mb-3">
                   <label className="form-label fw-semibold">
-                    Delivery Address
+                    Delivery Address <span className="text-danger fw-bold ms-1">*</span>
                   </label>
                   <input
                     type="text"
@@ -83,7 +85,9 @@ const WarehouseForm = () => {
                 {/* City & State */}
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label className="form-label fw-semibold">City</label>
+                    <label className="form-label fw-semibold">
+                      City <span className="text-danger fw-bold ms-1">*</span>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -95,7 +99,9 @@ const WarehouseForm = () => {
                     />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="form-label fw-semibold">State</label>
+                    <label className="form-label fw-semibold">
+                      State <span className="text-danger fw-bold ms-1">*</span>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -111,7 +117,9 @@ const WarehouseForm = () => {
                 {/* Country & Postal Code */}
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label className="form-label fw-semibold">Country</label>
+                    <label className="form-label fw-semibold">
+                      Country <span className="text-danger fw-bold ms-1">*</span>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -123,7 +131,9 @@ const WarehouseForm = () => {
                     />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="form-label fw-semibold">Postal Code</label>
+                    <label className="form-label fw-semibold">
+                      Postal Code <span className="text-danger fw-bold ms-1">*</span>
+                    </label>
                     <input
                       type="text"
                       className="form-control"

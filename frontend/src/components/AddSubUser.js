@@ -219,122 +219,155 @@ const AddSubUser = () => {
             <form onSubmit={handleSubmit}>
 
               {/* NAME */}
-              <input
-                type="text"
-                name="name"
-                className="form-control form-control-sm mb-1"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={handleChange}
-              />
-              {errors.name && (
-                <small className="text-danger">{errors.name}</small>
-              )}
-
-              {/* email_id */}
-              <input
-                type="text"
-                name="email_id"
-                className="form-control form-control-sm mb-1 mt-2"
-                placeholder="Email ID"
-                value={formData.email_id}
-                onChange={handleChange}
-              />
-              {errors.email_id && (
-                <small className="text-danger">{errors.email_id}</small>
-              )}
-
-              {/* mobile_no */}
-              <input
-                type="text"
-                name="mobile_no"
-                className="form-control form-control-sm mb-1 mt-2"
-                placeholder="Mobile Number (10 digits)"
-                value={formData.mobile_no}
-                onChange={handleChange}
-              />
-              {errors.mobile_no && (
-                <small className="text-danger">{errors.mobile_no}</small>
-              )}
-
-              {/* PASSWORD */}
-              <div className="input-group input-group-sm mt-2 mb-1">
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">
+                  Full Name <span className="text-danger fw-bold ms-1">*</span>
+                </label>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  className="form-control"
-                  placeholder={
-                    editIndex !== null
-                      ? "Leave blank to keep existing password"
-                      : "Password (min 6 characters)"
-                  }
-                  value={formData.password}
+                  type="text"
+                  name="name"
+                  className="form-control form-control-sm"
+                  placeholder="Full Name"
+                  value={formData.name}
                   onChange={handleChange}
                 />
-
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={() => setShowPassword(!showPassword)}
-                  tabIndex="-1"
-                >
-                  <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"} />
-                </button>
+                {errors.name && (
+                  <small className="text-danger">{errors.name}</small>
+                )}
               </div>
-              {errors.password && (
-                <small className="text-danger">{errors.password}</small>
-              )}
+
+              {/* email_id */}
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">
+                  Email ID <span className="text-danger fw-bold ms-1">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="email_id"
+                  className="form-control form-control-sm"
+                  placeholder="Email ID"
+                  value={formData.email_id}
+                  onChange={handleChange}
+                />
+                {errors.email_id && (
+                  <small className="text-danger">{errors.email_id}</small>
+                )}
+              </div>
+
+              {/* mobile_no */}
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">
+                  Mobile Number <span className="text-danger fw-bold ms-1">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="mobile_no"
+                  className="form-control form-control-sm"
+                  placeholder="Mobile Number (10 digits)"
+                  value={formData.mobile_no}
+                  onChange={handleChange}
+                />
+                {errors.mobile_no && (
+                  <small className="text-danger">{errors.mobile_no}</small>
+                )}
+              </div>
+
+              {/* PASSWORD */}
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">
+                  Password {editIndex === null && <span className="text-danger fw-bold ms-1">*</span>}
+                </label>
+                <div className="input-group input-group-sm">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    className="form-control"
+                    placeholder={
+                      editIndex !== null
+                        ? "Leave blank to keep existing password"
+                        : "Password (min 6 characters)"
+                    }
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex="-1"
+                  >
+                    <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"} />
+                  </button>
+                </div>
+                {errors.password && (
+                  <small className="text-danger">{errors.password}</small>
+                )}
+              </div>
 
               {/* BRANCH */}
-              <select
-                name="branchCode"
-                className="form-select form-select-sm mb-1 mt-2"
-                value={formData.branchCode}
-                onChange={handleChange}
-              >
-                {branches.length === 0 ? (
-                  <option value="">No Branch Found</option>
-                ) : (
-                  <>
-                    <option value="">Select Office</option>
-                    {branches.map((b) => (
-                      <option key={b.id} value={b.branchCode}>
-                        {b.branchName} ({b.branchCode})
-                      </option>
-                    ))}
-                  </>
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">
+                  Select Office <span className="text-danger fw-bold ms-1">*</span>
+                </label>
+                <select
+                  name="branchCode"
+                  className="form-select form-select-sm"
+                  value={formData.branchCode}
+                  onChange={handleChange}
+                >
+                  {branches.length === 0 ? (
+                    <option value="">No Branch Found</option>
+                  ) : (
+                    <>
+                      <option value="">Select Office</option>
+                      {branches.map((b) => (
+                        <option key={b.id} value={b.branchCode}>
+                          {b.branchName} ({b.branchCode})
+                        </option>
+                      ))}
+                    </>
+                  )}
+                </select>
+                {errors.branchCode && (
+                  <small className="text-danger">{errors.branchCode}</small>
                 )}
-              </select>
-              {errors.branchCode && (
-                <small className="text-danger">{errors.branchCode}</small>
-              )}
+              </div>
 
               {/* ROLE */}
-              <select
-                name="role"
-                className="form-select form-select-sm mb-1 mt-2"
-                value={formData.role}
-                onChange={handleChange}
-              >
-                <option value="">Select Role</option>
-                <option value="user">User</option>
-                <option value="employee">Employee</option>
-                <option value="manager">Manager</option>
-              </select>
-              {errors.role && (
-                <small className="text-danger">{errors.role}</small>
-              )}
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">
+                  Select Role <span className="text-danger fw-bold ms-1">*</span>
+                </label>
+                <select
+                  name="role"
+                  className="form-select form-select-sm"
+                  value={formData.role}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Role</option>
+                  <option value="user">User</option>
+                  <option value="employee">Employee</option>
+                  <option value="manager">Manager</option>
+                </select>
+                {errors.role && (
+                  <small className="text-danger">{errors.role}</small>
+                )}
+              </div>
 
               {/* STATUS */}
-              <select
-                name="status"
-                className="form-select form-select-sm mb-1 mt-2"
-                value={formData.status}
-                onChange={handleChange}
-              >
-                <option value="1">Active</option>
-                <option value="0">InActive</option>
-              </select>
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">Status</label>
+                <select
+                  name="status"
+                  className="form-select form-select-sm"
+                  value={formData.status}
+                  onChange={handleChange}
+                >
+                  <option value="1">Active</option>
+                  <option value="0">InActive</option>
+                </select>
+              </div>
 
               <div className="d-flex gap-2 mt-3">
                 <button
@@ -381,7 +414,7 @@ const AddSubUser = () => {
                 <tbody>
                   {users.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="text-center">
+                      <td colSpan="7" className="text-center">
                         No Users Found
                       </td>
                     </tr>

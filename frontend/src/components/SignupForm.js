@@ -161,7 +161,7 @@ export default function Signup() {
             {/* Name */}
             <div className="mb-3">
               <label className="form-label">
-                Name
+                Name <span className="text-danger fw-bold ms-1">*</span>
               </label>
 
               <input
@@ -184,7 +184,7 @@ export default function Signup() {
             {/* Mobile */}
             <div className="mb-3">
               <label className="form-label">
-                Mobile Number
+                Mobile Number <span className="text-danger fw-bold ms-1">*</span>
               </label>
 
               <input
@@ -213,7 +213,7 @@ export default function Signup() {
             {/* Email */}
             <div className="mb-3">
               <label className="form-label">
-                Email
+                Email <span className="text-danger fw-bold ms-1">*</span>
               </label>
 
               <input
@@ -236,7 +236,7 @@ export default function Signup() {
             {/* Password */}
             <div className="mb-3">
               <label className="form-label">
-                Password
+                Password <span className="text-danger fw-bold ms-1">*</span>
               </label>
 
               <input
@@ -263,7 +263,7 @@ export default function Signup() {
             {/* Confirm Password */}
             <div className="mb-3">
               <label className="form-label">
-                Confirm Password
+                Confirm Password <span className="text-danger fw-bold ms-1">*</span>
               </label>
 
               <input

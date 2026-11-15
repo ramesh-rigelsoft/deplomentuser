@@ -342,23 +342,31 @@ const handleEdit = (branchId) => {
               {editBranchId !== null ? "Update Office" : "Add Office"}
             </h5>
             <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="branchName"
-                maxLength={200}
-                className="form-control form-control-sm mb-2"
-                placeholder="Branch Name"
-                value={formData.branchName}
-                onChange={handleChange}
-              />
-              {errors.branchName && (
-                <small className="text-danger">{errors.branchName}</small>
-              )}
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">
+                  Branch Name <span className="text-danger fw-bold ms-1">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="branchName"
+                  maxLength={200}
+                  className="form-control form-control-sm"
+                  placeholder="Branch Name"
+                  value={formData.branchName}
+                  onChange={handleChange}
+                />
+                {errors.branchName && (
+                  <small className="text-danger">{errors.branchName}</small>
+                )}
+              </div>
               <hr />
               <h6 className="mt-3 mb-2">Company Information</h6>
 
               <div className="row g-2">
                 <div className="col-12 col-sm-6 mb-2">
+                  <label className="form-label small fw-bold mb-1">
+                    Shop Type <span className="text-danger fw-bold ms-1">*</span>
+                  </label>
                   <select
                     className="form-select form-select-sm"
                     name="shopType"
@@ -375,9 +383,10 @@ const handleEdit = (branchId) => {
                   )}
                 </div>
                 <div className="col-12 col-sm-6 mb-2">
+                  <label className="form-label small fw-bold mb-1">Status</label>
                   <select
                     name="status"
-                    className="form-select form-select-sm mb-2"
+                    className="form-select form-select-sm"
                     value={formData.status}
                     onChange={(e) =>
                       setFormData({
@@ -393,38 +402,48 @@ const handleEdit = (branchId) => {
 
               </div>
 
-              <input
-                type="text"
-                className="form-control form-control-sm mb-2"
-                name="gstNumber"
-                placeholder="GST Number"
-                value={formData.gstNumber}
-                onChange={handleChange}
-              />
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">GST Number</label>
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  name="gstNumber"
+                  placeholder="GST Number (Optional)"
+                  value={formData.gstNumber}
+                  onChange={handleChange}
+                />
+              </div>
+
             {!editBranchId ? (
-              <input
-                type="text"
-                className="form-control form-control-sm mb-1"
-                name="panNumber"
-                placeholder="PAN Number"
-                value={formData.panNumber}
-                onChange={handleChange}
-              />):(
-              <div className="row">
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">PAN Number</label>
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  name="panNumber"
+                  placeholder="PAN Number (Optional)"
+                  value={formData.panNumber}
+                  onChange={handleChange}
+                />
+              </div>
+            ):(
+              <div className="row g-2 mb-2">
                 {/* PAN Number */}
-                <div className="col-6 mb-2">
+                <div className="col-6">
+                  <label className="form-label small fw-bold mb-1">PAN Number</label>
                   <input
                     type="text"
                     className="form-control form-control-sm"
                     name="panNumber"
-                    placeholder="PAN Number"
+                    placeholder="PAN Number (Optional)"
                     value={formData.panNumber}
                     onChange={handleChange}
                   />
                 </div>
 
                 {/* Geo Location */}
-                <div className="col-6 mb-2">
+                <div className="col-6">
+                  <label className="form-label small fw-bold mb-1">Location</label>
                   <span
                     className="btn btn-outline-primary btn-sm w-100"
                     onClick={handleGeoLocation}
@@ -437,6 +456,9 @@ const handleEdit = (branchId) => {
 
               <div className="row g-2">
                 <div className="col-12 col-sm-4 mb-2">
+                  <label className="form-label small fw-bold mb-1">
+                    State <span className="text-danger fw-bold ms-1">*</span>
+                  </label>
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -451,6 +473,9 @@ const handleEdit = (branchId) => {
                 </div>
 
                 <div className="col-12 col-sm-4 mb-2">
+                  <label className="form-label small fw-bold mb-1">
+                    City <span className="text-danger fw-bold ms-1">*</span>
+                  </label>
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -465,6 +490,9 @@ const handleEdit = (branchId) => {
                 </div>
 
                 <div className="col-12 col-sm-4 mb-2">
+                  <label className="form-label small fw-bold mb-1">
+                    Pincode <span className="text-danger fw-bold ms-1">*</span>
+                  </label>
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -481,18 +509,22 @@ const handleEdit = (branchId) => {
                 </div>
               </div>
 
-              <textarea
-                className="form-control form-control-sm mb-2"
-                rows="3"
-                name="address"
-                placeholder="Company Address"
-                value={formData.address}
-                onChange={handleChange}
-              />
-
-              {errors.address && (
-                <small className="text-danger">{errors.address}</small>
-              )}
+              <div className="mb-2">
+                <label className="form-label small fw-bold mb-1">
+                  Company Address <span className="text-danger fw-bold ms-1">*</span>
+                </label>
+                <textarea
+                  className="form-control form-control-sm"
+                  rows="3"
+                  name="address"
+                  placeholder="Company Address"
+                  value={formData.address}
+                  onChange={handleChange}
+                />
+                {errors.address && (
+                  <small className="text-danger">{errors.address}</small>
+                )}
+              </div>
 
             <section>
               <div className="mb-2">

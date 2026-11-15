@@ -140,7 +140,7 @@ const SuperAdminLogin = () => {
                   marginBottom: "0.4rem",
                 }}
               >
-                Username or Email
+                Username or Email <span style={{ color: "#dc2626", fontWeight: "bold" }}>*</span>
               </label>
               <div style={{ position: "relative" }}>
                 <i
@@ -184,7 +184,7 @@ const SuperAdminLogin = () => {
                   marginBottom: "0.4rem",
                 }}
               >
-                Password
+                Password <span style={{ color: "#dc2626", fontWeight: "bold" }}>*</span>
               </label>
               <div style={{ position: "relative" }}>
                 <i

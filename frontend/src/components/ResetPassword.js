@@ -138,7 +138,9 @@ const MobileResetPassword = () => {
             <form onSubmit={handleMobileSubmit(sendOtp)}>
               
               <div className="mb-3">
-                <label className="form-label">Mobile Number</label>
+                <label className="form-label">
+                  Mobile Number <span className="text-danger fw-bold ms-1">*</span>
+                </label>
                 <input
                   type="text"
                   className="form-control form-control-lg"
@@ -154,7 +156,7 @@ const MobileResetPassword = () => {
 
               <div style={{ marginBottom: "18px" }}>
                 <label style={{ fontSize: "13px", fontWeight: "600" }}>
-                  Human Verification
+                  Human Verification <span className="text-danger fw-bold ms-1">*</span>
                 </label>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
@@ -229,7 +231,9 @@ const MobileResetPassword = () => {
 
               {/* OTP */}
               <div className="mb-3 text-center">
-                <label className="form-label">Enter OTP</label>
+                <label className="form-label">
+                  Enter OTP <span className="text-danger fw-bold ms-1">*</span>
+                </label>
                 <input
                   type="text"
                   maxLength="6"
@@ -246,7 +250,9 @@ const MobileResetPassword = () => {
 
               {/* Password */}
               <div className="mb-3 position-relative">
-                <label className="form-label">New Password</label>
+                <label className="form-label">
+                  New Password <span className="text-danger fw-bold ms-1">*</span>
+                </label>
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="New Password"
@@ -273,7 +279,9 @@ const MobileResetPassword = () => {
 
               {/* Confirm Password */}
               <div className="mb-3">
-                <label className="form-label">Confirm Password</label>
+                <label className="form-label">
+                  Confirm Password <span className="text-danger fw-bold ms-1">*</span>
+                </label>
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Confirm Password"

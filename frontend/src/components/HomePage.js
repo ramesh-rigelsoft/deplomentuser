@@ -76,14 +76,18 @@ const LoginPage = () => {
         </div>
 
         <form>
-          <label className="form-label">* UserId</label>
+          <label className="form-label">
+            UserId <span className="text-danger fw-bold">*</span>
+          </label>
           <input
             type="text"
             className="form-control"
             placeholder="Enter your User ID"
           />
 
-          <label className="form-label">* Password</label>
+          <label className="form-label">
+            Password <span className="text-danger fw-bold">*</span>
+          </label>
           <input
             type="password"
             className="form-control"

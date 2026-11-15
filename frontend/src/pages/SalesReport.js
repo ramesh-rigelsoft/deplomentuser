@@ -763,6 +763,7 @@ useEffect(() => {
                       </div>
 
                       {/* CHILD TABLE */}
+                      <div className="table-responsive">
                       <table className="table table-sm mb-0">
 
                         <thead>
@@ -875,6 +876,7 @@ useEffect(() => {
                         </tbody>
 
                       </table>
+                      </div>
 
                     </div>
                   </div>
