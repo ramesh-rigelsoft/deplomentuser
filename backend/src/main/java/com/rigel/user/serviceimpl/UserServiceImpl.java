@@ -104,6 +104,16 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
+	public User findOtherUserByEmail(String email, int excludeUserId) {
+		return userDao.findOtherUserByEmail(email, excludeUserId);
+	}
+
+	@Override
+	public User findOtherUserByMobile(String mobile, int excludeUserId) {
+		return userDao.findOtherUserByMobile(mobile, excludeUserId);
+	}
+
+	@Override
 	public Map<String, Object> sendEmailToAll(Mail emailDetails) {
 		smail = Collections.synchronizedMap(new HashMap<>());
 		List<String> invalidEmail = new CopyOnWriteArrayList<>();

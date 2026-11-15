@@ -215,33 +215,62 @@ public class UserAccessController {
 			}
 			
 			List<User> users = userService.findUsersByOwnerIdAndBranch(SearchCriteria.builder().branchCode(userDtoReq.getBranchCode()).userId(userDtoReq.getOwnerId()).build());
-			int userExistingCount=userDtoReq.getId()==null?users.size()+1:users.size();
-			if((userExistingCount) > userCount ) {
+			boolean isUpdate = userDtoReq.getId() != null && userDtoReq.getId() > 0;
+			int userExistingCount = isUpdate ? users.size() : users.size() + 1;
+			if (userExistingCount > userCount) {
 				throw new TaskTitleException("Max number of user already has been created in this Office");
 			}
 			
-			User user = objectMapper.convertValue(userDtoReq, User.class);
-			User user1 = userService.findUserByEmailId(user.getEmail_id(), userDtoReq.getId());
-			User user2 = userService.findUserByEmailId(user.getMobile_no(), userDtoReq.getId());
-			if (user2 != null) {
-				throw new TaskTitleException("Mobile Number already registered with us.");
-			}
-			if (user1 == null) {
-				user.setPassword(User.PASSWORD_ENCODER.encode(user.getPassword()));
-				user.setCreated_at(new Timestamp(new Date().getTime()));
-				user.setSoftwareKey(LicenseKeyGenerator.generateLicenseKey());
-				System.out.println("userId------------"+user.getOwnerId());
-				user = userService.saveSubUser(user);
-
-				data.put("user", user);
-				response.put("data", data);
-				response.put("status", "OK");
-				response.put("code", "200");
-				response.put("message", "Your account has been Updated successfully.");
-				return new ResponseEntity<>(response, HttpStatus.OK);
-			} else {
+			int targetId = isUpdate ? userDtoReq.getId() : 0;
+			
+			// Check email uniqueness (excluding target user)
+			User userByEmail = userService.findOtherUserByEmail(userDtoReq.getEmail_id(), targetId);
+			if (userByEmail != null) {
 				throw new TaskTitleException("Email id already registered with us.");
 			}
+			
+			// Check mobile uniqueness (excluding target user)
+			User userByMobile = userService.findOtherUserByMobile(userDtoReq.getMobile_no(), targetId);
+			if (userByMobile != null) {
+				throw new TaskTitleException("Mobile Number already registered with us.");
+			}
+			
+			User user;
+			if (isUpdate) {
+				user = userService.findUserById(targetId);
+				if (user == null) {
+					throw new TaskTitleException("User not found to update.");
+				}
+				user.setName(userDtoReq.getName());
+				user.setEmail_id(userDtoReq.getEmail_id());
+				user.setMobile_no(userDtoReq.getMobile_no());
+				user.setRole(userDtoReq.getRole());
+				user.setStatus(userDtoReq.getStatus());
+				user.setBranchCode(userDtoReq.getBranchCode());
+				user.setOwnerId(userDtoReq.getOwnerId());
+				
+				// Only update password if a new plain password was provided
+				if (userDtoReq.getPassword() != null && !userDtoReq.getPassword().trim().isEmpty()
+						&& !userDtoReq.getPassword().startsWith("$2a$")
+						&& !userDtoReq.getPassword().equals(user.getPassword())) {
+					user.setPassword(User.PASSWORD_ENCODER.encode(userDtoReq.getPassword().trim()));
+				}
+			} else {
+				user = objectMapper.convertValue(userDtoReq, User.class);
+				user.setId(0);
+				user.setPassword(User.PASSWORD_ENCODER.encode(userDtoReq.getPassword()));
+				user.setCreated_at(new Timestamp(new Date().getTime()));
+				user.setSoftwareKey(LicenseKeyGenerator.generateLicenseKey());
+			}
+			
+			user = userService.saveSubUser(user);
+
+			data.put("user", user);
+			response.put("data", data);
+			response.put("status", "OK");
+			response.put("code", "200");
+			response.put("message", isUpdate ? "User updated successfully." : "User created successfully.");
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
 

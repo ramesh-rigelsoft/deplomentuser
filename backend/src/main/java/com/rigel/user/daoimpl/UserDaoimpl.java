@@ -80,6 +80,48 @@ public class UserDaoimpl implements IUserDao {
 	}
 
 	@Override
+	public User findOtherUserByEmail(String email, int excludeUserId) {
+		if (email == null || email.trim().isEmpty()) {
+			return null;
+		}
+		try {
+			String jpql = excludeUserId > 0
+					? "SELECT u FROM User u WHERE u.id != :excludeId AND LOWER(u.email_id) = LOWER(:email)"
+					: "SELECT u FROM User u WHERE LOWER(u.email_id) = LOWER(:email)";
+			var query = entityManager.createQuery(jpql, User.class)
+					.setParameter("email", email.trim());
+			if (excludeUserId > 0) {
+				query.setParameter("excludeId", excludeUserId);
+			}
+			List<User> list = query.getResultList();
+			return list.isEmpty() ? null : list.get(0);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Override
+	public User findOtherUserByMobile(String mobile, int excludeUserId) {
+		if (mobile == null || mobile.trim().isEmpty()) {
+			return null;
+		}
+		try {
+			String jpql = excludeUserId > 0
+					? "SELECT u FROM User u WHERE u.id != :excludeId AND u.mobile_no = :mobile"
+					: "SELECT u FROM User u WHERE u.mobile_no = :mobile";
+			var query = entityManager.createQuery(jpql, User.class)
+					.setParameter("mobile", mobile.trim());
+			if (excludeUserId > 0) {
+				query.setParameter("excludeId", excludeUserId);
+			}
+			List<User> list = query.getResultList();
+			return list.isEmpty() ? null : list.get(0);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Override
 	public UserOtp saveUserOTP(UserOtp otp) {
 		return entityManager.merge(otp);
 	}

@@ -1,5 +1,5 @@
-import React, { useEffect,useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../redux/API";
 import { success, fail } from "../redux/WebTostar";
 import Cookies from "js-cookie";
@@ -7,18 +7,18 @@ import { useDispatch } from "react-redux";
 import Header from "./Header";
 
 const AddSubUser = () => {
-  const ownerId= parseInt(Cookies.get("secretCode"));
+  const ownerId = parseInt(Cookies.get("secretCode"));
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    id:0,
+    id: 0,
     name: "",
     email_id: "",
     password: "",
     ownerId: ownerId,
     mobile_no: "",
-    status:1,
+    status: 1,
     role: "",
-    branchCode:""
+    branchCode: ""
   });
 
   const [users, setUsers] = useState([]);
@@ -26,13 +26,19 @@ const AddSubUser = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
-  const [branches,setBranches]=useState([]);
+  const [branches, setBranches] = useState([]);
   useEffect(() => {
     if (ownerId) {
       API.fetchOfficeBranch(dispatch, { userId: ownerId })
         .then((res) => {
-          const list = res?.payload?.data?.branchList || [];
+          const list = res?.payload?.data?.branchList || res?.data?.branchList || [];
           setBranches(list);
+          if (list.length > 0) {
+            setFormData((prev) => ({
+              ...prev,
+              branchCode: prev.branchCode || list[0].branchCode,
+            }));
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -44,13 +50,11 @@ const AddSubUser = () => {
    userList();
   }, [ownerId]);
 
-  const userList=()=>{
-     if (ownerId) {
+  const userList = () => {
+    if (ownerId) {
       API.fetchSubUser(dispatch, { userId: ownerId })
         .then((res) => {
-          console.log(res);
-          // setState yahan karo
-          setUsers(res.payload.data.userList);
+          setUsers(res?.payload?.data?.userList || res?.data?.userList || []);
         })
         .catch((err) => {
           console.error(err);
@@ -75,14 +79,14 @@ const AddSubUser = () => {
   const validate = () => {
     let newErrors = {};
 
-    if (!formData.name.trim()) {
+    if (!formData.name?.trim()) {
       newErrors.name = "Name is required";
     }
 
-    if (!formData.email_id.trim()) {
-      newErrors.email_id = "email_id is required";
+    if (!formData.email_id?.trim()) {
+      newErrors.email_id = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email_id)) {
-      newErrors.email_id = "Invalid email_id format";
+      newErrors.email_id = "Invalid email format";
     }
     
     if (!formData.mobile_no?.trim()) {
@@ -91,10 +95,16 @@ const AddSubUser = () => {
       newErrors.mobile_no = "Mobile number must be 10 digits";
     }
 
-    if (!formData.password.trim()) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    if (editIndex === null) {
+      if (!formData.password?.trim()) {
+        newErrors.password = "Password is required";
+      } else if (formData.password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters";
+      }
+    } else {
+      if (formData.password?.trim() && formData.password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters";
+      }
     }
 
     if (!formData.role) {
@@ -102,79 +112,109 @@ const AddSubUser = () => {
     }
 
     if (!formData.branchCode) {
-      newErrors.branchCode = "Please select a Office";
+      newErrors.branchCode = "Please select an Office";
     }
 
-
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
+  };
+
+  const resetForm = () => {
+    setFormData({
+      id: 0,
+      name: "",
+      email_id: "",
+      mobile_no: "",
+      password: "",
+      status: 1,
+      role: "",
+      branchCode: branches.length > 0 ? branches[0].branchCode : "",
+      ownerId: ownerId,
+    });
+    setEditIndex(null);
+    setErrors({});
   };
 
   // CREATE / UPDATE USER
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validate()) return; // ❌ stop if invalid
+    if (!validate()) return;
     API.addUser(dispatch, formData)
-    .then((res) => {
-      if (res.payload.code === '200') {
-        success(res.payload.message);
-        setFormData({
-          name: "",
-          email_id: "",
-          mobile_no:"",
-          password: "",
-          status:1,
-          role: "",
-          branchCode:"",
-          ownerId: ownerId,
-        });
-        userList();
-      } else {
-        fail(res.payload.message);
-      }
-    }).catch((err) => {
-      console.error(err);
-      fail('Please contact to service provider.');
-    });
-
-    if (editIndex !== null) {
-      // const updatedUsers = [...users];
-      // updatedUsers[editIndex] = formData;
-      // setUsers(updatedUsers);
-      // setEditIndex(null);
-
-    } else {
-      // setUsers([...users, formData]);
-    }
-
-    
-
-    setErrors({});
+      .then((res) => {
+        const code = String(res?.payload?.code || res?.code);
+        if (code === '200') {
+          success(res?.payload?.message || res?.message || (editIndex !== null ? "User updated successfully" : "User created successfully"));
+          resetForm();
+          userList();
+        } else {
+          fail(res?.payload?.message || res?.message || "Operation failed");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        fail('Please contact service provider.');
+      });
   };
 
   const handleEdit = (index) => {
-    setFormData(users[index]);
+    const u = users[index];
+    setFormData({
+      id: u.id,
+      name: u.name || "",
+      email_id: u.email_id || "",
+      mobile_no: u.mobile_no || "",
+      password: "", // User leaves blank to keep existing password
+      status: u.status !== undefined ? u.status : 1,
+      role: u.role || "",
+      branchCode: u.branchCode || (branches.length > 0 ? branches[0].branchCode : ""),
+      ownerId: u.ownerId || ownerId,
+    });
     setEditIndex(index);
     setErrors({});
   };
 
 
   return (
-    <div className="container py-3  page-scroll">
+    <div className="container py-3 page-scroll">
       <Header
         title="User Mangement"
         subTitle="Manage everything in one place"
         dashboard="1"
       />
+
+      {branches.length === 0 && (
+        <div className="alert alert-warning border-0 shadow-sm d-flex justify-content-between align-items-center mb-3 rounded-3">
+          <div className="d-flex align-items-center">
+            <span className="me-2 fs-5">⚠</span>
+            <div>
+              <strong>No Branch Found:</strong> Sub-users create karne ke liye pehle Office Location me ek branch add karein.
+            </div>
+          </div>
+          <Link to="/officeLocation" className="btn btn-warning btn-sm fw-bold px-3">
+            + Add Branch
+          </Link>
+        </div>
+      )}
+
       <div className="row g-3">
 
         {/* FORM */}
         <div className="col-12 col-md-4">
           <div className="card shadow p-2 p-md-3">
-            <h5 className="text-center mb-3">
-              {editIndex !== null ? "Update Sub User" : "Add Sub User"}
-            </h5>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h5 className="mb-0">
+                {editIndex !== null ? "Update Sub User" : "Add Sub User"}
+              </h5>
+              {editIndex !== null && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={resetForm}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
 
             <form onSubmit={handleSubmit}>
 
@@ -196,7 +236,7 @@ const AddSubUser = () => {
                 type="text"
                 name="email_id"
                 className="form-control form-control-sm mb-1 mt-2"
-                placeholder="email_id"
+                placeholder="Email ID"
                 value={formData.email_id}
                 onChange={handleChange}
               />
@@ -204,16 +244,16 @@ const AddSubUser = () => {
                 <small className="text-danger">{errors.email_id}</small>
               )}
 
-               {/* email_id */}
+              {/* mobile_no */}
               <input
                 type="text"
                 name="mobile_no"
                 className="form-control form-control-sm mb-1 mt-2"
-                placeholder="Mobile Number"
+                placeholder="Mobile Number (10 digits)"
                 value={formData.mobile_no}
                 onChange={handleChange}
               />
-               {errors.mobile_no && (
+              {errors.mobile_no && (
                 <small className="text-danger">{errors.mobile_no}</small>
               )}
 
@@ -223,7 +263,11 @@ const AddSubUser = () => {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   className="form-control"
-                  placeholder="Password"
+                  placeholder={
+                    editIndex !== null
+                      ? "Leave blank to keep existing password"
+                      : "Password (min 6 characters)"
+                  }
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -237,33 +281,31 @@ const AddSubUser = () => {
                   <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"} />
                 </button>
               </div>
-
-              {/* <input
-                type="password"
-                name="password"
-                className="form-control form-control-sm mb-1 mt-2"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              /> */}
               {errors.password && (
                 <small className="text-danger">{errors.password}</small>
               )}
 
-               <select
+              {/* BRANCH */}
+              <select
                 name="branchCode"
                 className="form-select form-select-sm mb-1 mt-2"
                 value={formData.branchCode}
                 onChange={handleChange}
               >
-                <option value="">Select Office</option>
-                {branches.map((b) => (
-                  <option key={b.id} value={b.branchCode}>
-                    {b.branchName}
-                  </option>
-                ))}
+                {branches.length === 0 ? (
+                  <option value="">No Branch Found</option>
+                ) : (
+                  <>
+                    <option value="">Select Office</option>
+                    {branches.map((b) => (
+                      <option key={b.id} value={b.branchCode}>
+                        {b.branchName} ({b.branchCode})
+                      </option>
+                    ))}
+                  </>
+                )}
               </select>
-               {errors.branchCode && (
+              {errors.branchCode && (
                 <small className="text-danger">{errors.branchCode}</small>
               )}
 
@@ -283,7 +325,7 @@ const AddSubUser = () => {
                 <small className="text-danger">{errors.role}</small>
               )}
 
-               {/* ROLE */}
+              {/* STATUS */}
               <select
                 name="status"
                 className="form-select form-select-sm mb-1 mt-2"
@@ -294,13 +336,25 @@ const AddSubUser = () => {
                 <option value="0">InActive</option>
               </select>
 
-              <button
-                className={`btn w-100 btn-sm mt-3 ${
-                  editIndex !== null ? "btn-primary" : "btn-success"
-                }`}
-              >
-                {editIndex !== null ? "Update User" : "Create User"}
-              </button>
+              <div className="d-flex gap-2 mt-3">
+                <button
+                  type="submit"
+                  className={`btn w-100 btn-sm ${
+                    editIndex !== null ? "btn-primary" : "btn-success"
+                  }`}
+                >
+                  {editIndex !== null ? "Update User" : "Create User"}
+                </button>
+                {editIndex !== null && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={resetForm}
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
             </form>
           </div>
         </div>

@@ -20,6 +20,10 @@ public interface IUserDao {
 	public User findUserById(int id);
 	
 	public User findUserByEmailId(String email,int existingId);
+
+	public User findOtherUserByEmail(String email, int excludeUserId);
+
+	public User findOtherUserByMobile(String mobile, int excludeUserId);
 	
 	public UserOtp saveUserOTP(UserOtp otp);
 
