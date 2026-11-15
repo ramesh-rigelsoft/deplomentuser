@@ -35,7 +35,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/superadmin")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8091"})
+@CrossOrigin(originPatterns = {"*"}, allowedHeaders = "*", allowCredentials = "true")
 public class SuperAdminController {
 
     @Autowired

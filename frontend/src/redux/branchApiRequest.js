@@ -6,10 +6,7 @@ export const branchApiRequest = createAsyncThunk(
 "api/postRequest",
 async ({ domain, endpoint, data }, { rejectWithValue }) => {
 try {
-  const finalUrl = endpoint.replace(
-    "http://localhost:8089",
-    "http://localhost:8078"
-  );
+  const finalUrl = endpoint.replace(":8089", ":8078");
  const token = Cookies.get("token");
  const multipleBranch = Cookies.get("multipleBranch");
  const branchCode = Cookies.get("branchCode")||null;      

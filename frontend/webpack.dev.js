@@ -54,6 +54,8 @@ module.exports = {
   })
   ],
   devServer: {
+    host: '0.0.0.0',
+    allowedHosts: 'all',
     port: 3000,
     open: false,
     hot: true,

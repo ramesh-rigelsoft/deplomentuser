@@ -106,15 +106,24 @@ public class SecurityTokenConfig1 {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:8091"));
-//        config.setAllowedOrigins(Arrays.asList("*"));
+        config.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "http://192.168.*:*",
+                "http://10.*:*",
+                "*"
+        ));
 
         config.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
         ));
 
         config.setAllowedHeaders(Arrays.asList(
-                "Authorization", "Content-Type"
+                "*"
+        ));
+
+        config.setExposedHeaders(Arrays.asList(
+                "Authorization", "Content-Type", "multipleBranch", "branchCode"
         ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -2,6 +2,15 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const getApiBaseUrl = () => {
+  if (typeof window !== "undefined" && window.location && window.location.hostname) {
+    const hostname = window.location.hostname;
+    const envUrl = process.env.REACT_APP_API_URL;
+    if (envUrl && !envUrl.includes("localhost") && !envUrl.includes("127.0.0.1")) {
+      return envUrl.endsWith("/") ? envUrl.slice(0, -1) : envUrl;
+    }
+    const protocol = window.location.protocol || "http:";
+    return `${protocol}//${hostname}:8089/api`;
+  }
   const envUrl = process.env.REACT_APP_API_URL;
   if (envUrl) {
     return envUrl.endsWith("/") ? envUrl.slice(0, -1) : envUrl;
