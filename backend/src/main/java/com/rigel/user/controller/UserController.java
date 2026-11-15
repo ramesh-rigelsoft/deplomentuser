@@ -281,6 +281,10 @@ public class UserController {
 					user.setRole("admin");
 					user.setSoftwareKey(LicenseKeyGenerator.generateLicenseKey());
 					user = userService.persistUser(user);
+					if (user.getOwnerId() <= 0 && "admin".equalsIgnoreCase(user.getRole())) {
+						user.setOwnerId(user.getId());
+						user = userService.saveUser(user);
+					}
 //					final JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(user.getEmail_id());
 //					final String token = jwtTokenUtil.generateToken(userDetails, request);
 					try {
@@ -611,8 +615,30 @@ public class UserController {
 			int ownerId = searchCriteria.getUserId();
 			String subScriptionCode = searchCriteria.getSubscriptionCode();
 
-			UserSubscription userSubscription = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
 			LocalDateTime now = LocalDateTime.now();
+
+			// 1. Fetch all subscriptions for this owner to verify active and queued status
+			List<UserSubscription> ownerSubs = subscriptionPlanService.userSubscriptionPlanList(
+					SearchCriteria.builder().userId(ownerId).branchCode(branchCode).build()
+			);
+
+			// Check if a renewal is already queued
+			UserSubscription existingQueuedSub = ownerSubs.stream()
+					.filter(s -> s.isStatus() && (s.isQueued() || "QUEUED".equalsIgnoreCase(s.getQueueStatus())))
+					.findFirst()
+					.orElse(null);
+
+			if (existingQueuedSub != null) {
+				String activateDate = existingQueuedSub.getSubscriptionStartAt() != null
+						? existingQueuedSub.getSubscriptionStartAt().toLocalDate().toString()
+						: "next billing cycle";
+				throw new BadGatewayRequest("A subscription renewal (" + existingQueuedSub.getSubscriptionName()
+						+ ") is already queued for your account (scheduled to activate on " + activateDate
+						+ "). Multiple renewals or new subscriptions are not allowed.");
+			}
+
+			// Check active subscription
+			UserSubscription userSubscription = subscriptionPlanService.getSubscriptionPlanByOwnerId(ownerId, branchCode);
 			boolean queueNext = false;
 			LocalDateTime activeEndAt = null;
 
@@ -630,13 +656,15 @@ public class UserController {
 						userSubscription.setActive(false);
 						userSubscription.setStatus(false);
 						subscriptionPlanService.saveUserSubscriptionPlan(userSubscription);
-					} else if (now.isAfter(activeEndAt.minusMonths(1)) || Boolean.TRUE.equals(searchCriteria.getIsQueued())) {
-						// Within 1 month of expiry or explicitly requested to queue
+						queueNext = false;
+					} else if (now.isAfter(activeEndAt.minusMonths(1))) {
+						// Within 1 month (30 days) of expiry -> allow 1 renewal cycle queued
 						queueNext = true;
 					} else {
+						long daysLeft = java.time.temporal.ChronoUnit.DAYS.between(now.toLocalDate(), activeEndAt.toLocalDate());
 						throw new BadGatewayRequest("You already have an active subscription valid until "
-								+ activeEndAt.toLocalDate() + ". Renewal opens 1 month before expiry ("
-								+ activeEndAt.minusMonths(1).toLocalDate() + "), or you may queue your next subscription.");
+								+ activeEndAt.toLocalDate() + " (" + daysLeft + " days remaining). Renewal opens 30 days before expiry ("
+								+ activeEndAt.minusMonths(1).toLocalDate() + "). New subscription is only allowed once.");
 					}
 				}
 			}

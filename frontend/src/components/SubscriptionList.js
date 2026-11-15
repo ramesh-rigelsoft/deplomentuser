@@ -444,6 +444,31 @@ const completeVerification = (verifyData) => {
         const activeSub = mySubscriptions.find(
           (s) => !isSubscriptionExpired(s) && !s.isQueued && s.queueStatus !== "QUEUED"
         );
+        const queuedSub = mySubscriptions.find(
+          (s) => s.status !== false && (s.isQueued || s.queueStatus === "QUEUED")
+        );
+
+        if (queuedSub) {
+          return (
+            <div className="alert alert-success border-success shadow-sm mb-4">
+              <div className="d-flex flex-wrap justify-content-between align-items-center">
+                <div>
+                  <h6 className="mb-1 fw-bold text-success">
+                    ✅ Subscription Renewal Queued: {queuedSub.subscriptionName}
+                  </h6>
+                  <div className="small text-muted">
+                    Your renewal is already confirmed. It will automatically activate on{" "}
+                    <strong>{formatDate(queuedSub.subscriptionStartAt)}</strong>. Multiple renewals or duplicate subscriptions are not allowed.
+                  </div>
+                </div>
+                <div className="mt-2 mt-md-0">
+                  <span className="badge bg-success fs-6">Renewal Confirmed (1 Max)</span>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
         if (activeSub) {
           const days = getDaysLeft(activeSub);
           const isExpiringSoon = days !== null && days <= 30;
@@ -653,20 +678,12 @@ const completeVerification = (verifyData) => {
 
             </div>
 
-            {/* QUEUE OPTION */}
+            {/* AUTOMATED RENEWAL NOTE */}
             <div className="col-12 mt-2">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="queueSubscriptionCheck"
-                  checked={isQueueSelected}
-                  onChange={(e) => setIsQueueSelected(e.target.checked)}
-                />
-                <label className="form-check-label text-muted small" htmlFor="queueSubscriptionCheck">
-                  <strong>Queue for Future Activation:</strong> Check this if you already have an active plan and wish to pre-pay for the subsequent renewal cycle without losing your remaining days.
-                </label>
-              </div>
+              <small className="text-muted">
+                <i className="fa fa-info-circle text-primary me-1"></i>
+                <strong>Notice:</strong> Only 1 active subscription and 1 renewal cycle can be held at any time. When renewing an active plan, the new plan automatically queues and activates seamlessly at expiry without losing any days.
+              </small>
             </div>
 
           </div>
@@ -1159,7 +1176,8 @@ const completeVerification = (verifyData) => {
                     const expiryDate = getSubscriptionExpiryDate(subscription);
                     const daysLeft = getDaysLeft(subscription);
                     const isQueued = subscription.isQueued || subscription.queueStatus === "QUEUED";
-                    const isExpiringSoon = !isQueued && daysLeft !== null && daysLeft <= 30;
+                    const hasAnyQueued = mySubscriptions.some((s) => s.status !== false && (s.isQueued || s.queueStatus === "QUEUED"));
+                    const isExpiringSoon = !isQueued && !hasAnyQueued && daysLeft !== null && daysLeft <= 30;
 
                     return (
                     <tr
@@ -1529,35 +1547,77 @@ const completeVerification = (verifyData) => {
                       </td>
 
                       {/* ACTION */}
-
                       <td>
+                        {(() => {
+                          const activeSub = mySubscriptions.find(
+                            (s) => !isSubscriptionExpired(s) && !s.isQueued && s.queueStatus !== "QUEUED"
+                          );
+                          const queuedSub = mySubscriptions.find(
+                            (s) => s.status !== false && (s.isQueued || s.queueStatus === "QUEUED")
+                          );
 
-                        {plan.status ? (
+                          if (queuedSub) {
+                            return (
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-secondary"
+                                disabled
+                                title="Renewal already queued for this account"
+                              >
+                                Renewal Queued
+                              </button>
+                            );
+                          }
 
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-success"
-                            onClick={() =>
-                              handleSubscribe(
-                                plan
-                              )
+                          if (activeSub) {
+                            const days = getDaysLeft(activeSub);
+                            const isExpiringSoon = days !== null && days <= 30;
+                            if (isExpiringSoon) {
+                              return (
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-warning text-dark fw-bold"
+                                  onClick={() => handleSubscribe(plan)}
+                                >
+                                  Renew
+                                </button>
+                              );
+                            } else {
+                              return (
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-outline-secondary"
+                                  disabled
+                                  title="Plan currently active. Renewal opens 30 days before expiry."
+                                >
+                                  Plan Active
+                                </button>
+                              );
                             }
-                          >
-                            Subscribe
-                          </button>
+                          }
 
-                        ) : (
+                          if (plan.status) {
+                            return (
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-success"
+                                onClick={() => handleSubscribe(plan)}
+                              >
+                                Subscribe
+                              </button>
+                            );
+                          }
 
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-secondary"
-                            disabled
-                          >
-                            Inactive
-                          </button>
-
-                        )}
-
+                          return (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-secondary"
+                              disabled
+                            >
+                              Inactive
+                            </button>
+                          );
+                        })()}
                       </td>
 
                     </tr>

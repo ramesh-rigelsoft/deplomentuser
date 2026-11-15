@@ -50,24 +50,31 @@ public class UserDaoimpl implements IUserDao {
 
 	@Override
 	public User findUserByEmailId(String username, int existingId) {
+		if (username == null || username.trim().isEmpty()) {
+			return null;
+		}
+		String cleanUsername = username.trim();
+		String adminUsername = cleanUsername.endsWith("|admin") ? cleanUsername : cleanUsername + "|admin";
 		try {
 			if (existingId < 1) {
-				return entityManager
-						.createQuery("SELECT u FROM User u WHERE u.email_id = :username OR u.mobile_no = :username",
+				java.util.List<User> list = entityManager
+						.createQuery("SELECT u FROM User u WHERE u.email_id = :username OR u.email_id = :adminUsername OR u.mobile_no = :username OR u.mobile_no = :adminUsername ORDER BY u.id ASC",
 								User.class)
-						.setParameter("username", username).getSingleResult();
+						.setParameter("username", cleanUsername)
+						.setParameter("adminUsername", adminUsername)
+						.getResultList();
+				return list.isEmpty() ? null : list.get(0);
 			} else {
-				return entityManager.createQuery(
-						"SELECT u FROM User u WHERE u.id !=:userId AND (u.email_id = :username OR u.mobile_no = :username)",
-						User.class).setParameter("userId", existingId).setParameter("username", username)
-						.getSingleResult();
+				java.util.List<User> list = entityManager.createQuery(
+						"SELECT u FROM User u WHERE u.id != :userId AND (u.email_id = :username OR u.email_id = :adminUsername OR u.mobile_no = :username OR u.mobile_no = :adminUsername) ORDER BY u.id ASC",
+						User.class)
+						.setParameter("userId", existingId)
+						.setParameter("username", cleanUsername)
+						.setParameter("adminUsername", adminUsername)
+						.getResultList();
+				return list.isEmpty() ? null : list.get(0);
 			}
-
-		} catch (NoResultException e) {
-//	    	e.printStackTrace();
-			return null;
 		} catch (Exception e) {
-//	        e.printStackTrace(); // optional logging
 			return null;
 		}
 	}

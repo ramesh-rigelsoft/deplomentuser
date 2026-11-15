@@ -371,6 +371,7 @@ public class RolesManagementDaoImpl implements IRolesManagementDao {
 		}
 
 		if (branchCode != null && !branchCode.trim().isEmpty()) {
+			// 1. Direct match: Active plan explicitly for this branch
 			try {
 				return entityManager
 						.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND LOWER(s.branchCode) = LOWER(:branchCode) AND s.active = true AND s.status = true ORDER BY s.id DESC", UserSubscription.class)
@@ -380,28 +381,23 @@ public class RolesManagementDaoImpl implements IRolesManagementDao {
 						.getSingleResult();
 			} catch (Exception ignored) {}
 
+			// 2. Multi-branch plan check: If owner has an active plan that allows multiple branches
 			try {
 				return entityManager
-						.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND LOWER(s.branchCode) = LOWER(:branchCode) ORDER BY s.id DESC", UserSubscription.class)
+						.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND s.isMultipleBranch = true AND s.active = true AND s.status = true ORDER BY s.id DESC", UserSubscription.class)
 						.setParameter("ownerId", ownerId)
-						.setParameter("branchCode", branchCode.trim())
 						.setMaxResults(1)
 						.getSingleResult();
 			} catch (Exception ignored) {}
+
+			// Branch specified but no plan covers this branch
+			return null;
 		}
 
-		// Fallback without branchCode constraint
+		// 3. Fallback only when branchCode is not specified: Look for active plan belonging to this owner
 		try {
 			return entityManager
 					.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId AND s.active = true AND s.status = true ORDER BY s.id DESC", UserSubscription.class)
-					.setParameter("ownerId", ownerId)
-					.setMaxResults(1)
-					.getSingleResult();
-		} catch (Exception ignored) {}
-
-		try {
-			return entityManager
-					.createQuery("FROM UserSubscription s WHERE s.ownerId = :ownerId ORDER BY s.id DESC", UserSubscription.class)
 					.setParameter("ownerId", ownerId)
 					.setMaxResults(1)
 					.getSingleResult();

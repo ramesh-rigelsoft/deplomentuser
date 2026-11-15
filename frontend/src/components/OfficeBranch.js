@@ -49,10 +49,10 @@ const OfficeBranch = () => {
      if (ownerId) {
       API.fetchOfficeBranch(dispatch, { userId: ownerId })
         .then((res) => {
-          setBranchs(res.payload.data.branchList||[]);
+          setBranchs(res?.payload?.data?.branchList || res?.data?.branchList || []);
         })
         .catch((err) => {
-          console.error(err);
+          console.error("fetchOfficeBranch error:", err);
         });
     }
   };

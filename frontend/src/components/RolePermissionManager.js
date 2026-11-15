@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import API from "../redux/API";
 import { success, fail } from "../redux/WebTostar";
@@ -44,9 +45,12 @@ export default function RBACPermissionPanel() {
         itemType: "pages"
       });
 
-      if (res?.payload?.code === "200") {
-        const list = res?.payload?.data?.pages || [];
+      const list =
+        res?.payload?.data?.pages ||
+        res?.data?.pages ||
+        [];
 
+      if (list.length > 0 || String(res?.payload?.code || res?.code) === "200") {
         setPages(list);
 
         // First page automatically select
@@ -59,6 +63,7 @@ export default function RBACPermissionPanel() {
       } else {
         fail(
           res?.payload?.message ||
+          res?.message ||
             "Failed to fetch pages"
         );
       }
@@ -85,7 +90,9 @@ export default function RBACPermissionPanel() {
       );
 
       const list =
-        res?.payload?.data?.branchList || [];
+        res?.payload?.data?.branchList ||
+        res?.data?.branchList ||
+        [];
 
       setBranches(list);
 
@@ -128,8 +135,11 @@ export default function RBACPermissionPanel() {
           }
         );
 
-      if (res?.payload?.code === "200") {
-        const list = res?.payload?.data?.pages || [];
+      if (String(res?.payload?.code || res?.code) === "200") {
+        const list =
+          res?.payload?.data?.pages ||
+          res?.data?.pages ||
+          [];
 
         setPermittedPages(list);
       } else {
@@ -209,7 +219,7 @@ export default function RBACPermissionPanel() {
   const selectedPermission =
     permittedPages.find(
       (item) =>
-        Number(item.id) ===
+        Number(item.pageId || item.id) ===
         Number(permissions.pageId)
     );
 
@@ -328,7 +338,7 @@ export default function RBACPermissionPanel() {
   const handleSelectAssignedPage = (item) => {
     setPermissions((prev) => ({
       ...prev,
-      pageId: Number(item.id)
+      pageId: Number(item.pageId || item.id)
     }));
   };
 
@@ -345,6 +355,21 @@ export default function RBACPermissionPanel() {
       />
 
       <div className="container-fluid px-3 py-3">
+
+        {/* NO BRANCH WARNING BANNER */}
+        {branches.length === 0 && (
+          <div className="alert alert-warning border-0 shadow-sm d-flex justify-content-between align-items-center mb-3 rounded-3" role="alert">
+            <div className="d-flex align-items-center">
+              <span className="me-2 fs-5">⚠</span>
+              <div>
+                <strong>No Branch Found:</strong> Permissions assign karne ke liye pehle Office Location me ek branch add karein.
+              </div>
+            </div>
+            <Link to="/officeLocation" className="btn btn-warning btn-sm fw-bold px-3">
+              + Add Branch
+            </Link>
+          </div>
+        )}
 
         {/* ========================================
             COMMON BRANCH + ROLE HEADER
@@ -386,20 +411,22 @@ export default function RBACPermissionPanel() {
                   }
                 >
 
-                  {/* <option value="">
-                    Select Branch
-                  </option> */}
-
-                  {branches.map(
-                    (branch) => (
-                      <option
-                        key={branch.id}
-                        value={
-                          branch.branchCode
-                        }
-                      >
-                        {branch.branchName}
-                      </option>
+                  {branches.length === 0 ? (
+                    <option value="">
+                      No Branch Found
+                    </option>
+                  ) : (
+                    branches.map(
+                      (branch) => (
+                        <option
+                          key={branch.id}
+                          value={
+                            branch.branchCode
+                          }
+                        >
+                          {branch.branchName} ({branch.branchCode})
+                        </option>
+                      )
                     )
                   )}
 
@@ -482,9 +509,6 @@ export default function RBACPermissionPanel() {
                     }
                     onChange={
                       handlePageChange
-                    }
-                    disabled={
-                      !permissions.branchCode
                     }
                   >
 
@@ -661,11 +685,22 @@ export default function RBACPermissionPanel() {
 
                 {!permissions.branchCode ? (
 
-                  <div className="text-center py-5 text-warning">
+                  <div className="text-center py-5 text-warning px-3">
 
-                    <div className="mb-2">
-                      Please select a branch
+                    <div className="mb-2 fw-semibold">
+                      {branches.length === 0 ? "No Branch Available" : "Please select a branch"}
                     </div>
+
+                    {branches.length === 0 && (
+                      <div>
+                        <small className="text-muted d-block mb-2">
+                          Permissions set karne ke liye pehle branch add karein.
+                        </small>
+                        <Link to="/officeLocation" className="btn btn-sm btn-outline-warning">
+                          + Add Branch Now
+                        </Link>
+                      </div>
+                    )}
 
                   </div>
 
@@ -697,11 +732,11 @@ export default function RBACPermissionPanel() {
                   >
 
                     {permittedPages.map(
-                      (item) => {
+                      (item, idx) => {
 
                         const active =
                           Number(
-                            item.id
+                            item.pageId || item.id
                           ) ===
                           Number(
                             permissions.pageId
@@ -711,7 +746,7 @@ export default function RBACPermissionPanel() {
 
                           <div
                             key={
-                              item.id
+                              item.pagePermittedId || item.pageId || idx
                             }
                             className={`p-3 border-bottom ${
                               active
@@ -744,7 +779,7 @@ export default function RBACPermissionPanel() {
                                 <small className="text-muted">
                                   Page ID:{" "}
                                   {
-                                    item.pagePermittedId
+                                    item.pageId || item.id || "-"
                                   }
                                 </small>
 

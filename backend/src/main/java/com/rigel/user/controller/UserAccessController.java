@@ -122,7 +122,17 @@ public class UserAccessController {
 			throw new BadGatewayRequest(result.getFieldError().getDefaultMessage());
 		} else {
 			List<RolesPagePermision> rolesPagePermision = rolesManagementService.fetchPermittedPagesRoleWise(searchCriteria);
-			List<RolesPermittedPagesList> rolesPermittedPagesList=rolesPagePermision.stream().map(p->RolesPermittedPagesList.builder().pageLabel(p.getPageId().getLabel()).pagePermittedId(p.getId()).build()).toList();
+			List<RolesPermittedPagesList> rolesPermittedPagesList = rolesPagePermision.stream()
+					.map(p -> RolesPermittedPagesList.builder()
+							.id(p.getPageId() != null ? p.getPageId().getId() : null)
+							.pageId(p.getPageId() != null ? p.getPageId().getId() : null)
+							.pageLabel(p.getPageId() != null ? p.getPageId().getLabel() : null)
+							.pagePermittedId(p.getId())
+							.ownerId((long) p.getOwnerId())
+							.branchCode(p.getBranchCode())
+							.roleId(p.getRoleId() != null ? String.valueOf(p.getRoleId().getId()) : null)
+							.build())
+					.toList();
 			
 			data.put("pages", rolesPermittedPagesList);
 			response.put("data", data);

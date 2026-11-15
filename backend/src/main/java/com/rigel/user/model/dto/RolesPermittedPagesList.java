@@ -20,6 +20,8 @@ import lombok.ToString;
 @Builder
 public class RolesPermittedPagesList {
 
+	private Long id;
+	private Long pageId;
  	private Long ownerId;
  	private String branchCode;
     private String roleId;

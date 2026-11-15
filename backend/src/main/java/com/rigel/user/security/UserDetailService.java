@@ -33,6 +33,9 @@ public class UserDetailService implements UserDetailsService {
             throws UsernameNotFoundException {
 
         User user = userDao.findUserByEmailId(username, 0);
+        if (user == null && username != null && !username.endsWith("|admin")) {
+            user = userDao.findUserByEmailId(username + "|admin", 0);
+        }
 
         if (user == null) {
             if (superAdminDao != null) {
@@ -80,9 +83,12 @@ public class UserDetailService implements UserDetailsService {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
         if (role != null && !role.isBlank()) {
-            grantedAuthorities.add(
-                new SimpleGrantedAuthority(role)
-            );
+            grantedAuthorities.add(new SimpleGrantedAuthority(role));
+            if (!role.startsWith("ROLE_")) {
+                grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+            }
+            grantedAuthorities.add(new SimpleGrantedAuthority("user"));
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
 
         return grantedAuthorities;
