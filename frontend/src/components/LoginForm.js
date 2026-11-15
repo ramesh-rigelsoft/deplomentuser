@@ -7,6 +7,8 @@ import Cookies from "js-cookie";
 import { navigateTo } from "../components/navigationService";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "../i18n";
+import axios from "axios";
+import { BASE_URL } from "../redux/config";
 
 
 const HomePage = () => {
@@ -39,7 +41,16 @@ const HomePage = () => {
         Cookies.set("secret", JSON.stringify(data.secret), { expires: 1 });
         Cookies.set("token", data.access_token, { expires: 1 });
 
-        const userLang = data.language || (data.branch && data.branch.language) || "en";
+        let userLang = (data.branch && data.branch.language) || "en";
+        if (data.access_token) {
+          try {
+            const lRes = await axios.get(`${BASE_URL}/user/language/current`, {
+              headers: { Authorization: `Bearer ${data.access_token}` },
+            });
+            const fetched = lRes?.data?.data?.defaultLanguage || lRes?.data?.data?.language;
+            if (fetched) userLang = fetched;
+          } catch (e) {}
+        }
         Cookies.set("language", userLang, { expires: 30 });
         localStorage.setItem("app_language", userLang);
         syncLoginLanguage(userLang);

@@ -27,6 +27,7 @@ import lombok.Setter;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -86,12 +87,15 @@ public class User implements Serializable{
         
     private int ownerId;
 
+    @JsonIgnore
     @Column(name = "language", length = 20)
     private String language = "en";
 
+    @JsonIgnore
     @Column(name = "default_language", length = 20)
     private String defaultLanguage = "en";
 
+    @JsonIgnore
     @Column(name = "personal_language", length = 20)
     private String personalLanguage;
     

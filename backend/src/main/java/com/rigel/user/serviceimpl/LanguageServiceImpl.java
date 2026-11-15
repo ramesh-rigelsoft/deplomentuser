@@ -135,12 +135,10 @@ public class LanguageServiceImpl implements ILanguageService {
         result.put("language", resolvedCode);
         result.put("languageName", resolvedName);
         result.put("isRtl", isRtl);
+        result.put("defaultLanguage", resolvedCode);
+        result.put("defaultLanguageName", resolvedName);
 
         if (user != null) {
-            result.put("defaultLanguage", user.getDefaultLanguage() != null ? user.getDefaultLanguage() : "en");
-            LanguageMaster defMaster = languageDao.findByCode(user.getDefaultLanguage());
-            result.put("defaultLanguageName", defMaster != null ? defMaster.getLanguageName() : "English");
-
             result.put("personalLanguage", user.getPersonalLanguage());
             LanguageMaster persMaster = (user.getPersonalLanguage() != null) ? languageDao.findByCode(user.getPersonalLanguage()) : null;
             result.put("personalLanguageName", persMaster != null ? persMaster.getLanguageName() : null);
@@ -183,6 +181,7 @@ public class LanguageServiceImpl implements ILanguageService {
 
         owner.setDefaultLanguage(languageCode.trim().toLowerCase());
         owner.setLanguage(languageCode.trim().toLowerCase());
+        owner.setPersonalLanguage(languageCode.trim().toLowerCase());
         return entityManager.merge(owner);
     }
 
@@ -196,6 +195,8 @@ public class LanguageServiceImpl implements ILanguageService {
         }
 
         user.setPersonalLanguage(languageCode.trim().toLowerCase());
+        user.setDefaultLanguage(languageCode.trim().toLowerCase());
+        user.setLanguage(languageCode.trim().toLowerCase());
         return entityManager.merge(user);
     }
 

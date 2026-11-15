@@ -308,7 +308,7 @@ export const LanguageProvider = ({ children }) => {
       const res = await axios.get(`${BASE_URL}/user/language/current`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const resolved = res?.data?.data?.language;
+      const resolved = res?.data?.data?.defaultLanguage || res?.data?.data?.language;
       if (resolved) {
         const clean = resolved.trim().toLowerCase();
         setCurrentLanguage(clean);
