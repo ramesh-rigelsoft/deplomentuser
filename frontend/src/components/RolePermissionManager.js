@@ -494,11 +494,18 @@ export default function RBACPermissionPanel() {
                 <div className="mb-4">
 
                   <label className="form-label fw-bold">
-                    Select Page
+                    Select Page <span className="text-danger fw-bold ms-1">*</span>
                   </label>
 
                   <select
                     className="form-select form-select-lg"
+                    style={{
+                      height: "auto",
+                      minHeight: "44px",
+                      lineHeight: "1.5",
+                      padding: "8px 36px 8px 12px",
+                      fontSize: "15px"
+                    }}
                     value={
                       permissions.pageId ||
                       ""
@@ -525,6 +532,7 @@ export default function RBACPermissionPanel() {
                           {page.label ||
                             page.pageName ||
                             `Page ${page.id}`}
+                          {page.path ? ` (${page.path})` : ""}
                         </option>
 
                       )
@@ -546,15 +554,15 @@ export default function RBACPermissionPanel() {
 
                   <div className="border rounded p-3 mb-4 bg-light">
 
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                      <div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
 
-                        <small className="text-muted">
+                        <small className="text-muted d-block mb-1">
                           Selected Page
                         </small>
 
-                        <div className="fw-bold fs-5">
+                        <div className="fw-bold fs-5 text-break" style={{ lineHeight: "1.4", wordBreak: "break-word" }}>
 
                           {selectedPage.label ||
                             selectedPage.pageName ||
@@ -562,13 +570,16 @@ export default function RBACPermissionPanel() {
 
                         </div>
 
+                        {selectedPage.path && (
+                          <small className="text-muted d-block mt-1">
+                            Route: <code>{selectedPage.path}</code>
+                          </small>
+                        )}
+
                       </div>
 
-                      <span className="badge bg-primary">
-                        ID:{" "}
-                        {
-                          selectedPage.id
-                        }
+                      <span className="badge bg-primary px-3 py-2 fs-6">
+                        ID: {selectedPage.id}
                       </span>
 
                     </div>
@@ -777,10 +788,8 @@ export default function RBACPermissionPanel() {
                                 }
                               >
 
-                                <div className="fw-semibold">
-
+                                <div className="fw-semibold text-break" style={{ wordBreak: "break-word" }}>
                                   {item.pageLabel}
-
                                 </div>
 
                                 <small className="text-muted">
