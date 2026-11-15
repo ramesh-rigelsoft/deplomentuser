@@ -648,7 +648,7 @@ const handleEdit = (branchId) => {
                   editBranchId !== null ? "btn-primary" : "btn-success"
                 }`}
               >
-                {editBranchId !== null ? "Update Branch" : "Create Branch"}
+                {editBranchId !== null ? t("Update Branch", "Update Branch") : t("Create Branch", "Create Branch")}
               </button>
 
             </form>
@@ -658,17 +658,17 @@ const handleEdit = (branchId) => {
         {/* TABLE */}
         <div className="col-12 col-lg-7 col-xl-8">
           <div className="card shadow-sm border-0 p-3 p-md-4">
-            <h5 className="mb-3 fw-bold">Office List</h5>
+            <h5 className="mb-3 fw-bold">{t("Office List", "Office List")}</h5>
 
             <div className="table-responsive">
               <table className="table table-bordered table-sm table-hover align-middle mb-0">
                 <thead className="table-light">
                   <tr>
-                    <th style={{ whiteSpace: "nowrap" }}>Branch Code</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Branch Name</th>
-                    <th>Address</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Status</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Action</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("branch_code", "Branch Code")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("branch_name", "Branch Name")}</th>
+                    <th>{t("address", "Address")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("status", "Status")}</th>
+                    <th style={{ whiteSpace: "nowrap" }}>{t("action", "Action")}</th>
                   </tr>
                 </thead>
 
@@ -676,7 +676,7 @@ const handleEdit = (branchId) => {
                   {branchs.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="text-center">
-                        No Branch Found
+                        {t("No Branch Found", "No Branch Found")}
                       </td>
                     </tr>
                   ) : (
@@ -691,7 +691,7 @@ const handleEdit = (branchId) => {
                               branch.status ? "bg-success" : "bg-danger"
                             }`}
                           >
-                            {branch.status ? "Active" : "Inactive"}
+                            {branch.status ? t("active", "Active") : t("inactive", "Inactive")}
                           </span>
                         </td>
 
@@ -700,7 +700,7 @@ const handleEdit = (branchId) => {
                             className="btn btn-warning btn-sm"
                             onClick={() => handleEdit(branch.id)}
                           >
-                            Edit
+                            {t("edit", "Edit")}
                           </button>
                         </td>
                       </tr>

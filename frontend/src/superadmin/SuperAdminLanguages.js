@@ -3,8 +3,10 @@ import SuperAdminLayout from "./SuperAdminLayout";
 import superadminApi from "./superadminApi";
 import { toast } from "react-toastify";
 import { SUPPORTED_LANGUAGES } from "../i18n/languages";
+import { useTranslation } from "../i18n";
 
 const SuperAdminLanguages = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("branches"); // "branches" | "owners" | "master"
 
   // Data states

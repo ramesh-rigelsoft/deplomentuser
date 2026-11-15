@@ -4,8 +4,10 @@ import SuperAdminLayout from "./SuperAdminLayout";
 import superadminApi from "./superadminApi";
 import { toast } from "react-toastify";
 import { SUPPORTED_LANGUAGES } from "../i18n/languages";
+import { useTranslation } from "../i18n";
 
 const OwnersManagement = () => {
+  const { t } = useTranslation();
   const [owners, setOwners] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");

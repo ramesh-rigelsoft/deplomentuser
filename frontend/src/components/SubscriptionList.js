@@ -4,8 +4,10 @@ import { success, fail } from "../redux/WebTostar";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import Header from "./Header";
+import { useTranslation } from "../i18n";
 
 const SubscriptionPlanList = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const ownerId = parseInt(Cookies.get("secretCode"));

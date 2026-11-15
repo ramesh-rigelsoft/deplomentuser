@@ -3,8 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import superadminApi from "./superadminApi";
 import { toast } from "react-toastify";
+import { useTranslation } from "../i18n";
 
 const SuperAdminLayout = ({ children }) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 992 : false);
@@ -200,7 +202,7 @@ const SuperAdminLayout = ({ children }) => {
             onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ef4444")}
           >
             <i className="fa fa-sign-out" />
-            {!isMobile && <span>Logout</span>}
+            {!isMobile && <span>{t("logout", "Logout")}</span>}
           </button>
         </div>
       </nav>
@@ -290,7 +292,7 @@ const SuperAdminLayout = ({ children }) => {
                   }}
                 >
                   <i className={`fa ${item.icon}`} style={{ fontSize: "1.1rem", width: "20px", textAlign: "center" }} />
-                  {(sidebarOpen || isMobile) && <span>{item.label}</span>}
+                  {(sidebarOpen || isMobile) && <span>{t(item.label)}</span>}
                 </Link>
               );
             })}
