@@ -13,7 +13,7 @@ const Header = ({
   dashboard = "4"
 }) => {
   const dispatch = useDispatch();
-  const { currentLanguage, currentMeta, availableLanguages, changeLanguage, updatePersonalLanguage, t } = useTranslation();
+  const { t } = useTranslation();
   
   const ownerId= parseInt(Cookies.get("secretCode"));
 
@@ -227,30 +227,8 @@ useEffect(() => {
           </p>
         </div>
 
-        {/* Right Section: Action Button & Language */}
+        {/* Right Section: Action Button */}
         <div className="order-2 order-lg-3 flex-shrink-0 ms-auto ms-md-0 d-flex align-items-center gap-2">
-          <div className="d-flex align-items-center">
-            <select
-              className="form-select form-select-sm rounded-pill border bg-light text-dark fw-semibold"
-              style={{ minWidth: "135px", fontSize: "0.82rem", cursor: "pointer", height: "36px" }}
-              value={currentLanguage}
-              title={t("language_settings", "Language Settings")}
-              onChange={(e) => {
-                const selected = e.target.value;
-                changeLanguage(selected);
-                if (ownerId) {
-                  updatePersonalLanguage(selected);
-                }
-              }}
-            >
-              {availableLanguages.map((l) => (
-                <option key={l.code} value={l.code}>
-                  🌐 {l.nativeName || l.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <button
             type="button"
             onClick={() => handleLogout(dashboard)}
