@@ -404,7 +404,6 @@ public class UserController {
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
 			data.put("lowStockAlert", lowStockAlertList);
-			data.put("lowStockAlertList", lowStockAlertList);
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -488,7 +487,6 @@ public class UserController {
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
 			data.put("lowStockAlert", lowStockAlertList);
-			data.put("lowStockAlertList", lowStockAlertList);
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -566,7 +564,6 @@ public class UserController {
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
 			data.put("lowStockAlert", lowStockAlertList);
-			data.put("lowStockAlertList", lowStockAlertList);
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
