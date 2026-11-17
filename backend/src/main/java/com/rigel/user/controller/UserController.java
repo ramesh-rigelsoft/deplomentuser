@@ -73,7 +73,10 @@ import com.rigel.user.service.ISubscriptionPlanService;
 import com.rigel.user.service.IRazorpayService;
 import com.rigel.user.service.IUserLogOutIn;
 import com.rigel.user.service.IUserService;
+import com.rigel.user.service.ILowStockAlertService;
 import com.rigel.user.serviceimpl.EmailService;
+import com.rigel.user.model.LowStockAlert;
+import java.util.Collections;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -117,6 +120,9 @@ public class UserController {
 
 	@Autowired
 	private IRazorpayService razorpayService;
+
+	@Autowired
+	private ILowStockAlertService lowStockAlertService;
 
 	@Autowired(required = false)
 	private com.rigel.user.dao.ISuperAdminDao superAdminDao;
@@ -380,11 +386,25 @@ public class UserController {
 					subscriptionPlanService.getSubscriptionPlanByOwnerId(effectiveOwnerId, branchCode)
 			).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
 
+			List<LowStockAlert> lowStockAlertList = null;
+			try {
+				lowStockAlertList = (login.getBranchCode() != null && !login.getBranchCode().trim().isEmpty())
+						? lowStockAlertService.getAlerts(effectiveOwnerId, login.getBranchCode().trim())
+						: lowStockAlertService.getAlerts(effectiveOwnerId, null);
+			} catch (Exception ex) {
+				logger.error("Error fetching low stock alerts in adminLogin", ex);
+			}
+			if (lowStockAlertList == null) {
+				lowStockAlertList = Collections.emptyList();
+			}
+
 			data.put("access_token", token);
 			data.put("user", user);
 			data.put("branch", officeBranchDto);
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
+			data.put("lowStockAlert", lowStockAlertList);
+			data.put("lowStockAlertList", lowStockAlertList);
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -450,11 +470,25 @@ public class UserController {
 					subscriptionPlanService.getSubscriptionPlanByOwnerId(effectiveOwnerId, branchCode)
 			).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
 
+			List<LowStockAlert> lowStockAlertList = null;
+			try {
+				lowStockAlertList = (login.getBranchCode() != null && !login.getBranchCode().trim().isEmpty())
+						? lowStockAlertService.getAlerts(effectiveOwnerId, login.getBranchCode().trim())
+						: lowStockAlertService.getAlerts(effectiveOwnerId, null);
+			} catch (Exception ex) {
+				logger.error("Error fetching low stock alerts in adminLogin", ex);
+			}
+			if (lowStockAlertList == null) {
+				lowStockAlertList = Collections.emptyList();
+			}
+
 			data.put("access_token", token);
 			data.put("user", user);
 			data.put("branch", officeBranchDto);
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
+			data.put("lowStockAlert", lowStockAlertList);
+			data.put("lowStockAlertList", lowStockAlertList);
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");
@@ -514,11 +548,25 @@ public class UserController {
 					subscriptionPlanService.getSubscriptionPlanByOwnerId(effectiveOwnerId, branchCode)
 			).map(e -> objectMapper.convertValue(e, UserSubscriptionDto.class)).orElse(null);
 
+			List<LowStockAlert> lowStockAlertList = null;
+			try {
+				lowStockAlertList = (login.getBranchCode() != null && !login.getBranchCode().trim().isEmpty())
+						? lowStockAlertService.getAlerts(effectiveOwnerId, login.getBranchCode().trim())
+						: lowStockAlertService.getAlerts(effectiveOwnerId, null);
+			} catch (Exception ex) {
+				logger.error("Error fetching low stock alerts in adminLogin", ex);
+			}
+			if (lowStockAlertList == null) {
+				lowStockAlertList = Collections.emptyList();
+			}
+
 			data.put("access_token", token);
 			data.put("user", user);
 			data.put("branch", officeBranchDto);
 			data.put("page_access", menuDto);
 			data.put("subscription_plan", userSubscriptionDto);
+			data.put("lowStockAlert", lowStockAlertList);
+			data.put("lowStockAlertList", lowStockAlertList);
 			response.put("data", data);
 			response.put("status", "OK");
 			response.put("code", "200");

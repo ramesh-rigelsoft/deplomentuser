@@ -83,6 +83,18 @@ const API = {
   searchGarbage(dispatch, requestData) {
     return branchApiCall(dispatch, ENDPOINT.GARBAGE_SEARCH, requestData);
   },
+  saveLowStockAlert(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.LOW_STOCK_ALERT_SAVE, requestData);
+  },
+  fetchLowStockAlerts(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.LOW_STOCK_ALERT_LIST, requestData);
+  },
+  updateLowStockAlertStatus(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.LOW_STOCK_ALERT_STATUS, requestData);
+  },
+  deleteLowStockAlert(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.LOW_STOCK_ALERT_DELETE, requestData);
+  },
 };
 
 export default API;

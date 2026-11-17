@@ -21,6 +21,7 @@ import SalesReport from '../pages/SalesReport';
 import EntryReport from '../pages/EntryReport';
 import GarbageItem from '../pages/GarbageItem';
 import BranchDashboard from '../pages/BranchDashboard';
+import LowStockAlert from '../pages/LowStockAlert';
 import AppLayout from '../layout/AppLayout';
 import SubscriptionPlanList from './SubscriptionList';
 import Home from './Home';
@@ -62,6 +63,7 @@ export default function Main() {
         <Route path="/officeLocation" element={<OfficeBranch/>}/>
         <Route path="/branchs" element={<BranchDashboard/>}/>
         <Route path="/subscriptionPlanList" element={<SubscriptionPlanList/>}/>
+        <Route path="/lowStockAlert" element={<ProtectedRoute><LowStockAlert/></ProtectedRoute>}/>
        
         {/* branch route */}
         <Route path="/branchDashboard" element={<BranchSalesDashboar />}/>

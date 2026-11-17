@@ -1,5 +1,5 @@
 import React from "react";
-import { FaUser, FaEdit, FaFileInvoice, FaCreditCard, FaCogs, FaSignOutAlt, FaUserFriends } from "react-icons/fa";
+import { FaUser, FaEdit, FaFileInvoice, FaCreditCard, FaCogs, FaSignOutAlt, FaUserFriends, FaExclamationTriangle } from "react-icons/fa";
 import { success, fail } from "../redux/WebTostar";
 import { navigateTo } from "../components/navigationService";
 import { Link } from "react-router-dom";
@@ -9,15 +9,15 @@ import { useTranslation } from "../i18n";
 export default function Dashboards() {
   const { t } = useTranslation();
 
-  const clickedCards =(name)=> {
-    localStorage.setItem("tab",name);
+  const clickedCards = (name) => {
+    localStorage.setItem("tab", name);
   };
 
 
   // Logout function (abhi simple alert, baad me API + token remove)
   // const handleLogout = () => {
   //   success("Logged out successfully!");
-    
+
   //   navigateTo("/login");
   //   // yaha localStorage.removeItem("token") bhi kar sakte ho
   // };
@@ -101,6 +101,18 @@ export default function Dashboards() {
             <div className="mt-auto">
               <Link to="/subscriptionPlanList" className="btn btn-info btn-sm text-white px-3 py-1">
                 {t("view", "View")}
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("lowStockAlert")}>
+          <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
+            <FaExclamationTriangle size={30} className="text-danger mb-2 mx-auto" />
+            <h5 className="fw-bold mb-2">{t("low_stock_alert", "Low Stock Alert")}</h5>
+            <div className="mt-auto">
+              <Link to="/lowStockAlert" className="btn btn-danger btn-sm text-white px-3 py-1">
+                {t("manage", "Manage")}
               </Link>
             </div>
           </div>

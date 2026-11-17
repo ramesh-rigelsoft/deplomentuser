@@ -46,5 +46,10 @@ export const ENDPOINT = {
    FETCH_DASHBOARD_DATA: `${BASE_URL}/dashboard/view`, 
    INVENTRY_LIST: `${BASE_URL}/inventory/search`,
    EXPENSE_LIST_AND_SEARCH: `${BASE_URL}/expense/search`,
-   GARBAGE_SEARCH: `${BASE_URL}/garbage/search`
+   GARBAGE_SEARCH: `${BASE_URL}/garbage/search`,
+
+   LOW_STOCK_ALERT_SAVE: `${BASE_URL}/user/low-stock-alert/save`,
+   LOW_STOCK_ALERT_LIST: `${BASE_URL}/user/low-stock-alert/list`,
+   LOW_STOCK_ALERT_STATUS: `${BASE_URL}/user/low-stock-alert/status`,
+   LOW_STOCK_ALERT_DELETE: `${BASE_URL}/user/low-stock-alert/delete`
 };
