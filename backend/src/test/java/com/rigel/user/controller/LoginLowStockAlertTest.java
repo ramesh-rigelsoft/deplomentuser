@@ -89,6 +89,7 @@ public class LoginLowStockAlertTest {
                 .categoryType("Smartphone")
                 .brand("Apple")
                 .model("iPhone 15")
+                .skuCode("Apple|01")
                 .minimumStockCount(5)
                 .status(true)
                 .build();

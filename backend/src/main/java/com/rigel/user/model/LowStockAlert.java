@@ -26,7 +26,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "low_stock_alert", indexes = {
     @Index(name = "idx_low_stock_alert_owner_id", columnList = "owner_id"),
-    @Index(name = "idx_low_stock_alert_branch_code", columnList = "branch_code")
+    @Index(name = "idx_low_stock_alert_branch_code", columnList = "branch_code"),
+    @Index(name = "idx_low_stock_alert_sku_code", columnList = "sku_code")
 })
 public class LowStockAlert implements Serializable {
 
@@ -50,6 +51,9 @@ public class LowStockAlert implements Serializable {
 
     @Column(name = "model", nullable = false, length = 255)
     private String model;
+
+    @Column(name = "sku_code", nullable = false, length = 255)
+    private String skuCode;
 
     @Column(name = "minimum_stock_count", nullable = false)
     @Builder.Default

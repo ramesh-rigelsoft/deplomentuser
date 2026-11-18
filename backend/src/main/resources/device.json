@@ -1,0 +1,183 @@
+{
+  "categories": [
+    {
+      "category": "Mobile & Smart Devices",
+      "items": [
+        { "id": "01", "name": "Smartphone", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "02", "name": "Feature-Phone", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "03", "name": "Tablet", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "04", "name": "iPad", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "05", "name": "Smart Watch", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "06", "name": "Fitness Band", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "07", "name": "Smart Glasses", "hsn": "9004", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Audio Devices",
+      "items": [
+        { "id": "08", "name": "Wired Earphone", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "09", "name": "Wireless Earbuds", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "10", "name": "Headphone", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "11", "name": "Bluetooth Headphone", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "12", "name": "Neckband", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "13", "name": "Bluetooth Speaker", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "14", "name": "Sound Bar", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "15", "name": "Microphone", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Charging & Power",
+      "items": [
+        { "id": "16", "name": "Mobile Charger", "hsn": "8504", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "17", "name": "Fast Charger", "hsn": "8504", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "18", "name": "Wireless Charger", "hsn": "8504", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "19", "name": "Power Bank", "hsn": "8507", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "20", "name": "Extension Board", "hsn": "8536", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "21", "name": "Spike Guard", "hsn": "8536", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "22", "name": "UPS", "hsn": "8504", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "23", "name": "Inverter", "hsn": "8504", "gst": {"cgst": 12, "sgst": 12, "igst": 24} },
+        { "id": "24", "name": "Battery", "hsn": "8507", "gst": {"cgst": 14, "sgst": 14, "igst": 28} },
+        { "id": "25", "name": "Adapter", "hsn": "8504", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Cables & Connectivity",
+      "items": [
+        { "id": "26", "name": "Data Cable", "hsn": "8544", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "27", "name": "Type-C Cable", "hsn": "8544", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "28", "name": "Micro USB Cable", "hsn": "8544", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "29", "name": "Lightning Cable", "hsn": "8544", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "30", "name": "OTG Cable", "hsn": "8544", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "31", "name": "AUX Cable", "hsn": "8544", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "32", "name": "HDMI Cable", "hsn": "8544", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "33", "name": "LAN Cable", "hsn": "8544", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "34", "name": "USB Hub", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Protection Accessories",
+      "items": [
+        { "id": "35", "name": "Back Cover", "hsn": "3926", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "36", "name": "Flip Cover", "hsn": "4202", "gst": {"cgst": 6, "sgst": 6, "igst": 12} },
+        { "id": "37", "name": "Screen Guard", "hsn": "7007", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "38", "name": "Tempered Glass", "hsn": "7007", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "39", "name": "Camera Lens Protector", "hsn": "7007", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Storage Devices",
+      "items": [
+        { "id": "40", "name": "Memory Card", "hsn": "8523", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "41", "name": "Pendrive", "hsn": "8523", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "42", "name": "External Hard Disk", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "43", "name": "SSD", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "44", "name": "RAM", "hsn": "8473", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "45", "name": "Hard Disk (HDD)", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "46", "name": "Card Reader", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "47", "name": "NAS Storage", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Computer & Laptop",
+      "items": [
+        { "id": "48", "name": "Laptop", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "49", "name": "Desktop Computer", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "50", "name": "CPU", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "51", "name": "Monitor", "hsn": "8528", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "52", "name": "Keyboard", "hsn": "847160", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "53", "name": "Mouse", "hsn": "847160", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "54", "name": "Printer", "hsn": "8443", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "55", "name": "Scanner", "hsn": "8471", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "56", "name": "Webcam", "hsn": "8525", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "57", "name": "Graphics Card", "hsn": "847330", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Home Electronics",
+      "items": [
+        {
+          "id": "58", "name": "LED TV", "hsn": "8528",
+          "gst": {
+            "up_to_32_inch": {"cgst": 9, "sgst": 9, "igst": 18},
+            "above_32_inch": {"cgst": 14, "sgst": 14, "igst": 28}
+          }
+        },
+        {
+          "id": "59", "name": "Smart TV", "hsn": "8528",
+          "gst": {
+            "up_to_32_inch": {"cgst": 9, "sgst": 9, "igst": 18},
+            "above_32_inch": {"cgst": 14, "sgst": 14, "igst": 28}
+          }
+        },
+        { "id": "60", "name": "Set Top Box", "hsn": "8528", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "61", "name": "Projector", "hsn": "8528", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "62", "name": "Remote Control", "hsn": "8523", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "63", "name": "Water Purifier (RO)", "hsn": "8421", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Internet & Networking",
+      "items": [
+        { "id": "64", "name": "WiFi Router", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "65", "name": "Modem", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "66", "name": "WiFi Dongle", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "67", "name": "Range Extender", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "68", "name": "Network Switch", "hsn": "8517", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Camera & Security",
+      "items": [
+        { "id": "69", "name": "DSLR Camera", "hsn": "8525", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "70", "name": "Action Camera", "hsn": "8525", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "71", "name": "CCTV Camera", "hsn": "8525", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "72", "name": "DVR / NVR", "hsn": "8521", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "73", "name": "Biometric Machine", "hsn": "8543", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Home Appliances",
+      "items": [
+        { "id": "74", "name": "Washing Machine", "hsn": "8450", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "75", "name": "Refrigerator", "hsn": "8418", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "76", "name": "Microwave Oven", "hsn": "8514", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "77", "name": "Electric Kettle", "hsn": "8516", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "78", "name": "Induction Cooktop", "hsn": "8516", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "79", "name": "Electric Iron", "hsn": "8516", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "80", "name": "Fan", "hsn": "8414", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "81", "name": "Air Cooler", "hsn": "8479", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "82", "name": "Room Heater", "hsn": "8516", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "83", "name": "Geyser / Water Heater", "hsn": "8516", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "84", "name": "Voltage Stabilizer", "hsn": "9032", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Gaming & Smart Home",
+      "items": [
+        { "id": "85", "name": "Gaming Console", "hsn": "9504", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "86", "name": "Game Controller", "hsn": "9504", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "87", "name": "VR Headset", "hsn": "9504", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "88", "name": "Smart Bulb", "hsn": "9405", "gst": {"cgst": 6, "sgst": 6, "igst": 12} },
+        { "id": "89", "name": "Smart Plug", "hsn": "8536", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "90", "name": "Smart Lock", "hsn": "8301", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    },
+    {
+      "category": "Shop Service",
+      "items": [
+        { "id": "91", "name": "Mobile/Laptop Repair Service", "hsn": "9987", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "92", "name": "Recharge / SIM Services", "hsn": "9987", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "93", "name": "Money Transfer", "hsn": "9991", "gst": {"cgst": 0, "sgst": 0, "igst": 0} },
+        { "id": "94", "name": "Photography / Studio Service", "hsn": "9983", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "95", "name": "General Service Charge", "hsn": "9987", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "96", "name": "Other Services", "hsn": "9999", "gst": {"cgst": 0, "sgst": 0, "igst": 0} }
+      ]
+    },
+    {
+      "category": "Other",
+      "items": [
+        { "id": "97", "name": "Other", "hsn": "0000", "gst": {"cgst": 9, "sgst": 9, "igst": 18} }
+      ]
+    }
+  ]
+}

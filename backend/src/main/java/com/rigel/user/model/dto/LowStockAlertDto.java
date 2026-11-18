@@ -24,6 +24,7 @@ public class LowStockAlertDto implements Serializable {
     private String brand;
     private String categoryType;
     private String model;
+    private String skuCode;
     private Integer minimumStockCount;
     private Boolean status;
     private LocalDateTime createdAt;

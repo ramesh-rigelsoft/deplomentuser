@@ -1,20 +1,89 @@
 package com.rigel.user.serviceimpl;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rigel.user.dao.ILowStockAlertDao;
 import com.rigel.user.model.LowStockAlert;
 import com.rigel.user.model.dto.LowStockAlertDto;
 import com.rigel.user.service.ILowStockAlertService;
 
+import jakarta.annotation.PostConstruct;
+
 @Service
 public class LowStockAlertServiceImpl implements ILowStockAlertService {
 
+    private static final Logger logger = LoggerFactory.getLogger(LowStockAlertServiceImpl.class);
+
     @Autowired
     private ILowStockAlertDao lowStockAlertDao;
+
+    private final Map<String, String> categoryIdMap = new ConcurrentHashMap<>();
+
+    private static String normalizeName(String name) {
+        if (name == null) return "";
+        return name.trim().toLowerCase().replaceAll("[\\s\\-_]+", "");
+    }
+
+    @PostConstruct
+    public void initDeviceCategories() {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("device.json")) {
+            if (is != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode root = mapper.readTree(is);
+                JsonNode categories = root.get("categories");
+                if (categories != null && categories.isArray()) {
+                    for (JsonNode cat : categories) {
+                        JsonNode items = cat.get("items");
+                        if (items != null && items.isArray()) {
+                            for (JsonNode item : items) {
+                                JsonNode nameNode = item.get("name");
+                                JsonNode idNode = item.get("id");
+                                if (nameNode != null && idNode != null) {
+                                    String rawName = nameNode.asText().trim().toLowerCase();
+                                    String idVal = idNode.asText().trim();
+                                    categoryIdMap.put(rawName, idVal);
+                                    categoryIdMap.put(normalizeName(rawName), idVal);
+                                }
+                            }
+                        }
+                    }
+                }
+                logger.info("Loaded {} device category items from device.json for SKU code generation", categoryIdMap.size());
+            } else {
+                logger.warn("device.json not found in classpath");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to load device.json for SKU code generation", e);
+        }
+    }
+
+    public String resolveSkuCode(String brand, String categoryType, String providedSku) {
+        if (providedSku != null && !providedSku.trim().isEmpty()) {
+            return providedSku.trim();
+        }
+        String id = null;
+        if (categoryType != null) {
+            id = categoryIdMap.get(categoryType.trim().toLowerCase());
+            if (id == null || id.isEmpty()) {
+                id = categoryIdMap.get(normalizeName(categoryType));
+            }
+        }
+        if (id == null || id.isEmpty()) {
+            id = "97";
+        }
+        String b = (brand != null && !brand.trim().isEmpty()) ? brand.trim() : "Unknown";
+        return b + "|" + id;
+    }
 
     @Override
     public LowStockAlert saveAlert(LowStockAlertDto dto) {
@@ -55,6 +124,10 @@ public class LowStockAlertServiceImpl implements ILowStockAlertService {
         alert.setCategoryType(dto.getCategoryType().trim());
         alert.setBrand(dto.getBrand().trim());
         alert.setModel(dto.getModel().trim());
+
+        String skuCode = resolveSkuCode(dto.getBrand(), dto.getCategoryType(), dto.getSkuCode());
+        alert.setSkuCode(skuCode);
+
         alert.setMinimumStockCount(dto.getMinimumStockCount());
         if (dto.getStatus() != null) {
             alert.setStatus(dto.getStatus());

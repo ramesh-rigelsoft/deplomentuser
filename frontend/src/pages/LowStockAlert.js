@@ -29,9 +29,36 @@ const EMPTY_FORM = (ownerId, branchCode = "") => ({
   customBrand: "",
   brand: "",
   model: "",
+  skuCode: "",
   minimumStockCount: 5,
   status: true
 });
+
+const normalizeItemName = (str) => (str ? str.toLowerCase().replace(/[\s\-_]+/g, "") : "");
+
+const findItemId = (categoryTypeName) => {
+  if (!categoryTypeName || !devicesData?.categories) return "97";
+  const rawTarget = categoryTypeName.trim().toLowerCase();
+  const normalizedTarget = normalizeItemName(rawTarget);
+  for (const cat of devicesData.categories) {
+    if (cat.items) {
+      const found = cat.items.find((i) => {
+        if (!i.name) return false;
+        const rawName = i.name.trim().toLowerCase();
+        return rawName === rawTarget || normalizeItemName(rawName) === normalizedTarget;
+      });
+      if (found && found.id) return found.id;
+    }
+  }
+  return "97";
+};
+
+const getComputedSkuCode = (brand, categoryType) => {
+  const b = brand && brand.trim() ? brand.trim() : "";
+  if (!b && !categoryType) return "";
+  const id = findItemId(categoryType);
+  return b ? `${b}|${id}` : `[Brand]|${id}`;
+};
 
 export default function LowStockAlert() {
   const { t } = useTranslation();
@@ -156,6 +183,7 @@ export default function LowStockAlert() {
       customBrand: isStandardBrand ? "" : alert.brand || "",
       brand: alert.brand,
       model: alert.model === "All Models" ? "" : (alert.model || ""),
+      skuCode: alert.skuCode || `${alert.brand}|${findItemId(alert.categoryType)}`,
       minimumStockCount: alert.minimumStockCount,
       status: alert.status
     });
@@ -200,6 +228,9 @@ export default function LowStockAlert() {
         ? formData.customBrand.trim()
         : formData.selectedBrand.trim();
 
+    const itemId = findItemId(formData.categoryType);
+    const alertSKUCode = `${resolvedBrand}|${itemId}`;
+
     const payload = {
       id: formData.id,
       ownerId,
@@ -207,6 +238,7 @@ export default function LowStockAlert() {
       categoryType: formData.categoryType.trim(),
       brand: resolvedBrand,
       model: formData.model && formData.model.trim() ? formData.model.trim() : "All Models",
+      skuCode: alertSKUCode,
       minimumStockCount: parseInt(formData.minimumStockCount, 10),
       status: formData.status
     };
@@ -284,7 +316,8 @@ export default function LowStockAlert() {
       (alert.brand && alert.brand.toLowerCase().includes(q)) ||
       (alert.categoryType && alert.categoryType.toLowerCase().includes(q)) ||
       (alert.model && alert.model.toLowerCase().includes(q)) ||
-      (alert.branchCode && alert.branchCode.toLowerCase().includes(q));
+      (alert.branchCode && alert.branchCode.toLowerCase().includes(q)) ||
+      (alert.skuCode && alert.skuCode.toLowerCase().includes(q));
 
     const matchesStatus =
       statusFilter === "ALL"
@@ -453,6 +486,7 @@ export default function LowStockAlert() {
               <tr>
                 <th scope="col" style={{ width: 56 }}>#</th>
                 <th scope="col">{t("branch", "Branch")}</th>
+                <th scope="col">{t("sku_code", "SKU Code")}</th>
                 <th scope="col">{t("category_type", "Item type")}</th>
                 <th scope="col">{t("brand", "Brand")}</th>
                 <th scope="col">{t("model", "Model")}</th>
@@ -464,14 +498,14 @@ export default function LowStockAlert() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-5 text-muted">
+                  <td colSpan="9" className="text-center py-5 text-muted">
                     <span className="spinner-border spinner-border-sm text-primary me-2" role="status" />
                     {t("loading_alerts", "Loading alerts...")}
                   </td>
                 </tr>
               ) : filteredAlerts.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-5 text-muted">
+                  <td colSpan="9" className="text-center py-5 text-muted">
                     <FaBoxes size={32} className="opacity-50 mb-2" />
                     <div className="fw-semibold text-dark">
                       {alerts.length > 0
@@ -494,6 +528,11 @@ export default function LowStockAlert() {
                       <td>
                         <div className="fw-medium">{branchInfo ? branchInfo.branchName : alert.branchCode}</div>
                         {branchInfo && <div className="text-muted small">{alert.branchCode}</div>}
+                      </td>
+                      <td>
+                        <span className="badge bg-light text-primary border font-monospace px-2 py-1">
+                          {alert.skuCode || `${alert.brand}|${findItemId(alert.categoryType)}`}
+                        </span>
                       </td>
                       <td>{alert.categoryType}</td>
                       <td>{alert.brand}</td>
@@ -730,7 +769,7 @@ export default function LowStockAlert() {
                     )}
                   </div>
 
-                  <div className="col-12">
+                  <div className="col-12 col-md-6">
                     <label className="form-label small fw-semibold" htmlFor="lsa-f-model">
                       {t("model", "Model name / number")}
                     </label>
@@ -741,6 +780,26 @@ export default function LowStockAlert() {
                       placeholder="e.g. iPhone 15, Galaxy S23, Latitude 5420 (optional)"
                       value={formData.model}
                       onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="col-12 col-md-6">
+                    <label className="form-label small fw-semibold" htmlFor="lsa-f-skucode">
+                      {t("sku_code", "SKU Code")}{" "}
+                      <small className="text-muted fw-normal">({t("auto_generated", "Auto-generated")})</small>
+                    </label>
+                    <input
+                      id="lsa-f-skucode"
+                      type="text"
+                      className="form-control font-monospace bg-light"
+                      value={
+                        getComputedSkuCode(
+                          formData.selectedBrand === "Other" ? formData.customBrand : formData.selectedBrand,
+                          formData.categoryType
+                        ) || t("sku_placeholder", "e.g. Brand|ID")
+                      }
+                      readOnly
+                      title="Generated as Brand|Id from device.json"
                     />
                   </div>
                 </div>
