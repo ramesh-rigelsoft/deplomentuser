@@ -17,6 +17,7 @@
       "items": [
         { "id": "08", "name": "Wired Earphone", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
         { "id": "09", "name": "Wireless Earbuds", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
+        { "id": "98", "name": "AirPods", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
         { "id": "10", "name": "Headphone", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
         { "id": "11", "name": "Bluetooth Headphone", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
         { "id": "12", "name": "Neckband", "hsn": "8518", "gst": {"cgst": 9, "sgst": 9, "igst": 18} },
