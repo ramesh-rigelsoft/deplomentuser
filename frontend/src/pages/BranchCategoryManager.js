@@ -315,7 +315,8 @@ export default function BranchCategoryManager() {
                       </label>
                       <button
                         type="button"
-                        className="btn btn-link btn-sm p-0 text-decoration-none"
+                        className="btn btn-link btn-sm p-0 text-decoration-none fw-semibold"
+                        style={{ fontSize: "12px" }}
                         onClick={handleSelectAll}
                       >
                         {selectedCategoryTypes.length === categoryTypes.length
@@ -323,51 +324,78 @@ export default function BranchCategoryManager() {
                           : t("Select All", "Select All")}
                       </button>
                     </div>
+
                     <div
-                      className="border rounded p-2"
+                      className="border rounded-2 p-2 bg-light"
                       style={{
-                        maxHeight: "220px",
+                        maxHeight: "240px",
                         overflowY: "auto",
-                        backgroundColor: "#f8f9fa",
                       }}
                     >
-                      {categoryTypes.map((item) => {
-                        const isSelected = selectedCategoryTypes.some((s) => s.id === item.id);
-                        return (
-                          <div
-                            key={item.id}
-                            className={`form-check d-flex align-items-center px-2 py-1 rounded mb-1 ${
-                              isSelected ? "bg-primary bg-opacity-10" : ""
-                            }`}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => handleCategoryTypeToggle(item)}
-                          >
-                            <input
-                              className="form-check-input me-2 flex-shrink-0"
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => {}}
-                              style={{ cursor: "pointer" }}
-                            />
-                            <label
-                              className="form-check-label small w-100"
-                              style={{ cursor: "pointer" }}
+                      <div className="d-flex flex-column gap-1">
+                        {categoryTypes.map((item) => {
+                          const isSelected = selectedCategoryTypes.some((s) => s.id === item.id);
+                          return (
+                            <div
+                              key={item.id}
+                              className={`d-flex align-items-center justify-content-between px-2 py-2 rounded-2 border ${
+                                isSelected
+                                  ? "bg-primary bg-opacity-10 border-primary"
+                                  : "bg-white border-light-subtle"
+                              }`}
+                              style={{
+                                cursor: "pointer",
+                                transition: "all 0.15s ease-in-out",
+                              }}
+                              onClick={() => handleCategoryTypeToggle(item)}
                             >
-                              {item.name}
-                              <span className="text-muted ms-1" style={{ fontSize: "11px" }}>
-                                (HSN: {item.hsn})
+                              <div className="d-flex align-items-center flex-grow-1 min-w-0 me-2">
+                                <input
+                                  className="form-check-input flex-shrink-0 me-2"
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => {}}
+                                  style={{
+                                    cursor: "pointer",
+                                    width: "18px",
+                                    height: "18px",
+                                    margin: 0,
+                                    padding: 0,
+                                    position: "static",
+                                    float: "none",
+                                  }}
+                                />
+                                <span
+                                  className={`small text-truncate ${isSelected ? "fw-bold text-primary" : "text-dark"}`}
+                                  style={{ cursor: "pointer", userSelect: "none", fontSize: "13px" }}
+                                >
+                                  {item.name}
+                                </span>
+                              </div>
+
+                              <span
+                                className="badge bg-secondary-subtle text-secondary border flex-shrink-0"
+                                style={{ fontSize: "10px", padding: "3px 6px" }}
+                              >
+                                HSN: {item.hsn || "—"}
                               </span>
-                            </label>
-                          </div>
-                        );
-                      })}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                    {selectedCategoryTypes.length > 0 && (
-                      <small className="text-success mt-1 d-block">
-                        <i className="bi bi-check-circle me-1"></i>
-                        {selectedCategoryTypes.length} selected
+
+                    <div className="d-flex justify-content-between align-items-center mt-1 px-1">
+                      <small className="text-muted" style={{ fontSize: "11px" }}>
+                        Total: {categoryTypes.length}
                       </small>
-                    )}
+                      {selectedCategoryTypes.length > 0 && (
+                        <small className="text-success fw-bold" style={{ fontSize: "11px" }}>
+                          <i className="bi bi-check-circle-fill me-1"></i>
+                          {selectedCategoryTypes.length} selected
+                        </small>
+                      )}
+                    </div>
                   </div>
                 )}
 
