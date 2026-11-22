@@ -95,6 +95,18 @@ const API = {
   deleteLowStockAlert(dispatch, requestData) {
     return callAPI(dispatch, ENDPOINT.LOW_STOCK_ALERT_DELETE, requestData);
   },
+  saveBranchCategory(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.BRANCH_CATEGORY_SAVE, requestData);
+  },
+  fetchBranchCategories(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.BRANCH_CATEGORY_LIST, requestData);
+  },
+  deleteBranchCategory(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.BRANCH_CATEGORY_DELETE, requestData);
+  },
+  clearBranchCategories(dispatch, requestData) {
+    return callAPI(dispatch, ENDPOINT.BRANCH_CATEGORY_CLEAR_BRANCH, requestData);
+  },
 };
 
 export default API;

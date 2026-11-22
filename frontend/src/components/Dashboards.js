@@ -1,5 +1,5 @@
 import React from "react";
-import { FaUser, FaEdit, FaFileInvoice, FaCreditCard, FaCogs, FaSignOutAlt, FaUserFriends, FaExclamationTriangle } from "react-icons/fa";
+import { FaUser, FaEdit, FaFileInvoice, FaCreditCard, FaCogs, FaSignOutAlt, FaUserFriends, FaExclamationTriangle, FaTags } from "react-icons/fa";
 import { success, fail } from "../redux/WebTostar";
 import { navigateTo } from "../components/navigationService";
 import { Link } from "react-router-dom";
@@ -112,6 +112,18 @@ export default function Dashboards() {
             <h5 className="fw-bold mb-2">{t("low_stock_alert", "Low Stock Alert")}</h5>
             <div className="mt-auto">
               <Link to="/lowStockAlert" className="btn btn-danger btn-sm text-white px-3 py-1">
+                {t("manage", "Manage")}
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-sm-6 col-lg-4 col-xl-4 col-xxl-3" onClick={() => clickedCards("branchCategory")}>
+          <div className="card shadow-sm border-0 text-center p-3 p-md-4 h-100 hover-card">
+            <FaTags size={30} className="text-purple mb-2 mx-auto" style={{ color: "#6f42c1" }} />
+            <h5 className="fw-bold mb-2">{t("branch_category", "Branch Category")}</h5>
+            <div className="mt-auto">
+              <Link to="/branchCategory" className="btn btn-sm text-white px-3 py-1" style={{ backgroundColor: "#6f42c1" }}>
                 {t("manage", "Manage")}
               </Link>
             </div>

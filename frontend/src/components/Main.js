@@ -22,6 +22,7 @@ import EntryReport from '../pages/EntryReport';
 import GarbageItem from '../pages/GarbageItem';
 import BranchDashboard from '../pages/BranchDashboard';
 import LowStockAlert from '../pages/LowStockAlert';
+import BranchCategoryManager from '../pages/BranchCategoryManager';
 import AppLayout from '../layout/AppLayout';
 import SubscriptionPlanList from './SubscriptionList';
 import Home from './Home';
@@ -64,6 +65,7 @@ export default function Main() {
         <Route path="/branchs" element={<BranchDashboard/>}/>
         <Route path="/subscriptionPlanList" element={<SubscriptionPlanList/>}/>
         <Route path="/lowStockAlert" element={<ProtectedRoute><LowStockAlert/></ProtectedRoute>}/>
+        <Route path="/branchCategory" element={<ProtectedRoute><BranchCategoryManager/></ProtectedRoute>}/>
        
         {/* branch route */}
         <Route path="/branchDashboard" element={<BranchSalesDashboar />}/>

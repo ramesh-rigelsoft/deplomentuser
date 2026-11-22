@@ -51,5 +51,10 @@ export const ENDPOINT = {
    LOW_STOCK_ALERT_SAVE: `${BASE_URL}/user/low-stock-alert/save`,
    LOW_STOCK_ALERT_LIST: `${BASE_URL}/user/low-stock-alert/list`,
    LOW_STOCK_ALERT_STATUS: `${BASE_URL}/user/low-stock-alert/status`,
-   LOW_STOCK_ALERT_DELETE: `${BASE_URL}/user/low-stock-alert/delete`
+   LOW_STOCK_ALERT_DELETE: `${BASE_URL}/user/low-stock-alert/delete`,
+
+   BRANCH_CATEGORY_SAVE: `${BASE_URL}/user/branch-category/save`,
+   BRANCH_CATEGORY_LIST: `${BASE_URL}/user/branch-category/list`,
+   BRANCH_CATEGORY_DELETE: `${BASE_URL}/user/branch-category/delete`,
+   BRANCH_CATEGORY_CLEAR_BRANCH: `${BASE_URL}/user/branch-category/delete-branch`
 };
